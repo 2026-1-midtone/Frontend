@@ -1,0 +1,27 @@
+.footer {
+  border-top: 1px solid $color-border;
+  background-color: $color-bg;
+
+  &__inner {
+    @include container;
+    @include flex-between;
+    gap: $space-4;
+    padding-block: $space-6;
+
+    @include respond-to('sm') {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $space-2;
+    }
+  }
+
+  &__brand {
+    @include typo($font-size-sm, $font-weight-semibold);
+    color: $color-text-secondary;
+  }
+
+  &__copy {
+    @include typo($font-size-xs);
+    color: $color-text-tertiary;
+  }
+}

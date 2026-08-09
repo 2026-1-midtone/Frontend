@@ -1,0 +1,128 @@
+// =============================================================
+// 시프트메이트 디자인 토큰 - 믹스인
+// =============================================================
+@use 'sass:map';
+@use 'variables' as *;
+
+// -------------------------------------------------------------
+// 반응형: 지정 breakpoint '이하'에서 적용 (모바일 우선 축소 대응)
+// 사용 예: @include respond-to('md') { ... }
+// -------------------------------------------------------------
+@mixin respond-to($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (max-width: map.get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @error "'#{$breakpoint}'는 정의되지 않은 breakpoint입니다. 사용 가능: #{map.keys($breakpoints)}";
+  }
+}
+
+// 지정 breakpoint '초과'에서 적용
+@mixin respond-from($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (min-width: map.get($breakpoints, $breakpoint) + 1px) {
+      @content;
+    }
+  } @else {
+    @error "'#{$breakpoint}'는 정의되지 않은 breakpoint입니다. 사용 가능: #{map.keys($breakpoints)}";
+  }
+}
+
+// -------------------------------------------------------------
+// Flex 유틸
+// -------------------------------------------------------------
+@mixin flex($direction: row, $justify: flex-start, $align: stretch, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  @if $gap != 0 {
+    gap: $gap;
+  }
+}
+
+@mixin flex-center {
+  @include flex(row, center, center);
+}
+
+@mixin flex-between {
+  @include flex(row, space-between, center);
+}
+
+@mixin flex-column($gap: 0) {
+  @include flex(column, flex-start, stretch, $gap);
+}
+
+// -------------------------------------------------------------
+// 텍스트
+// -------------------------------------------------------------
+@mixin typo($size, $weight: $font-weight-regular, $line-height: $line-height-normal) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $line-height;
+}
+
+// 한 줄 말줄임
+@mixin ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 여러 줄 말줄임
+@mixin ellipsis-multiline($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// -------------------------------------------------------------
+// 레이아웃
+// -------------------------------------------------------------
+@mixin container($max-width: $layout-max-width) {
+  width: 100%;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding-inline: $layout-gutter;
+}
+
+// 스크린리더 전용 (시각적으로 숨김)
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+// -------------------------------------------------------------
+// 인터랙션
+// -------------------------------------------------------------
+@mixin focus-ring($color: $color-border-focus) {
+  outline: 2px solid $color;
+  outline-offset: 2px;
+}
+
+@mixin button-reset {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+@mixin card($padding: $space-6) {
+  padding: $padding;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: $color-bg;
+  box-shadow: $shadow-sm;
+}

@@ -1,0 +1,97 @@
+.home {
+  @include flex-column($space-16);
+
+  &__hero {
+    @include flex-column($space-4);
+    align-items: flex-start;
+    padding-block: $space-10;
+  }
+
+  &__eyebrow {
+    padding: $space-1 $space-3;
+    border-radius: $radius-full;
+    background-color: $color-primary-subtle;
+    color: $color-primary-active;
+    @include typo($font-size-xs, $font-weight-semibold);
+  }
+
+  &__title {
+    @include typo($font-size-4xl, $font-weight-bold, $line-height-tight);
+    letter-spacing: -0.03em;
+
+    @include respond-to('md') {
+      font-size: $font-size-3xl;
+    }
+  }
+
+  &__description {
+    @include typo($font-size-lg, $font-weight-regular, $line-height-relaxed);
+    color: $color-text-secondary;
+
+    @include respond-to('md') {
+      font-size: $font-size-md;
+    }
+  }
+
+  &__cta {
+    @include button-reset;
+    margin-top: $space-2;
+    padding: $space-3 $space-8;
+    border-radius: $radius-full;
+    background-color: $color-primary;
+    color: $color-text-inverse;
+    @include typo($font-size-md, $font-weight-semibold);
+    box-shadow: $shadow-md;
+    transition: background-color $duration-base $easing-standard,
+      transform $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: $color-primary-hover;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      background-color: $color-primary-active;
+      transform: translateY(0);
+    }
+  }
+
+  &__features {
+    @include flex-column($space-6);
+  }
+
+  &__features-title {
+    @include typo($font-size-2xl, $font-weight-bold, $line-height-tight);
+  }
+
+  &__feature-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-5;
+
+    @include respond-to('md') {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__feature-card {
+    @include card;
+    @include flex-column($space-2);
+    transition: box-shadow $duration-base $easing-standard,
+      border-color $duration-base $easing-standard;
+
+    &:hover {
+      border-color: $color-border-strong;
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &__feature-title {
+    @include typo($font-size-lg, $font-weight-semibold, $line-height-tight);
+  }
+
+  &__feature-description {
+    @include typo($font-size-sm, $font-weight-regular, $line-height-relaxed);
+    color: $color-text-secondary;
+  }
+}

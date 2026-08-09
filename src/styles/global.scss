@@ -1,0 +1,24 @@
+// =============================================================
+// 전역 스타일 진입점 - main.jsx에서 한 번만 import
+// =============================================================
+@use 'reset';
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: $font-family-base;
+  @include typo($font-size-md, $font-weight-regular, $line-height-normal);
+  color: $color-text;
+  background-color: $color-bg-subtle;
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+::selection {
+  background-color: $color-primary-subtle;
+  color: $color-primary-active;
+}
