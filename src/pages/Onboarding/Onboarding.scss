@@ -1,0 +1,71 @@
+.onboarding {
+  @include flex-column;
+  flex: 1;
+  padding-inline: $space-8;
+  background: $gradient-onboarding;
+
+  &__brand {
+    @include flex-column($space-2);
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    // 시안상 브랜드 블록이 화면 중앙보다 살짝 위에 위치한다.
+    padding-bottom: $space-16;
+    text-align: center;
+  }
+
+  &__character {
+    width: 200px;
+    height: auto;
+    margin-bottom: $space-8;
+  }
+
+  &__tagline {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+    color: $color-text-tertiary;
+  }
+
+  &__title {
+    @include flex(row, center, center, $space-2);
+  }
+
+  &__title-text {
+    @include typo($font-size-3xl, $font-weight-extrabold, $line-height-tight);
+    color: $color-text-brand;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 24px rgba($purple-500, 0.55);
+  }
+
+  &__sparkle {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  &__actions {
+    padding-bottom: $space-12;
+  }
+
+  &__login {
+    @include button-reset;
+    display: block;
+    width: 100%;
+    padding-block: $space-4;
+    border-radius: $radius-xl;
+    background-color: $color-surface-strong;
+    color: $color-text;
+    @include typo($font-size-md, $font-weight-semibold);
+    text-align: center;
+    transition:
+      background-color $duration-fast $easing-standard,
+      transform $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: $night-400;
+    }
+
+    &:active {
+      transform: scale(0.985);
+    }
+  }
+}

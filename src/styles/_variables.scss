@@ -1,80 +1,97 @@
 // =============================================================
 // 시프트메이트 디자인 토큰 - 변수
 // 이 파일은 전역으로 자동 주입되므로 컴포넌트에서 별도 @use 불필요
+//
+// 서비스는 모바일 앱 기준 다크 테마다.
+// 기준 너비는 393px이며 데스크톱에서도 이 폭으로 중앙 정렬한다.
 // =============================================================
 
 // -------------------------------------------------------------
-// Color - Primitive
+// Color - Primitive : Brand Purple
 // -------------------------------------------------------------
-$blue-50: #eef4ff;
-$blue-100: #dbe6ff;
-$blue-200: #bccfff;
-$blue-300: #91aeff;
-$blue-400: #6483fb;
-$blue-500: #4059f0;
-$blue-600: #2d3ce5;
-$blue-700: #242dc9;
-$blue-800: #2229a2;
-$blue-900: #222a80;
+$purple-50: #f7ecff;
+$purple-100: #ecd3ff;
+$purple-200: #ddb3ff;
+$purple-300: #cb8dff;
+$purple-400: #bb68f5;
+$purple-500: #ab3eea; // 브랜드 메인
+$purple-600: #9127d0;
+$purple-700: #711ba4;
+$purple-800: #4e1274;
+$purple-900: #2f0a47;
+$purple-950: #1c0630;
 
-$teal-100: #cdfaf0;
-$teal-400: #2dd4bf;
-$teal-600: #0d9488;
+$magenta-400: #e263fb; // 캐릭터 림라이트 / 강조
+$magenta-500: #d43df0;
 
-$gray-0: #ffffff;
-$gray-50: #f8f9fb;
-$gray-100: #f1f3f6;
-$gray-200: #e5e8ed;
-$gray-300: #d1d6de;
-$gray-400: #a4acba;
-$gray-500: #737c8c;
-$gray-600: #545c6b;
-$gray-700: #3d4451;
-$gray-800: #272c36;
-$gray-900: #14171d;
+// -------------------------------------------------------------
+// Color - Primitive : Night Neutral (다크 테마 기준)
+// 숫자가 커질수록 밝아진다.
+// -------------------------------------------------------------
+$night-0: #08060c; // 가장 어두운 배경
+$night-50: #0e0b14;
+$night-100: #14101c;
+$night-200: #1c1726;
+$night-300: #262030; // 카드 / 버튼 표면
+$night-400: #322b3e;
+$night-500: #48404f;
+$night-600: #6b6377;
+$night-700: #948da0;
+$night-800: #c6c1cf;
+$night-900: #ecebf0;
+$night-1000: #ffffff;
 
-$red-100: #ffe3e3;
+// -------------------------------------------------------------
+// Color - Primitive : Status
+// -------------------------------------------------------------
+$red-400: #ff6b6b;
 $red-500: #f03e3e;
-$red-600: #d92c2c;
-
-$amber-100: #fff3bf;
+$amber-400: #ffc94d;
 $amber-500: #f59f00;
-
-$green-100: #d3f9d8;
+$green-400: #51cf66;
 $green-500: #2f9e44;
+$blue-400: #4dabf7;
 
 // -------------------------------------------------------------
 // Color - Semantic
 // -------------------------------------------------------------
-$color-primary: $blue-500;
-$color-primary-hover: $blue-600;
-$color-primary-active: $blue-700;
-$color-primary-subtle: $blue-50;
+$color-primary: $purple-500;
+$color-primary-hover: $purple-400;
+$color-primary-active: $purple-600;
+$color-primary-subtle: rgba($purple-500, 0.16);
 
-$color-accent: $teal-400;
-$color-accent-strong: $teal-600;
+$color-accent: $magenta-400;
 
-$color-danger: $red-500;
-$color-danger-subtle: $red-100;
-$color-warning: $amber-500;
-$color-warning-subtle: $amber-100;
-$color-success: $green-500;
-$color-success-subtle: $green-100;
+$color-danger: $red-400;
+$color-warning: $amber-400;
+$color-success: $green-400;
+$color-info: $blue-400;
 
-$color-text: $gray-900;
-$color-text-secondary: $gray-600;
-$color-text-tertiary: $gray-500;
-$color-text-disabled: $gray-400;
-$color-text-inverse: $gray-0;
+$color-text: $night-1000;
+$color-text-secondary: $night-700;
+$color-text-tertiary: $night-600;
+$color-text-disabled: $night-500;
+$color-text-brand: $purple-400;
+$color-text-inverse: $night-0;
 
-$color-bg: $gray-0;
-$color-bg-subtle: $gray-50;
-$color-bg-muted: $gray-100;
-$color-bg-overlay: rgba($gray-900, 0.48);
+$color-bg: $night-0;
+$color-bg-elevated: $night-100;
+$color-surface: $night-200;
+$color-surface-strong: $night-300;
+$color-overlay: rgba($night-0, 0.72);
 
-$color-border: $gray-200;
-$color-border-strong: $gray-300;
-$color-border-focus: $blue-400;
+$color-border: rgba($night-1000, 0.08);
+$color-border-strong: rgba($night-1000, 0.16);
+$color-border-focus: $purple-400;
+
+// 온보딩 상단 퍼플 글로우
+$gradient-onboarding: radial-gradient(
+  120% 62% at 50% 0%,
+  #3b1358 0%,
+  #22093a 34%,
+  #100a1a 62%,
+  $night-0 100%
+);
 
 // -------------------------------------------------------------
 // Typography
@@ -102,6 +119,7 @@ $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
+$font-weight-extrabold: 800;
 
 $line-height-tight: 1.25;
 $line-height-normal: 1.5;
@@ -129,18 +147,22 @@ $radius-sm: 4px;
 $radius-md: 8px;
 $radius-lg: 12px;
 $radius-xl: 16px;
+$radius-2xl: 20px;
 $radius-full: 9999px;
 
-$shadow-sm: 0 1px 2px rgba($gray-900, 0.06);
-$shadow-md: 0 4px 12px rgba($gray-900, 0.08);
-$shadow-lg: 0 12px 28px rgba($gray-900, 0.12);
+$shadow-sm: 0 1px 2px rgba(#000000, 0.4);
+$shadow-md: 0 4px 16px rgba(#000000, 0.5);
+$shadow-lg: 0 12px 32px rgba(#000000, 0.6);
+$glow-primary: 0 0 48px rgba($purple-500, 0.45);
 
 // -------------------------------------------------------------
 // Layout
 // -------------------------------------------------------------
-$layout-max-width: 1200px;
-$layout-header-height: 64px;
+// 앱 기준 폭. 데스크톱에서도 이 폭으로 중앙 정렬하고 양옆은 배경만 노출한다.
+$layout-app-width: 393px;
 $layout-gutter: $space-5;
+$layout-header-height: 56px;
+$layout-tabbar-height: 64px;
 
 // -------------------------------------------------------------
 // Z-index

@@ -82,10 +82,16 @@
 // -------------------------------------------------------------
 // 레이아웃
 // -------------------------------------------------------------
-@mixin container($max-width: $layout-max-width) {
+// 앱 기준 폭(393px)으로 중앙 정렬한다.
+// 데스크톱에서 양옆은 배경만 노출되고, 393px 미만 화면에서는 화면 폭을 그대로 쓴다.
+@mixin app-frame($width: $layout-app-width) {
   width: 100%;
-  max-width: $max-width;
-  margin: 0 auto;
+  max-width: $width;
+  margin-inline: auto;
+}
+
+@mixin container($width: $layout-app-width) {
+  @include app-frame($width);
   padding-inline: $layout-gutter;
 }
 
@@ -123,6 +129,12 @@
   padding: $padding;
   border: 1px solid $color-border;
   border-radius: $radius-lg;
-  background-color: $color-bg;
+  background-color: $color-surface;
   box-shadow: $shadow-sm;
+}
+
+// 100dvh 기준 전체 화면 (모바일 주소창 높이 변화 대응)
+@mixin full-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
 }

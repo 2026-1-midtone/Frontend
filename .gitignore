@@ -30,3 +30,7 @@ dist-ssr
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# 커밋하지 않는 로컬 기획·운영 문서
+/docs/product-overview.md
+/docs/sprint-manager.md

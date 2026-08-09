@@ -1,0 +1,13 @@
+.app-layout {
+  @include full-screen;
+  background-color: $night-0;
+
+  &__frame {
+    @include app-frame;
+    @include full-screen;
+    @include flex-column;
+    position: relative;
+    overflow-x: hidden;
+    background-color: $color-bg;
+  }
+}

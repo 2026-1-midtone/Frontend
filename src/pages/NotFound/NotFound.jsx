@@ -10,8 +10,8 @@ function NotFound() {
       <p className="not-found__description">
         주소가 변경되었거나 삭제된 페이지일 수 있습니다.
       </p>
-      <Link to={PATH.HOME} className="not-found__link">
-        홈으로 돌아가기
+      <Link to={PATH.ONBOARDING} className="not-found__link">
+        처음으로 돌아가기
       </Link>
     </div>
   )
