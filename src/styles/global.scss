@@ -4,14 +4,16 @@
 @use 'reset';
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
   font-family: $font-family-base;
   @include typo($font-size-md, $font-weight-regular, $line-height-normal);
   color: $color-text;
-  background-color: $color-bg-subtle;
+
+  // 앱 프레임(393px) 바깥으로 노출되는 데스크톱 여백 배경
+  background-color: $night-0;
 }
 
 :focus-visible {
@@ -20,5 +22,5 @@ body {
 
 ::selection {
   background-color: $color-primary-subtle;
-  color: $color-primary-active;
+  color: $color-text;
 }

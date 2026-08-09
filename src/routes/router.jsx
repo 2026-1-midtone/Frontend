@@ -1,16 +1,16 @@
 import { createBrowserRouter } from 'react-router-dom'
-import MainLayout from '../layouts/MainLayout.jsx'
-import Home from '../pages/Home/Home.jsx'
+import AppLayout from '../layouts/AppLayout.jsx'
+import Onboarding from '../pages/Onboarding/Onboarding.jsx'
 import NotFound from '../pages/NotFound/NotFound.jsx'
 import { PATH } from './paths.js'
 
 export const router = createBrowserRouter([
   {
-    path: PATH.HOME,
-    element: <MainLayout />,
+    path: PATH.ONBOARDING,
+    element: <AppLayout />,
     errorElement: <NotFound />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <Onboarding /> },
       { path: '*', element: <NotFound /> },
     ],
   },

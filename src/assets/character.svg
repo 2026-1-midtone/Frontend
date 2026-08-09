@@ -1,0 +1,77 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 240 200"
+  width="240"
+  height="200"
+  role="img"
+  aria-label="시프트메이트 캐릭터"
+>
+  <defs>
+    <radialGradient id="body" cx="38%" cy="30%" r="78%">
+      <stop offset="0%" stop-color="#7a2fb8" />
+      <stop offset="48%" stop-color="#4a1275" />
+      <stop offset="100%" stop-color="#25073f" />
+    </radialGradient>
+    <linearGradient id="rim" x1="10%" y1="0%" x2="90%" y2="100%">
+      <stop offset="0%" stop-color="#e263fb" stop-opacity="0.9" />
+      <stop offset="45%" stop-color="#ab3eea" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#e263fb" stop-opacity="0.85" />
+    </linearGradient>
+    <linearGradient id="badge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8f8a99" />
+      <stop offset="100%" stop-color="#4d4857" />
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 뒤쪽 퍼플 글로우 -->
+  <ellipse cx="128" cy="98" rx="82" ry="62" fill="#ab3eea" opacity="0.28" filter="url(#glow)" />
+
+  <!-- 수면(z) 배지 -->
+  <g transform="rotate(-8 62 128)">
+    <rect x="34" y="100" width="56" height="56" rx="16" fill="url(#badge)" opacity="0.55" />
+    <text
+      x="62"
+      y="138"
+      text-anchor="middle"
+      font-family="Pretendard, sans-serif"
+      font-size="30"
+      font-weight="700"
+      fill="#efeaf5"
+      opacity="0.85"
+    >
+      z
+    </text>
+  </g>
+
+  <!-- 구름형 몸통 -->
+  <g filter="url(#glow)">
+    <path
+      d="M78 128c-19 0-34-14-34-32 0-14 9-26 22-31 1-21 19-38 41-38 15 0 28 8 35 20 5-3 11-4 17-4 20 0 36 15 36 34 0 4-1 8-2 11 10 6 17 16 17 28 0 18-16 33-35 33H78z"
+      fill="url(#body)"
+      stroke="url(#rim)"
+      stroke-width="3.5"
+    />
+  </g>
+
+  <!-- 눈 -->
+  <g>
+    <ellipse cx="106" cy="86" rx="21" ry="26" fill="#ffffff" />
+    <ellipse cx="153" cy="84" rx="21" ry="26" fill="#ffffff" />
+    <!-- 눈 속 반짝임 -->
+    <path
+      d="M106 70c2.4 9.2 4.4 11.2 13.6 13.6-9.2 2.4-11.2 4.4-13.6 13.6-2.4-9.2-4.4-11.2-13.6-13.6 9.2-2.4 11.2-4.4 13.6-13.6z"
+      fill="#120a1a"
+    />
+    <path
+      d="M153 68c2.4 9.2 4.4 11.2 13.6 13.6-9.2 2.4-11.2 4.4-13.6 13.6-2.4-9.2-4.4-11.2-13.6-13.6 9.2-2.4 11.2-4.4 13.6-13.6z"
+      fill="#120a1a"
+    />
+  </g>
+</svg>
