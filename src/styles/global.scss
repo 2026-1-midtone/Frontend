@@ -24,3 +24,8 @@ body {
   background-color: $color-primary-subtle;
   color: $color-text;
 }
+
+// 아이콘만 노출되는 버튼 등에서 스크린리더용 텍스트를 제공할 때 사용한다.
+.visually-hidden {
+  @include visually-hidden;
+}

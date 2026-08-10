@@ -1,0 +1,59 @@
+.ai-assistant {
+  @include flex(row, flex-end, flex-end, $space-1);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+
+  &__bubble {
+    position: relative;
+    margin-bottom: $space-5;
+    padding: $space-2 $space-4;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-full;
+    background-color: rgba($night-300, 0.92);
+    backdrop-filter: blur(12px);
+    box-shadow: $shadow-md;
+  }
+
+  &__message {
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+    white-space: nowrap;
+  }
+
+  &__close {
+    @include button-reset;
+    @include flex-center;
+    position: absolute;
+    top: -10px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
+    border-radius: $radius-full;
+    background-color: $night-400;
+    color: $color-text;
+
+    &:hover {
+      background-color: $night-500;
+    }
+  }
+
+  &__trigger {
+    @include button-reset;
+    @include flex-center;
+    flex-shrink: 0;
+    filter: drop-shadow(0 6px 16px rgba($purple-500, 0.5));
+    transition: transform $duration-fast $easing-standard;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    img {
+      width: 72px;
+      height: auto;
+    }
+  }
+}

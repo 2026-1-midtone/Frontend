@@ -1,0 +1,15 @@
+.tab-layout {
+  @include flex-column;
+  flex: 1;
+  background-color: $color-bg;
+
+  &__content {
+    @include flex-column;
+    flex: 1;
+  }
+
+  // 네비게이션이 콘텐츠 위에 겹쳐 뜨도록 아래쪽 여백을 상쇄한다.
+  .bottom-navigation {
+    margin-top: -$layout-tabbar-height;
+  }
+}

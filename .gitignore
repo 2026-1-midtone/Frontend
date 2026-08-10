@@ -28,8 +28,9 @@ dist-ssr
 .env.*
 !.env.example
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code 로컬 설정
+# 팀 공용으로 공유할 설정이 생기면 .claude/settings.json 만 별도로 추적할 것
+.claude/
 
 # 커밋하지 않는 로컬 기획·운영 문서
 /docs/product-overview.md
