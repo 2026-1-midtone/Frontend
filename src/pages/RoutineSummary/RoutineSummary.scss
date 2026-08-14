@@ -1,0 +1,441 @@
+.routine-summary {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  overscroll-behavior: none;
+  background: $color-bg-elevated;
+  color: $color-text;
+
+  &__hero {
+    position: absolute;
+    top: -70px;
+    left: -83px;
+    width: 561px;
+    height: 701px;
+    max-width: none;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  &__hero-shade {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 532px;
+    background: linear-gradient(180deg, rgba($night-100, 0) 0%, $night-0 100%);
+    pointer-events: none;
+  }
+
+  &__status-bar {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 44px;
+    padding: 18px 24px 0;
+    @include flex-between;
+  }
+
+  &__time {
+    @include typo($font-size-caption, $font-weight-semibold, 1);
+  }
+
+  &__camera {
+    position: absolute;
+    top: 17px;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: $radius-full;
+    background: $night-1000;
+    transform: translateX(-50%);
+  }
+
+  &__device-status {
+    @include flex(row, flex-end, flex-end, 5px);
+    height: 14px;
+  }
+
+  &__signal {
+    width: 13px;
+    height: 12px;
+    background: linear-gradient(to top right, transparent 49%, $night-1000 50%);
+  }
+
+  &__wifi {
+    width: 10px;
+    height: 8px;
+    border-top: 3px solid $night-1000;
+    border-radius: 50%;
+    transform: rotate(-12deg);
+  }
+
+  &__battery {
+    width: 8px;
+    height: 13px;
+    border-radius: 1px;
+    background-color: $night-1000;
+  }
+
+  &__header {
+    position: absolute;
+    z-index: 2;
+    top: 78px;
+    right: 24px;
+    left: 24px;
+    @include flex-between;
+    align-items: flex-start;
+  }
+
+  &__title {
+    @include flex(row, flex-start, center, $space-1);
+    @include typo($font-size-xl, $font-weight-bold, $line-height-tight);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__subtitle {
+    margin-top: $space-1;
+    color: $night-800;
+    @include typo($font-size-md, $font-weight-semibold, 24px);
+  }
+
+  &__settings {
+    @include button-reset;
+    width: 30px;
+    height: 30px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__progress {
+    position: absolute;
+    z-index: 2;
+    top: 157px;
+    right: 24px;
+    left: 24px;
+    height: 72px;
+    padding: 9px 14px 10px;
+    border-radius: 12px;
+    background: rgba($night-300, 0.55);
+
+    p {
+      color: $night-800;
+      @include typo($font-size-compact, $font-weight-regular, $line-height-normal);
+    }
+
+    strong {
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &__progress-track {
+    position: relative;
+    height: 12px;
+    margin-top: 8px;
+    overflow: hidden;
+    border-radius: $radius-full;
+    background-color: $night-0;
+
+    span {
+      display: block;
+      width: 30%;
+      height: 100%;
+      border-radius: inherit;
+      background-color: $color-primary;
+      box-shadow:
+        0 0 5px rgba($night-1000, 0.65) inset,
+        0 0 8px rgba($color-primary, 0.75);
+    }
+  }
+
+  &__content {
+    position: absolute;
+    z-index: 1;
+    top: 245px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    border-radius: 22px 22px 0 0;
+    @include flex-column;
+    background-color: $color-bg-elevated;
+  }
+
+  &__glow {
+    position: absolute;
+    width: 774px;
+    height: 774px;
+    max-width: none;
+    pointer-events: none;
+
+    &--left {
+      top: -499px;
+      left: -406px;
+    }
+
+    &--bottom {
+      top: 226px;
+      left: -98px;
+    }
+
+    &--right {
+      top: 147px;
+      left: 67px;
+    }
+  }
+
+  &__section-heading {
+    position: relative;
+    z-index: 1;
+    margin: 26px 24px 0;
+    @include flex(row, flex-start, center, 16px);
+
+    h2 {
+      @include flex(row, flex-start, center, $space-1);
+      @include typo($font-size-compact, $font-weight-semibold, $line-height-normal);
+      white-space: nowrap;
+
+      img {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    p {
+      color: $color-text-secondary;
+      @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+  }
+
+  &__list {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-height: 0;
+    margin-top: $space-5;
+    padding: 0 $space-6 calc($layout-tabbar-height + $space-16);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+    @include flex-column($space-2);
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &[data-dragging='true'] {
+      cursor: grabbing;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+      outline-offset: -2px;
+    }
+  }
+
+  &__routine {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 42px;
+    gap: 14px;
+    align-items: center;
+    min-height: 78px;
+    padding: 14px 16px 14px 18px;
+    border-radius: 18px;
+    background: rgba($night-300, 0.2);
+  }
+
+  &__emoji {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+    font-size: $font-size-xl;
+    line-height: 1;
+    text-align: center;
+  }
+
+  &__routine-copy {
+    min-width: 0;
+
+    h3 {
+      @include typo($font-size-compact, $font-weight-semibold, $line-height-normal);
+      color: $night-900;
+      white-space: nowrap;
+    }
+
+    p {
+      margin-top: 1px;
+      color: $color-text-tertiary;
+      @include typo($font-size-xs, $font-weight-medium, $line-height-relaxed);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+  }
+
+  &__routine-status {
+    color: $color-text;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
+    letter-spacing: 0.01em;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  &__footer-shade {
+    position: absolute;
+    z-index: 2;
+    right: -15px;
+    bottom: 0;
+    left: -15px;
+    height: 270px;
+    background: linear-gradient(
+      180deg,
+      rgba($color-bg-elevated, 0) 0,
+      $color-bg-elevated 39%,
+      $color-bg-elevated 100%
+    );
+    pointer-events: none;
+  }
+
+  &__assistant {
+    position: absolute;
+    z-index: 5;
+    right: 24px;
+    bottom: 68px;
+    width: 140px;
+    @include flex-column;
+    align-items: flex-end;
+  }
+
+  &__assistant-message {
+    position: relative;
+    width: 140px;
+    height: 39px;
+
+    > img:first-child {
+      width: 140px;
+      height: 39px;
+    }
+
+    span {
+      position: absolute;
+      top: 9px;
+      left: 13px;
+      @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+  }
+
+  &__assistant-close {
+    @include button-reset;
+    position: absolute;
+    top: -7px;
+    right: -2px;
+    width: 22px;
+    height: 22px;
+    border-radius: $radius-full;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  &__assistant-character {
+    width: 68px;
+    height: 65px;
+    margin-top: -8px;
+    object-fit: cover;
+    object-position: center;
+    transform: scaleX(-1);
+  }
+
+  &__cta {
+    @include button-reset;
+    position: absolute;
+    z-index: 4;
+    right: 24px;
+    bottom: 68px;
+    left: 24px;
+    height: 48px;
+    border: 1px solid rgba($night-1000, 0.16);
+    border-radius: 12px;
+    background: rgba($night-300, 0.55);
+    @include typo($font-size-md, $font-weight-semibold, 24px);
+    text-align: center;
+    transition:
+      background-color $duration-fast $easing-standard,
+      transform $duration-fast $easing-standard;
+
+    &:hover {
+      background: rgba($night-400, 0.78);
+    }
+
+    &:active {
+      transform: scale(0.985);
+    }
+  }
+
+  &__navigation {
+    position: absolute;
+    z-index: 5;
+    right: 24px;
+    bottom: 14px;
+    left: 24px;
+    height: 44px;
+    border: 1px solid rgba($night-700, 0.6);
+    border-radius: 17px;
+    background: rgba($night-300, 0.55);
+    @include flex(row, space-between, center);
+  }
+
+  &__nav-item {
+    @include button-reset;
+    width: 76px;
+    height: 44px;
+    border-radius: 16px;
+    color: $color-text-tertiary;
+    @include flex(column, center, center, 2px);
+    @include typo($font-size-2xs, $font-weight-medium, $line-height-tight);
+    letter-spacing: 0.02em;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+
+    &--active {
+      background: rgba($night-1000, 0.3);
+      color: $color-text;
+    }
+  }
+
+  &__home-indicator {
+    position: absolute;
+    z-index: 5;
+    bottom: 3px;
+    left: 50%;
+    width: 88px;
+    height: 3px;
+    border-radius: $radius-full;
+    background: $color-text-secondary;
+    transform: translateX(-50%);
+  }
+
+}
