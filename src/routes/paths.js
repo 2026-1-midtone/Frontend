@@ -4,4 +4,6 @@ export const PATH = {
   ONBOARDING: '/',
   ROUTINE_SUMMARY: '/routine-summary',
   DAILY_ROUTINE: '/daily-routine',
+  RHYTHM_COACHING: '/coaching',
+  TRANSITION_GUIDE: '/coaching/transition',
 }
