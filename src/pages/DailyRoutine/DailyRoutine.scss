@@ -1,0 +1,135 @@
+.daily-routine {
+  flex: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 64px 24px 32px;
+  background:
+    radial-gradient(circle at 88% 8%, rgba($purple-600, 0.3), transparent 30%),
+    $color-bg;
+
+  &__header {
+    @include flex(row, flex-start, flex-start, $space-3);
+
+    > button {
+      @include button-reset;
+      width: 32px;
+      height: 32px;
+      border-radius: $radius-full;
+      background: rgba(#ffffff, 0.08);
+      font-size: 28px;
+      line-height: 27px;
+    }
+
+    p {
+      color: $color-text-brand;
+      @include typo(13px, $font-weight-semibold, 18px);
+    }
+
+    h1 {
+      margin-top: $space-1;
+      @include typo(22px, $font-weight-bold, 30px);
+    }
+  }
+
+  &__progress {
+    margin-top: $space-8;
+    color: $color-text-secondary;
+    @include typo(13px, $font-weight-medium, 18px);
+
+    > div {
+      height: 8px;
+      margin-top: $space-2;
+      overflow: hidden;
+      border-radius: $radius-full;
+      background: $night-300;
+
+      span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: $color-primary;
+        transition: width $duration-base $easing-standard;
+      }
+    }
+  }
+
+  &__list {
+    margin-top: $space-6;
+    @include flex-column($space-3);
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: $space-3;
+    padding: $space-4;
+    border: 1px solid $color-border;
+    border-radius: $radius-xl;
+    background: rgba($night-300, 0.72);
+  }
+
+  &__icon {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+    font-size: 24px;
+  }
+
+  &__copy {
+    h2 {
+      @include typo(15px, $font-weight-semibold, 22px);
+    }
+
+    p {
+      margin-top: 2px;
+      color: $color-text-tertiary;
+      @include typo(12px, $font-weight-medium, 19px);
+    }
+  }
+
+  &__actions,
+  &__timer,
+  &__result {
+    grid-column: 2;
+  }
+
+  &__actions {
+    margin-top: $space-2;
+    @include flex(row, flex-start, center, $space-2);
+
+    button {
+      @include button-reset;
+      padding: 7px 12px;
+      border-radius: $radius-md;
+      background: $color-primary-subtle;
+      color: $color-text-brand;
+      @include typo(12px, $font-weight-semibold, 16px);
+
+      &:last-child {
+        background: rgba(#ffffff, 0.06);
+        color: $color-text-secondary;
+      }
+    }
+  }
+
+  &__timer,
+  &__result {
+    @include button-reset;
+    width: fit-content;
+    margin-top: $space-2;
+    padding: 7px 12px;
+    border-radius: $radius-md;
+    background: $color-primary;
+    @include typo(12px, $font-weight-semibold, 16px);
+  }
+
+  &__result {
+    &--completed {
+      background: rgba($green-400, 0.18);
+      color: $green-400;
+    }
+
+    &--skipped {
+      background: rgba(#ffffff, 0.06);
+      color: $color-text-secondary;
+    }
+  }
+}
