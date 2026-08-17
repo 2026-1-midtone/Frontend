@@ -1,0 +1,25 @@
+.page-header {
+  @include flex-column($space-2);
+
+  &__row {
+    @include flex-between;
+  }
+
+  &__title {
+    @include flex(row, flex-start, center, $space-2);
+    @include typo($font-size-xl, $font-weight-extrabold, $line-height-tight);
+    color: $color-text;
+    letter-spacing: -0.02em;
+  }
+
+  &__sparkle {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  &__subtitle {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+    color: $night-800;
+  }
+}

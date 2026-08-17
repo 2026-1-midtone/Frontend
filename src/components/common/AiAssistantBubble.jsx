@@ -1,9 +1,9 @@
-import characterImage from '../../../assets/character.svg'
-import { IconClose } from '../../../components/common/icons/index.jsx'
+import characterImage from '../../assets/character.svg'
+import { IconClose } from './icons/index.jsx'
 import './AiAssistantBubble.scss'
 
 /**
- * 플로팅 AI 비서 진입점.
+ * 플로팅 AI 비서 진입점. 하단 탭이 붙는 화면 전반에서 재사용한다.
  * @param {string} message 말풍선 문구
  * @param {boolean} showMessage 말풍선 노출 여부
  * @param {() => void} onDismissMessage 말풍선 닫기

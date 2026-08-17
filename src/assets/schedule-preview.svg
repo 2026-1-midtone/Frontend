@@ -1,0 +1,68 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 400 260"
+  width="400"
+  height="260"
+  role="img"
+  aria-label="업로드된 근무표 미리보기"
+>
+  <rect width="400" height="260" fill="#1c1726" />
+
+  <!-- 헤더 행 -->
+  <rect x="0" y="0" width="400" height="28" fill="#322b3e" />
+  <text x="12" y="19" font-family="Pretendard, sans-serif" font-size="12" fill="#c6c1cf">
+    직원 근무표
+  </text>
+
+  <!-- 격자 -->
+  <g stroke="#3a3346" stroke-width="1">
+    <line x1="0" y1="60" x2="400" y2="60" />
+    <line x1="0" y1="92" x2="400" y2="92" />
+    <line x1="0" y1="124" x2="400" y2="124" />
+    <line x1="0" y1="156" x2="400" y2="156" />
+    <line x1="0" y1="188" x2="400" y2="188" />
+    <line x1="0" y1="220" x2="400" y2="220" />
+    <line x1="40" y1="28" x2="40" y2="260" />
+    <line x1="90" y1="28" x2="90" y2="260" />
+    <line x1="140" y1="28" x2="140" y2="260" />
+    <line x1="190" y1="28" x2="190" y2="260" />
+    <line x1="240" y1="28" x2="240" y2="260" />
+    <line x1="290" y1="28" x2="290" y2="260" />
+    <line x1="340" y1="28" x2="340" y2="260" />
+  </g>
+
+  <!-- 근무 유형을 암시하는 색 블록 -->
+  <g opacity="0.85">
+    <rect x="44" y="34" width="42" height="22" rx="4" fill="#4dabf7" />
+    <rect x="94" y="34" width="42" height="22" rx="4" fill="#ab3eea" />
+    <rect x="194" y="34" width="42" height="22" rx="4" fill="#f03e3e" />
+    <rect x="294" y="34" width="42" height="22" rx="4" fill="#51cf66" />
+
+    <rect x="44" y="66" width="42" height="22" rx="4" fill="#ab3eea" />
+    <rect x="144" y="66" width="42" height="22" rx="4" fill="#f03e3e" />
+    <rect x="244" y="66" width="42" height="22" rx="4" fill="#4dabf7" />
+    <rect x="344" y="66" width="42" height="22" rx="4" fill="#51cf66" />
+
+    <rect x="94" y="98" width="42" height="22" rx="4" fill="#f03e3e" />
+    <rect x="194" y="98" width="42" height="22" rx="4" fill="#ab3eea" />
+    <rect x="294" y="98" width="42" height="22" rx="4" fill="#4dabf7" />
+
+    <rect x="44" y="130" width="42" height="22" rx="4" fill="#51cf66" />
+    <rect x="144" y="130" width="42" height="22" rx="4" fill="#4dabf7" />
+    <rect x="244" y="130" width="42" height="22" rx="4" fill="#ab3eea" />
+    <rect x="344" y="130" width="42" height="22" rx="4" fill="#f03e3e" />
+
+    <rect x="94" y="162" width="42" height="22" rx="4" fill="#ab3eea" />
+    <rect x="194" y="162" width="42" height="22" rx="4" fill="#51cf66" />
+    <rect x="294" y="162" width="42" height="22" rx="4" fill="#f03e3e" />
+
+    <rect x="44" y="194" width="42" height="22" rx="4" fill="#4dabf7" />
+    <rect x="144" y="194" width="42" height="22" rx="4" fill="#ab3eea" />
+    <rect x="244" y="194" width="42" height="22" rx="4" fill="#f03e3e" />
+    <rect x="344" y="194" width="42" height="22" rx="4" fill="#51cf66" />
+
+    <rect x="94" y="226" width="42" height="22" rx="4" fill="#f03e3e" />
+    <rect x="194" y="226" width="42" height="22" rx="4" fill="#4dabf7" />
+    <rect x="294" y="226" width="42" height="22" rx="4" fill="#ab3eea" />
+  </g>
+</svg>

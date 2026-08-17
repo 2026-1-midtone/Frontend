@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import {
@@ -7,7 +8,6 @@ import {
   IconSchedule,
   IconSun,
 } from '../../components/common/icons/index.jsx'
-import AiAssistantBubble from './components/AiAssistantBubble.jsx'
 import HomeGreeting from './components/HomeGreeting.jsx'
 import NextShiftCard from './components/NextShiftCard.jsx'
 import QuickMenuList from './components/QuickMenuList.jsx'

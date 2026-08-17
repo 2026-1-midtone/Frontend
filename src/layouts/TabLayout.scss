@@ -12,4 +12,16 @@
   .bottom-navigation {
     margin-top: -$layout-tabbar-height;
   }
+
+  // AI 비서는 콘텐츠 길이와 무관하게 하단 네비게이션 바로 위에 고정된 채로
+  // 스크롤을 따라간다. sticky + 높이 0 래퍼 트릭으로 흐름에서 공간을 차지하지 않는다.
+  .ai-assistant {
+    position: sticky;
+    bottom: calc(#{$layout-tabbar-height} + #{$space-4});
+    z-index: $z-sticky;
+    height: 0;
+    overflow: visible;
+    justify-content: flex-end;
+    padding-right: $space-4;
+  }
 }

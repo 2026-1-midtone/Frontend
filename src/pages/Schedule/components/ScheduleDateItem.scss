@@ -1,0 +1,60 @@
+.schedule-date-item {
+  @include flex-column($space-1);
+  padding: $space-3 0;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__row {
+    @include flex-between;
+    gap: $space-3;
+  }
+
+  &__date {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-tight);
+    color: $night-800;
+  }
+
+  &__select-wrap {
+    position: relative;
+    @include flex-center;
+  }
+
+  &__select {
+    appearance: none;
+    padding: $space-2 $space-8 $space-2 $space-3;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    background-color: $night-300;
+    color: $color-text;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+  }
+
+  &__select-icon {
+    position: absolute;
+    right: $space-2;
+    color: $night-700;
+    pointer-events: none;
+  }
+
+  &__status {
+    @include flex(row, flex-start, center, $space-1);
+    @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+
+    &.is-done {
+      color: $color-success;
+    }
+
+    &.is-warning {
+      color: $color-danger;
+    }
+  }
+}

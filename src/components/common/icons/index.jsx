@@ -154,3 +154,53 @@ export function IconEyeOff({ size = 24, ...rest }) {
     </svg>
   )
 }
+
+/** 근무표 업로드 버튼 */
+export function IconUpload({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 15V4M12 4l-4 4M12 4l4 4"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"
+      />
+    </svg>
+  )
+}
+
+/** 인식 불확실 경고 배지 */
+export function IconWarningTriangle({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        fill="currentColor"
+        d="M10.9 3.6a1.6 1.6 0 0 1 2.2 0c.2.2.35.4.46.66l7.6 13.6c.6 1.1-.2 2.44-1.44 2.44H3.28c-1.24 0-2.03-1.34-1.44-2.44l7.6-13.6c.1-.25.26-.46.46-.66Z"
+      />
+      <rect x="11.1" y="9" width="1.8" height="5.4" rx="0.9" fill="#0e0b14" />
+      <circle cx="12" cy="16.6" r="1" fill="#0e0b14" />
+    </svg>
+  )
+}
+
+/** 인식 완료 표시 */
+export function IconCheck({ size = 14, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m5 12.5 4 4 10-10"
+      />
+    </svg>
+  )
+}
