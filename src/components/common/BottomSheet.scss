@@ -1,0 +1,21 @@
+.bottom-sheet {
+  @include flex-column($space-4);
+  padding: $space-3 $space-5 $space-5;
+  border-top: 1px solid $color-border;
+  border-radius: $radius-2xl $radius-2xl 0 0;
+  background-color: rgba($night-100, 0.82);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 -8px 32px rgba(#000000, 0.45);
+
+  &__handle {
+    width: 96px;
+    height: 4px;
+    margin-inline: auto;
+    border-radius: $radius-full;
+    background-color: rgba($night-1000, 0.36);
+  }
+
+  &__content {
+    @include flex-column($space-4);
+  }
+}

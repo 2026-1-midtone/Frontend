@@ -1,0 +1,21 @@
+.home-greeting {
+  @include flex-column($space-1);
+
+  &__message {
+    @include flex(row, flex-start, center, $space-2);
+    @include typo($font-size-lg, $font-weight-bold, $line-height-tight);
+    color: $color-text;
+    letter-spacing: -0.02em;
+  }
+
+  &__sparkle {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  &__shift {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+    color: $night-800;
+  }
+}
