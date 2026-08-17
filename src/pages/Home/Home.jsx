@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
@@ -8,6 +9,7 @@ import {
   IconSchedule,
   IconSun,
 } from '../../components/common/icons/index.jsx'
+import { PATH } from '../../routes/paths.js'
 import HomeGreeting from './components/HomeGreeting.jsx'
 import NextShiftCard from './components/NextShiftCard.jsx'
 import QuickMenuList from './components/QuickMenuList.jsx'
@@ -74,6 +76,7 @@ const RHYTHM_COACH_ITEMS = [
 ]
 
 function Home() {
+  const navigate = useNavigate()
   const [routines, setRoutines] = useState(INITIAL_ROUTINES)
   const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
@@ -94,7 +97,10 @@ function Home() {
   return (
     <div className="home">
       <div className="home__top">
-        <SettingsButton className="home__settings" />
+        <SettingsButton
+          className="home__settings"
+          onClick={() => navigate(PATH.SETTINGS)}
+        />
 
         <div className="home__summary">
           <HomeGreeting

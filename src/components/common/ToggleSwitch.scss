@@ -1,0 +1,37 @@
+.toggle-switch {
+  @include button-reset;
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 26px;
+  border-radius: $radius-full;
+  background-color: rgba($night-1000, 0.14);
+  transition: background-color $duration-fast $easing-standard;
+
+  &:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: $radius-full;
+    background-color: $night-700;
+    transition:
+      transform $duration-fast $easing-standard,
+      background-color $duration-fast $easing-standard;
+  }
+
+  &.is-on {
+    background-color: $night-1000;
+  }
+
+  &.is-on .toggle-switch__thumb {
+    background-color: $night-900;
+    transform: translateX(18px);
+  }
+}
