@@ -33,16 +33,4 @@
   &__sheet {
     padding-bottom: $space-20;
   }
-
-  // AI 비서는 하단 네비게이션 바로 위에 고정된 채로 스크롤을 따라간다.
-  // 시트 콘텐츠 길이와 무관하게 위치가 유지되도록 sticky + 높이 0 래퍼 트릭을 쓴다.
-  .ai-assistant {
-    position: sticky;
-    bottom: calc(#{$layout-tabbar-height} + #{$space-4});
-    z-index: $z-sticky;
-    height: 0;
-    overflow: visible;
-    justify-content: flex-end;
-    padding-right: $space-4;
-  }
 }

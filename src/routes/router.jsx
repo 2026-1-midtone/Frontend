@@ -4,6 +4,8 @@ import TabLayout from '../layouts/TabLayout.jsx'
 import Home from '../pages/Home/Home.jsx'
 import NotFound from '../pages/NotFound/NotFound.jsx'
 import Onboarding from '../pages/Onboarding/Onboarding.jsx'
+import Schedule from '../pages/Schedule/Schedule.jsx'
+import ScheduleResult from '../pages/Schedule/ScheduleResult.jsx'
 import { PATH } from './paths.js'
 
 export const router = createBrowserRouter([
@@ -16,7 +18,11 @@ export const router = createBrowserRouter([
       {
         // 하단 탭이 붙는 화면 묶음
         element: <TabLayout />,
-        children: [{ path: PATH.HOME, element: <Home /> }],
+        children: [
+          { path: PATH.HOME, element: <Home /> },
+          { path: PATH.SCHEDULE, element: <Schedule /> },
+          { path: PATH.SCHEDULE_RESULT, element: <ScheduleResult /> },
+        ],
       },
       { path: '*', element: <NotFound /> },
     ],

@@ -9,13 +9,13 @@ import {
 import { PATH } from '../routes/paths.js'
 import './TabLayout.scss'
 
-// 탭 라벨과 대상 화면은 아직 미확정이라 임시값이다.
+// 근무표 화면 시안에서 최종 확정된 탭 구성.
 // 온보딩처럼 탭이 없는 화면과 분리하기 위해 별도 레이아웃으로 둔다.
 const NAV_ITEMS = [
   { to: PATH.HOME, label: '홈', icon: IconHome },
   { to: PATH.SCHEDULE, label: '근무표', icon: IconSchedule },
-  { to: PATH.RECORD, label: '기록', icon: IconEdit },
-  { to: PATH.MORE, label: '전체', icon: IconGrid },
+  { to: PATH.COACHING, label: '코칭', icon: IconEdit },
+  { to: PATH.ROUTINE, label: '루틴', icon: IconGrid },
 ]
 
 /**

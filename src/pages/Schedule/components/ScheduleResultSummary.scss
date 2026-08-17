@@ -1,0 +1,21 @@
+.schedule-result-summary {
+  @include flex-column($space-2);
+
+  &__row {
+    @include flex-between;
+
+    dt {
+      @include typo($font-size-sm, $font-weight-medium, $line-height-tight);
+      color: $night-700;
+    }
+
+    dd {
+      @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+      color: $color-text;
+
+      &.is-accent {
+        color: $color-accent;
+      }
+    }
+  }
+}

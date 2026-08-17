@@ -1,0 +1,35 @@
+.schedule-stats {
+  @include flex-column($space-3);
+  padding: $space-5;
+  border-top: 1px solid $color-border;
+
+  &__list {
+    @include flex(row, space-between, stretch);
+  }
+
+  &__item {
+    @include flex-column($space-1);
+    align-items: center;
+    flex: 1;
+  }
+
+  &__label {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    color: $night-700;
+  }
+
+  &__value {
+    @include typo($font-size-2xl, $font-weight-bold, $line-height-tight);
+    color: $color-text;
+
+    &.is-accent {
+      color: $color-accent;
+    }
+  }
+
+  &__caption {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    color: $night-700;
+    text-align: center;
+  }
+}

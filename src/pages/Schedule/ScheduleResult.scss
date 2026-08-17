@@ -1,0 +1,51 @@
+.schedule-result {
+  @include flex-column($space-5);
+  flex: 1;
+  padding: $space-4 $layout-gutter $space-16;
+  background-color: $color-bg;
+  background-image: url('../../assets/background.svg');
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% auto;
+
+  &__card {
+    @include flex-column($space-4);
+    padding: $space-5;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-100, 0.85);
+    backdrop-filter: blur(16px);
+  }
+
+  &__title {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__complete {
+    @include button-reset;
+    padding-block: $space-3;
+    border-radius: $radius-xl;
+    background-color: $night-400;
+    color: $color-text;
+    text-align: center;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    transition: background-color $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: $night-500;
+    }
+  }
+
+  &__manual {
+    @include button-reset;
+    align-self: center;
+    padding-block: $space-1;
+    color: $color-text-tertiary;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+
+    &:hover {
+      color: $night-800;
+    }
+  }
+}

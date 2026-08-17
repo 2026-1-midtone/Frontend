@@ -4,6 +4,7 @@ export const PATH = {
   ONBOARDING: '/',
   HOME: '/home',
   SCHEDULE: '/schedule',
-  RECORD: '/record',
-  MORE: '/more',
+  SCHEDULE_RESULT: '/schedule/result',
+  COACHING: '/coaching',
+  ROUTINE: '/routine',
 }

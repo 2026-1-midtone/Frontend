@@ -1,0 +1,24 @@
+.schedule-warning {
+  @include flex(row, flex-start, flex-start, $space-3);
+  padding-inline: $space-5;
+
+  &__icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: $color-danger;
+  }
+
+  &__text {
+    @include flex-column($space-1);
+
+    strong {
+      @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+      color: $color-danger;
+    }
+
+    span {
+      @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+      color: $night-700;
+    }
+  }
+}
