@@ -204,3 +204,55 @@ export function IconCheck({ size = 14, ...rest }) {
     </svg>
   )
 }
+
+/** 이동 행(NavRow) 화살표 */
+export function IconChevronRight({ size = 20, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m9 5 7 7-7 7"
+      />
+    </svg>
+  )
+}
+
+/** 프로필 편집 - 사진 변경 */
+export function IconCamera({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        fill="currentColor"
+        d="M9 3.5a1 1 0 0 0-.83.45L7.1 5.5H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-11a2 2 0 0 0-2-2h-2.1l-1.07-1.55a1 1 0 0 0-.83-.45H9Zm3 5.7a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6Zm0 2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6Z"
+      />
+    </svg>
+  )
+}
+
+/** 홈 퀵메뉴 - AI 영양코칭 */
+export function IconPill({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <rect
+        x="4.5"
+        y="4.5"
+        width="15"
+        height="15"
+        rx="7.5"
+        transform="rotate(45 12 12)"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        d="M8.5 8.5 12 12"
+      />
+    </svg>
+  )
+}

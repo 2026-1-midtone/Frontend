@@ -34,6 +34,7 @@ function Schedule() {
       <PageHeader
         title="근무표 관리"
         subtitle="오늘 근무도 시프트메이트가 챙겨드릴게요!"
+        onSettingsClick={() => navigate(PATH.SETTINGS)}
       />
 
       <div className="schedule__card">

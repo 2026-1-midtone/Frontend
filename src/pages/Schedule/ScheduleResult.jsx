@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import scheduleMockPreview from '../../assets/schedule-preview.svg'
+import { PATH } from '../../routes/paths.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
 import ScheduleResultThumbnail from './components/ScheduleResultThumbnail.jsx'
@@ -24,6 +26,7 @@ const INITIAL_DATES = [
 ]
 
 function ScheduleResult() {
+  const navigate = useNavigate()
   const [dates, setDates] = useState(INITIAL_DATES)
   const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
@@ -58,6 +61,7 @@ function ScheduleResult() {
       <PageHeader
         title="근무표 관리"
         subtitle="오늘 근무도 시프트메이트가 챙겨드릴게요!"
+        onSettingsClick={() => navigate(PATH.SETTINGS)}
       />
 
       <div className="schedule-result__card">
