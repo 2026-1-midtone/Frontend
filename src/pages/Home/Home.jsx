@@ -5,7 +5,10 @@ import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import {
   IconCoffee,
+  IconEdit,
   IconEyeOff,
+  IconGrid,
+  IconPill,
   IconSchedule,
   IconSun,
 } from '../../components/common/icons/index.jsx'
@@ -18,12 +21,12 @@ import TodayRoutineList from './components/TodayRoutineList.jsx'
 import WeeklyProgressArc from './components/WeeklyProgressArc.jsx'
 import './Home.scss'
 
-// 데이터 연동 전까지 사용하는 목업. 실제 값은 후속 이슈에서 API로 대체한다.
+// 근무표만 실제 화면(/schedule)이 있고, 나머지는 코칭·루틴 탭이 만들어지면 연결한다.
 const QUICK_MENU_ITEMS = [
   { id: 'schedule', label: '근무표', icon: IconSchedule },
-  { id: 'routine', label: '근무표', icon: IconSchedule },
-  { id: 'record', label: '근무표', icon: IconSchedule },
-  { id: 'report', label: '근무표', icon: IconSchedule },
+  { id: 'rhythm-coaching', label: '리듬 코칭', icon: IconEdit },
+  { id: 'nutrition-coaching', label: 'AI 영양코칭', icon: IconPill },
+  { id: 'weekly-status', label: '주간 실행 현황', icon: IconGrid },
 ]
 
 const INITIAL_ROUTINES = [
@@ -88,6 +91,14 @@ function Home() {
     )
   }
 
+  // 근무표만 실제 화면이 있다. 나머지(리듬 코칭/AI 영양코칭/주간 실행 현황)는
+  // 코칭·루틴 탭이 구현되면 연결한다.
+  const handleSelectQuickMenu = (id) => {
+    if (id === 'schedule') {
+      navigate(PATH.SCHEDULE)
+    }
+  }
+
   // TODO: 전체 루틴 화면 라우트가 정해지면 연결한다.
   const handleViewAllRoutines = () => {}
 
@@ -108,7 +119,7 @@ function Home() {
             shiftLabel="나이트 근무 D+2"
           />
           <NextShiftCard remainingLabel="n시간 n분" progress={45} />
-          <QuickMenuList items={QUICK_MENU_ITEMS} />
+          <QuickMenuList items={QUICK_MENU_ITEMS} onSelect={handleSelectQuickMenu} />
         </div>
       </div>
 

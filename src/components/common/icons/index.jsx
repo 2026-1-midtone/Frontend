@@ -231,3 +231,28 @@ export function IconCamera({ size = 24, ...rest }) {
     </svg>
   )
 }
+
+/** 홈 퀵메뉴 - AI 영양코칭 */
+export function IconPill({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <rect
+        x="4.5"
+        y="4.5"
+        width="15"
+        height="15"
+        rx="7.5"
+        transform="rotate(45 12 12)"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        d="M8.5 8.5 12 12"
+      />
+    </svg>
+  )
+}
