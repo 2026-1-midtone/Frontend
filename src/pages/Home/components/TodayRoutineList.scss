@@ -46,24 +46,15 @@
     }
   }
 
-  &__more {
+  &__view-all {
     @include button-reset;
-    @include flex-center;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
     align-self: center;
-    width: 100%;
     padding-block: $space-1;
     color: $color-text-tertiary;
 
     &:hover {
       color: $night-800;
-    }
-  }
-
-  &__more-icon {
-    transition: transform $duration-base $easing-standard;
-
-    &.is-expanded {
-      transform: rotate(180deg);
     }
   }
 }

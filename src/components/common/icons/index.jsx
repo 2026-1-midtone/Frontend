@@ -111,3 +111,46 @@ export function IconClose({ size = 16, ...rest }) {
     </svg>
   )
 }
+
+/** 리듬코치 카드 - 카페인 중단 */
+export function IconCoffee({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        fill="currentColor"
+        d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8Zm11 1.5V13a3.5 3.5 0 0 0 0-7 1 1 0 1 0 0 2 1.5 1.5 0 0 1 0 3.5Z"
+      />
+      <path
+        fill="currentColor"
+        d="M7.2 3.6a1 1 0 0 1 1.5 1.3c-.5.6-.5 1 0 1.6a1 1 0 1 1-1.5 1.3c-1.1-1.3-1.1-2.9 0-4.2Zm4 0a1 1 0 0 1 1.5 1.3c-.5.6-.5 1 0 1.6a1 1 0 1 1-1.5 1.3c-1.1-1.3-1.1-2.9 0-4.2Z"
+      />
+    </svg>
+  )
+}
+
+/** 리듬코치 카드 - 권장 낮잠 */
+export function IconSun({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+      <path
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"
+      />
+    </svg>
+  )
+}
+
+/** 리듬코치 카드 - 빛 차단 */
+export function IconEyeOff({ size = 24, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        fill="currentColor"
+        d="M12 5c-5 0-8.6 3.3-9.9 6.1a1 1 0 0 0 0 .8C2.6 13.6 4.6 16 7.6 17.2l-1.9 1.9a1 1 0 1 0 1.4 1.4l14-14a1 1 0 0 0-1.4-1.4l-2.1 2.1A9.9 9.9 0 0 0 12 5Zm0 3.6c.4 0 .8.05 1.2.14l-4.46 4.46A3.6 3.6 0 0 1 12 8.6Zm-3.5 6.87 1.1-1.1a3.6 3.6 0 0 0 4.87-4.87l1.27-1.27A8.2 8.2 0 0 1 20 12c-.72 1.5-2.55 3.85-5.7 5.02l-1.5-1.5c-.25.05-.51.08-.8.08a5.6 5.6 0 0 1-3.5-1.13Z"
+      />
+    </svg>
+  )
+}

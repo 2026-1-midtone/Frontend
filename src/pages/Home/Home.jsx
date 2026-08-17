@@ -1,12 +1,19 @@
 import { useState } from 'react'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
-import { IconSchedule } from '../../components/common/icons/index.jsx'
+import {
+  IconCoffee,
+  IconEyeOff,
+  IconSchedule,
+  IconSun,
+} from '../../components/common/icons/index.jsx'
 import AiAssistantBubble from './components/AiAssistantBubble.jsx'
 import HomeGreeting from './components/HomeGreeting.jsx'
 import NextShiftCard from './components/NextShiftCard.jsx'
 import QuickMenuList from './components/QuickMenuList.jsx'
+import RhythmCoachList from './components/RhythmCoachList.jsx'
 import TodayRoutineList from './components/TodayRoutineList.jsx'
+import WeeklyProgressArc from './components/WeeklyProgressArc.jsx'
 import './Home.scss'
 
 // 데이터 연동 전까지 사용하는 목업. 실제 값은 후속 이슈에서 API로 대체한다.
@@ -44,6 +51,28 @@ const INITIAL_ROUTINES = [
   },
 ]
 
+const RHYTHM_COACH_ITEMS = [
+  {
+    id: 'caffeine-stop',
+    icon: IconCoffee,
+    tone: 'danger',
+    label: '카페인 중단',
+    detail: '~2:00',
+  },
+  {
+    id: 'recommended-nap',
+    icon: IconSun,
+    label: '권장 낮잠',
+    detail: '13:00~14:30',
+  },
+  {
+    id: 'light-block',
+    icon: IconEyeOff,
+    label: '빛 차단',
+    detail: '06:00 이후',
+  },
+]
+
 function Home() {
   const [routines, setRoutines] = useState(INITIAL_ROUTINES)
   const [showAssistantMessage, setShowAssistantMessage] = useState(true)
@@ -55,6 +84,12 @@ function Home() {
       ),
     )
   }
+
+  // TODO: 전체 루틴 화면 라우트가 정해지면 연결한다.
+  const handleViewAllRoutines = () => {}
+
+  // TODO: 전체 실행 현황 화면 라우트가 정해지면 연결한다.
+  const handleViewWeeklyStatus = () => {}
 
   return (
     <div className="home">
@@ -82,6 +117,13 @@ function Home() {
           <TodayRoutineList
             routines={routines}
             onToggle={handleToggleRoutine}
+            onViewAll={handleViewAllRoutines}
+          />
+          <RhythmCoachList items={RHYTHM_COACH_ITEMS} />
+          <WeeklyProgressArc
+            percent={60}
+            label="주간 실행 현황"
+            onViewAll={handleViewWeeklyStatus}
           />
         </BottomSheet>
       </div>
