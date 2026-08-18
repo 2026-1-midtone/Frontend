@@ -63,6 +63,8 @@ function ScheduleResult() {
       />
 
       <div className="schedule-result__card">
+        <h2 className="schedule-result__title">근무표 인식결과 확인</h2>
+
         <p className="schedule-result__banner">
           수정이 필요한 날짜만 선택해 근무 유형을 변경하세요.
           <br />

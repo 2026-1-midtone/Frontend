@@ -17,6 +17,11 @@
     backdrop-filter: blur(16px);
   }
 
+  &__title {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
   &__banner {
     @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
     color: $night-700;
