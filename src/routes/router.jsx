@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import AppLayout from '../layouts/AppLayout.jsx'
 import TabLayout from '../layouts/TabLayout.jsx'
 import DailyRoutine from '../pages/DailyRoutine/DailyRoutine.jsx'
+import RoutineStreak from '../pages/DailyRoutine/RoutineStreak.jsx'
 import RoutineSummary from '../pages/RoutineSummary/RoutineSummary.jsx'
 import Home from '../pages/Home/Home.jsx'
 import NotFound from '../pages/NotFound/NotFound.jsx'
@@ -34,8 +35,8 @@ export const router = createBrowserRouter([
           
           { path: PATH.ROUTINE_SUMMARY, element: <RoutineSummary /> },
           { path: PATH.DAILY_ROUTINE, element: <DailyRoutine /> },
-          
-          // 방금 추가된 코칭 화면들도 하단 탭 내부에 배치
+          { path: PATH.ROUTINE, element: <DailyRoutine /> },
+          { path: PATH.ROUTINE_STREAK, element: <RoutineStreak /> },
           { path: PATH.COACHING, element: <RhythmCoaching /> },
           { path: PATH.TRANSITION_GUIDE, element: <TransitionGuide /> },
           

@@ -10,8 +10,6 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
-import AssistantPrompt from './components/AssistantPrompt.jsx'
-import CoachingBottomNavigation from './components/CoachingBottomNavigation.jsx'
 import CoachingCard from './components/CoachingCard.jsx'
 import CoachingStatusBar from './components/CoachingStatusBar.jsx'
 import './RhythmCoaching.scss'
@@ -85,7 +83,7 @@ function RhythmCoaching() {
           </h1>
           <p>나이트 근무 D+2</p>
         </div>
-        <button type="button" aria-label="설정">
+        <button type="button" aria-label="설정" onClick={() => navigate(PATH.SETTINGS)}>
           <img src={settingsIcon} alt="" />
         </button>
       </header>
@@ -148,8 +146,6 @@ function RhythmCoaching() {
         </div>
       </div>
 
-      <AssistantPrompt />
-      <CoachingBottomNavigation />
       <span className="rhythm-coaching__home-indicator" aria-hidden="true" />
     </main>
   )

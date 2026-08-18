@@ -5,10 +5,14 @@
 
   // 시안 배경 에셋(393x731)을 상단 정렬로 깔고, 그 아래는 기본 다크 배경이 이어진다.
   background-color: $color-bg;
-  background-image: url('../../assets/background.svg');
+  background-image:
+    $gradient-page-background-fade,
+    url('../../assets/background.svg');
   background-repeat: no-repeat;
   background-position: top center;
-  background-size: 100% auto;
+  background-size:
+    100% $layout-background-fade-height,
+    100% auto;
 
   &__top {
     @include flex-column;
@@ -31,6 +35,6 @@
   }
 
   &__sheet {
-    padding-bottom: $space-20;
+    padding-bottom: $layout-content-bottom-space;
   }
 }

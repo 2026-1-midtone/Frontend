@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import { PATH } from '../../routes/paths.js'
 import ScheduleAgendaList from './components/ScheduleAgendaList.jsx'
@@ -63,7 +62,6 @@ const AGENDA_ITEMS = [
 
 function ScheduleCalendar() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
   const [{ year, month }, setCursor] = useState({ year: MOCK_YEAR, month: MOCK_MONTH })
 
   const handlePrevMonth = () => {
@@ -118,11 +116,6 @@ function ScheduleCalendar() {
 
       <ScheduleAgendaList items={AGENDA_ITEMS} />
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-      />
     </div>
   )
 }

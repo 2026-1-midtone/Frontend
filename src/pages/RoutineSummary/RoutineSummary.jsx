@@ -1,16 +1,9 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import aiAssistantImage from '@/assets/routine-summary/ai-assistant.png'
-import assistantBubble from '@/assets/routine-summary/assistant-bubble.svg'
-import assistantSparkle from '@/assets/routine-summary/assistant-sparkle.svg'
-import calendarIcon from '@/assets/routine-summary/calendar-edit.svg'
-import cloverNavIcon from '@/assets/routine-summary/clover-nav.svg'
 import cloverSectionIcon from '@/assets/routine-summary/clover-section.svg'
-import draftsIcon from '@/assets/routine-summary/drafts.svg'
 import glowBottom from '@/assets/routine-summary/glow-bottom.svg'
 import glowLeft from '@/assets/routine-summary/glow-left.svg'
 import glowRight from '@/assets/routine-summary/glow-right.svg'
-import homeIcon from '@/assets/routine-summary/home.svg'
 import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
@@ -23,13 +16,6 @@ const routines = [
   { id: 3, completed: true },
   { id: 4, completed: false },
   { id: 5, completed: false },
-]
-
-const navigationItems = [
-  { id: 'home', label: 'Home', ariaLabel: '홈', icon: homeIcon },
-  { id: 'routine', label: 'Home', ariaLabel: '루틴', icon: calendarIcon },
-  { id: 'record', label: 'Home', ariaLabel: '기록', icon: draftsIcon },
-  { id: 'more', label: 'Home', ariaLabel: '더보기', icon: cloverNavIcon },
 ]
 
 function StatusBar() {
@@ -48,7 +34,6 @@ function StatusBar() {
 
 function RoutineSummary() {
   const navigate = useNavigate()
-  const [isAssistantVisible, setIsAssistantVisible] = useState(true)
   const routineListDrag = useRef({
     active: false,
     startY: 0,
@@ -102,7 +87,12 @@ function RoutineSummary() {
           </h1>
           <p className="routine-summary__subtitle">루틴이 마무리 되고 있어요</p>
         </div>
-        <button className="routine-summary__settings" type="button" aria-label="설정">
+        <button
+          className="routine-summary__settings"
+          type="button"
+          aria-label="설정"
+          onClick={() => navigate(PATH.SETTINGS)}
+        >
           <img src={settingsIcon} alt="" />
         </button>
       </header>
@@ -164,51 +154,14 @@ function RoutineSummary() {
 
       <div className="routine-summary__footer-shade" />
 
-      {isAssistantVisible && (
-        <aside className="routine-summary__assistant" aria-label="AI 비서 안내">
-          <div className="routine-summary__assistant-message">
-            <img src={assistantBubble} alt="" aria-hidden="true" />
-            <span>AI비서한테 물어보세요!</span>
-            <button
-              className="routine-summary__assistant-close"
-              type="button"
-              aria-label="AI 비서 닫기"
-              onClick={() => setIsAssistantVisible(false)}
-            >
-              <img src={assistantSparkle} alt="" />
-            </button>
-          </div>
-          <img
-            className="routine-summary__assistant-character"
-            src={aiAssistantImage}
-            alt="AI 비서 캐릭터"
-          />
-        </aside>
-      )}
-
       <button
         className="routine-summary__cta"
         type="button"
-        onClick={() => navigate(PATH.DAILY_ROUTINE)}
+        onClick={() => navigate(PATH.ROUTINE)}
       >
         루틴하러 가기
       </button>
 
-      <nav className="routine-summary__navigation" aria-label="주요 메뉴">
-        {navigationItems.map((item, index) => (
-          <button
-            className={`routine-summary__nav-item${index === 0 ? ' routine-summary__nav-item--active' : ''}`}
-            type="button"
-            key={item.id}
-            aria-label={item.ariaLabel}
-            aria-current={index === 0 ? 'page' : undefined}
-          >
-            <img src={item.icon} alt="" />
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </nav>
-      <span className="routine-summary__home-indicator" aria-hidden="true" />
     </main>
   )
 }

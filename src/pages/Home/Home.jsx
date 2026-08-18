@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import {
@@ -21,13 +20,18 @@ import TodayRoutineList from './components/TodayRoutineList.jsx'
 import WeeklyProgressArc from './components/WeeklyProgressArc.jsx'
 import './Home.scss'
 
-// 근무표만 실제 화면(/schedule)이 있고, 나머지는 코칭·루틴 탭이 만들어지면 연결한다.
 const QUICK_MENU_ITEMS = [
   { id: 'schedule', label: '근무표', icon: IconSchedule },
   { id: 'rhythm-coaching', label: '리듬 코칭', icon: IconEdit },
   { id: 'nutrition-coaching', label: 'AI 영양코칭', icon: IconPill },
   { id: 'weekly-status', label: '주간 실행 현황', icon: IconGrid },
 ]
+
+const QUICK_MENU_PATHS = {
+  schedule: PATH.SCHEDULE,
+  'rhythm-coaching': PATH.COACHING,
+  'weekly-status': PATH.ROUTINE_SUMMARY,
+}
 
 const INITIAL_ROUTINES = [
   {
@@ -81,7 +85,6 @@ const RHYTHM_COACH_ITEMS = [
 function Home() {
   const navigate = useNavigate()
   const [routines, setRoutines] = useState(INITIAL_ROUTINES)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
   const handleToggleRoutine = (id) => {
     setRoutines((prev) =>
@@ -91,19 +94,15 @@ function Home() {
     )
   }
 
-  // 근무표만 실제 화면이 있다. 나머지(리듬 코칭/AI 영양코칭/주간 실행 현황)는
-  // 코칭·루틴 탭이 구현되면 연결한다.
   const handleSelectQuickMenu = (id) => {
-    if (id === 'schedule') {
-      navigate(PATH.SCHEDULE)
-    }
+    const targetPath = QUICK_MENU_PATHS[id]
+
+    if (targetPath) navigate(targetPath)
   }
 
-  // TODO: 전체 루틴 화면 라우트가 정해지면 연결한다.
-  const handleViewAllRoutines = () => {}
-
-  // TODO: 전체 실행 현황 화면 라우트가 정해지면 연결한다.
-  const handleViewWeeklyStatus = () => {}
+  const handleViewAllRoutines = () => {
+    navigate(PATH.ROUTINE)
+  }
 
   return (
     <div className="home">
@@ -124,12 +123,6 @@ function Home() {
       </div>
 
       <div className="home__bottom">
-        <AiAssistantBubble
-          message="AI비서한테 물어보세요!"
-          showMessage={showAssistantMessage}
-          onDismissMessage={() => setShowAssistantMessage(false)}
-        />
-
         <BottomSheet className="home__sheet">
           <TodayRoutineList
             routines={routines}
@@ -140,7 +133,7 @@ function Home() {
           <WeeklyProgressArc
             percent={60}
             label="주간 실행 현황"
-            onViewAll={handleViewWeeklyStatus}
+            to={PATH.ROUTINE_SUMMARY}
           />
         </BottomSheet>
       </div>

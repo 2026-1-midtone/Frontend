@@ -1,4 +1,4 @@
-import characterImage from '../../assets/character.svg'
+import AssistantMascot from './AssistantMascot.jsx'
 import { IconClose } from './icons/index.jsx'
 import './AiAssistantBubble.scss'
 
@@ -32,7 +32,7 @@ function AiAssistantBubble({ message, showMessage, onDismissMessage, onOpen }) {
         onClick={onOpen}
         aria-label="AI 비서에게 물어보기"
       >
-        <img src={characterImage} alt="" width={72} height={60} />
+        <AssistantMascot />
       </button>
     </div>
   )

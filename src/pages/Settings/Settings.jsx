@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import NavRow from '../../components/common/NavRow.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
@@ -21,7 +20,6 @@ const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관', '�
 
 function Settings() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
   const [alerts, setAlerts] = useState({
     napAlarm: true,
     caffeineCutoffAlarm: false,
@@ -101,11 +99,6 @@ function Settings() {
         </footer>
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-      />
     </div>
   )
 }
