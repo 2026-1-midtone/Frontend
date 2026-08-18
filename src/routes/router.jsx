@@ -12,6 +12,8 @@ import AccountSettings from '../pages/Settings/AccountSettings.jsx'
 import CoachingAlertSettings from '../pages/Settings/CoachingAlertSettings.jsx'
 import PersonalizationSettings from '../pages/Settings/PersonalizationSettings.jsx'
 import Settings from '../pages/Settings/Settings.jsx'
+import RhythmCoaching from '../pages/RhythmCoaching/RhythmCoaching.jsx'
+import TransitionGuide from '../pages/RhythmCoaching/TransitionGuide.jsx'
 import { PATH } from './paths.js'
 
 export const router = createBrowserRouter([
@@ -30,6 +32,10 @@ export const router = createBrowserRouter([
           
           { path: PATH.ROUTINE_SUMMARY, element: <RoutineSummary /> },
           { path: PATH.DAILY_ROUTINE, element: <DailyRoutine /> },
+          
+          // 방금 추가된 코칭 화면들도 하단 탭 내부에 배치
+          { path: PATH.COACHING, element: <RhythmCoaching /> },
+          { path: PATH.TRANSITION_GUIDE, element: <TransitionGuide /> },
           
           { path: PATH.SETTINGS, element: <Settings /> },
           { path: PATH.SETTINGS_PERSONALIZATION, element: <PersonalizationSettings /> },

@@ -8,6 +8,7 @@ export const PATH = {
   SCHEDULE: '/schedule',
   SCHEDULE_RESULT: '/schedule/result',
   COACHING: '/coaching',
+  TRANSITION_GUIDE: '/coaching/transition',
   ROUTINE: '/routine',
   SETTINGS: '/settings',
   SETTINGS_PERSONALIZATION: '/settings/personalization',
