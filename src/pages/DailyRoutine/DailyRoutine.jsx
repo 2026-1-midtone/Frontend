@@ -91,16 +91,10 @@ const sections = [
   { id: 'completed', title: '완료된 항목' },
 ]
 
-const entryTips = ['light', 'caffeine', 'nap']
-
-const getRandomEntryTip = () => (
-  entryTips[Math.floor(Math.random() * entryTips.length)]
-)
-
 function DailyRoutine() {
   const navigate = useNavigate()
   const [tasks, setTasks] = useState(initialTasks)
-  const [activeTip, setActiveTip] = useState(getRandomEntryTip)
+  const [activeTip, setActiveTip] = useState(null)
 
   const progress = useMemo(() => {
     const actionableCompleted = tasks
