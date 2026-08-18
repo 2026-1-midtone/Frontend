@@ -1,0 +1,54 @@
+.weekly-progress {
+  @include flex-column($space-1);
+  align-items: center;
+  padding-top: $space-2;
+
+  &__chart {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    overflow: visible;
+  }
+
+  &__track,
+  &__fill {
+    stroke-linecap: round;
+  }
+
+  &__track {
+    stroke: rgba($night-1000, 0.14);
+  }
+
+  &__fill {
+    stroke: $color-accent;
+    transition: stroke-dasharray $duration-slow $easing-standard;
+  }
+
+  &__percent {
+    font-family: $font-family-base;
+    font-size: 34px;
+    font-weight: $font-weight-extrabold;
+    fill: $color-accent;
+  }
+
+  &__percent-sign {
+    font-size: 20px;
+    font-weight: $font-weight-bold;
+  }
+
+  &__label {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-tight);
+    color: $night-800;
+  }
+
+  &__link {
+    @include button-reset;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    margin-top: $space-1;
+    color: $color-text-tertiary;
+
+    &:hover {
+      color: $night-800;
+    }
+  }
+}

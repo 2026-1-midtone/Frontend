@@ -1,0 +1,43 @@
+.bottom-navigation {
+  position: sticky;
+  bottom: 0;
+  z-index: $z-sticky;
+  padding: $space-2 $space-3 $space-3;
+
+  &__list {
+    @include flex(row, space-between, stretch);
+    padding: $space-2;
+    border: 1px solid $color-border;
+    border-radius: $radius-2xl;
+    background-color: rgba($night-200, 0.86);
+    backdrop-filter: blur(16px);
+  }
+
+  &__item {
+    flex: 1;
+  }
+
+  &__link {
+    @include flex-column($space-1);
+    align-items: center;
+    padding-block: $space-2;
+    border-radius: $radius-xl;
+    color: $color-text-tertiary;
+    transition:
+      color $duration-fast $easing-standard,
+      background-color $duration-fast $easing-standard;
+
+    &:hover {
+      color: $night-800;
+    }
+
+    &.is-active {
+      color: $color-text;
+      background-color: rgba($night-1000, 0.1);
+    }
+  }
+
+  &__label {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+  }
+}

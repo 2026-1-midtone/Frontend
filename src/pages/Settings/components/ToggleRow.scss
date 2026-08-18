@@ -1,0 +1,42 @@
+.toggle-row {
+  @include flex-column($space-3);
+  padding-block: $space-3;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__head {
+    @include flex-between;
+    gap: $space-3;
+  }
+
+  &__label {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__caption {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    color: $night-700;
+  }
+
+  &__body {
+    @include flex(row, flex-start, flex-start, $space-3);
+    transition: opacity $duration-fast $easing-standard;
+
+    // 시작/종료 시간처럼 SettingsField가 두 개 들어올 때 균등 분할되게 한다.
+    > .settings-field {
+      flex: 1;
+      min-width: 0;
+      padding-block: 0;
+      border-bottom: none;
+    }
+
+    &.is-disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+  }
+}

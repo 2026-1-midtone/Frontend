@@ -1,0 +1,84 @@
+.profile-card {
+  @include flex(row, flex-start, center, $space-4);
+
+  &__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-full;
+    object-fit: cover;
+  }
+
+  &__avatar-edit {
+    @include flex-center;
+    position: absolute;
+    inset: 0;
+    border-radius: $radius-full;
+    background-color: rgba($night-0, 0.55);
+    color: $night-0;
+  }
+
+  &__info {
+    @include flex-column($space-1);
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__name-suffix {
+    color: $night-700;
+    font-weight: $font-weight-regular;
+  }
+
+  &__name-input {
+    width: 100%;
+    padding: $space-1 $space-2;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-sm;
+    background-color: $night-300;
+    color: $color-text;
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+  }
+
+  &__email {
+    @include typo($font-size-sm, $font-weight-regular, $line-height-tight);
+    color: $night-600;
+  }
+
+  &__joined {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    color: $night-600;
+  }
+
+  &__edit-button {
+    @include button-reset;
+    flex-shrink: 0;
+    padding: $space-2 $space-4;
+    border-radius: $radius-full;
+    background-color: rgba($night-1000, 0.1);
+    color: $color-text;
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+    transition: background-color $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: rgba($night-1000, 0.16);
+    }
+
+    &.is-editing {
+      background-color: $color-primary;
+      color: $night-0;
+
+      &:hover {
+        background-color: $color-primary-hover;
+      }
+    }
+  }
+}

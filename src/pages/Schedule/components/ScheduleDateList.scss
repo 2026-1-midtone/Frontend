@@ -1,0 +1,8 @@
+.schedule-date-list {
+  @include flex-column($space-2);
+
+  &__title {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+}

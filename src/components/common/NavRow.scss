@@ -1,0 +1,34 @@
+.nav-row {
+  @include button-reset;
+  @include flex-between;
+  width: 100%;
+  padding: $space-4 $space-5;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: rgba($night-200, 0.5);
+  transition: background-color $duration-fast $easing-standard;
+
+  &:hover {
+    background-color: rgba($night-300, 0.6);
+  }
+
+  &__text {
+    @include flex-column($space-1);
+    align-items: flex-start;
+  }
+
+  &__title {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__description {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    color: $night-700;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: $night-700;
+  }
+}

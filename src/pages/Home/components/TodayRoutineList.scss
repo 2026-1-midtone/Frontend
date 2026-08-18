@@ -1,0 +1,60 @@
+.today-routine {
+  @include flex-column($space-4);
+  padding: $space-5;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: rgba($night-200, 0.4);
+
+  &__title {
+    @include flex(row, flex-start, center, $space-2);
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__title-icon {
+    color: $color-text-brand;
+    flex-shrink: 0;
+  }
+
+  &__list {
+    @include flex-column($space-4);
+  }
+
+  &__button {
+    @include button-reset;
+    @include flex-column($space-1);
+    width: 100%;
+    text-align: left;
+  }
+
+  &__item-title {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__item-detail {
+    @include typo($font-size-sm, $font-weight-regular, $line-height-normal);
+    color: $night-800;
+  }
+
+  // 완료된 루틴은 취소선 + 흐린 색으로 구분한다.
+  &__button.is-done {
+    .today-routine__item-title,
+    .today-routine__item-detail {
+      color: $color-text-tertiary;
+      text-decoration: line-through;
+    }
+  }
+
+  &__view-all {
+    @include button-reset;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    align-self: center;
+    padding-block: $space-1;
+    color: $color-text-tertiary;
+
+    &:hover {
+      color: $night-800;
+    }
+  }
+}

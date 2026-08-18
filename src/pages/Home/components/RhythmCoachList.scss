@@ -1,0 +1,53 @@
+.rhythm-coach {
+  @include flex-column($space-3);
+
+  &__title {
+    @include flex(row, flex-start, center, $space-2);
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__title-icon {
+    color: $color-text-brand;
+    flex-shrink: 0;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-3;
+  }
+
+  &__item {
+    @include flex-column($space-2);
+    align-items: flex-start;
+    padding: $space-4 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-200, 0.4);
+  }
+
+  &__icon {
+    @include flex-center;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-md;
+    background-color: rgba($night-1000, 0.06);
+    color: $night-900;
+
+    &--danger {
+      background-color: rgba($red-400, 0.16);
+      color: $red-400;
+    }
+  }
+
+  &__label {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__detail {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    color: $night-700;
+  }
+}

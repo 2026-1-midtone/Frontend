@@ -4,4 +4,13 @@ export const PATH = {
   ONBOARDING: '/',
   ROUTINE_SUMMARY: '/routine-summary',
   DAILY_ROUTINE: '/daily-routine',
+  HOME: '/home',
+  SCHEDULE: '/schedule',
+  SCHEDULE_RESULT: '/schedule/result',
+  COACHING: '/coaching',
+  ROUTINE: '/routine',
+  SETTINGS: '/settings',
+  SETTINGS_PERSONALIZATION: '/settings/personalization',
+  SETTINGS_COACHING_ALERTS: '/settings/coaching-alerts',
+  SETTINGS_ACCOUNT: '/settings/account',
 }

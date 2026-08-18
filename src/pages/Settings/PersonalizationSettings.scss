@@ -1,0 +1,65 @@
+.personalization-settings {
+  @include flex-column($space-5);
+  flex: 1;
+  padding: $space-4 $layout-gutter $space-16;
+  background-color: $color-bg;
+  background-image: url('../../assets/background.svg');
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% auto;
+
+  &__card {
+    @include flex-column($space-6);
+    padding: $space-5;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-100, 0.85);
+    backdrop-filter: blur(16px);
+  }
+
+  &__section {
+    @include flex-column($space-1);
+  }
+
+  &__title {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+    margin-bottom: $space-2;
+  }
+
+  &__toggle-list {
+    padding: $space-1 $space-4;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-200, 0.4);
+  }
+
+  &__caption {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $night-700;
+  }
+
+  &__actions {
+    @include flex-column($space-3);
+  }
+
+  &__action {
+    @include button-reset;
+    padding-block: $space-3;
+    border-radius: $radius-xl;
+    text-align: center;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $night-700;
+    background-color: rgba($night-1000, 0.06);
+    transition: background-color $duration-fast $easing-standard;
+
+    &--primary {
+      color: $color-text;
+      background-color: $night-400;
+    }
+
+    &:hover {
+      background-color: rgba($night-1000, 0.12);
+    }
+  }
+}
