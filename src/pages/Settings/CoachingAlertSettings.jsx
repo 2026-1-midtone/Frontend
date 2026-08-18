@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
@@ -15,7 +14,6 @@ const TIME_OPTIONS = Array.from({ length: 24 }, (_, hour) => {
 
 function CoachingAlertSettings() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
   const [caffeineCutoffAlarm, setCaffeineCutoffAlarm] = useState(true)
   const [caffeineAlarmTime, setCaffeineAlarmTime] = useState('')
@@ -132,11 +130,6 @@ function CoachingAlertSettings() {
         </button>
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-      />
     </div>
   )
 }

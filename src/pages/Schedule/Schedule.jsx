@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import scheduleMockPreview from '../../assets/schedule-preview.svg'
 import { PATH } from '../../routes/paths.js'
@@ -15,7 +14,6 @@ const MOCK_STATS = { confirmed: 18, needsReview: 6, total: 28 }
 function Schedule() {
   const navigate = useNavigate()
   const [previewSrc, setPreviewSrc] = useState(null)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
   // TODO: 실제 파일 선택 다이얼로그 + 업로드 API 연동.
   // 지금은 클릭하면 목업 이미지를 채워 "업로드 후" 상태를 보여준다.
@@ -23,8 +21,10 @@ function Schedule() {
     setPreviewSrc(scheduleMockPreview)
   }
 
-  const handleGoToResult = () => {
-    navigate(PATH.SCHEDULE_RESULT)
+  // 업로드가 끝나면 두 버튼 모두 캘린더 화면으로 이동한다.
+  // 세부 수정은 캘린더 화면의 "수정하러 가기"에서 이어서 진행한다.
+  const handleGoToCalendar = () => {
+    navigate(PATH.SCHEDULE_CALENDAR)
   }
 
   const isUploaded = Boolean(previewSrc)
@@ -58,11 +58,15 @@ function Schedule() {
               <button
                 type="button"
                 className="schedule__action schedule__action--primary"
-                onClick={handleGoToResult}
+                onClick={handleGoToCalendar}
               >
                 수정하러 가기
               </button>
-              <button type="button" className="schedule__action">
+              <button
+                type="button"
+                className="schedule__action"
+                onClick={handleGoToCalendar}
+              >
                 완료
               </button>
             </div>
@@ -70,11 +74,6 @@ function Schedule() {
         )}
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-      />
     </div>
   )
 }

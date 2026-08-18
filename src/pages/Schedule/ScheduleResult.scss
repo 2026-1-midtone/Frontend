@@ -1,15 +1,19 @@
 .schedule-result {
   @include flex-column($space-5);
   flex: 1;
-  padding: $space-4 $layout-gutter $space-16;
+  padding: $space-4 $layout-gutter $layout-content-bottom-space;
   background-color: $color-bg;
-  background-image: url('../../assets/background.svg');
+  background-image:
+    $gradient-page-background-fade,
+    url('../../assets/background.svg');
   background-repeat: no-repeat;
   background-position: top center;
-  background-size: 100% auto;
+  background-size:
+    100% $layout-background-fade-height,
+    100% auto;
 
   &__card {
-    @include flex-column($space-4);
+    @include flex-column($space-5);
     padding: $space-5;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
@@ -17,27 +21,47 @@
     backdrop-filter: blur(16px);
   }
 
-  &__title {
-    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
-    color: $color-text;
+  &__banner {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $night-700;
   }
 
-  &__complete {
+  &__divider {
+    @include flex(row, center, center, $space-3);
+  }
+
+  &__divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba($purple-500, 0) 0%,
+      rgba($purple-500, 0.6) 50%,
+      rgba($purple-500, 0) 100%
+    );
+  }
+
+  &__caption {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $night-600;
+  }
+
+  &__confirm {
     @include button-reset;
     padding-block: $space-3;
     border-radius: $radius-xl;
-    background-color: $night-400;
-    color: $color-text;
+    background-color: $color-primary;
+    color: $night-0;
     text-align: center;
     @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
     transition: background-color $duration-fast $easing-standard;
 
     &:hover {
-      background-color: $night-500;
+      background-color: $color-primary-hover;
     }
   }
 
-  &__manual {
+  &__back {
     @include button-reset;
     align-self: center;
     padding-block: $space-1;

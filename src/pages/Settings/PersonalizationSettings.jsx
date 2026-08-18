@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
@@ -27,7 +26,6 @@ const NAP_COUNT_OPTIONS = [
 
 function PersonalizationSettings() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
   const [caffeineIntake, setCaffeineIntake] = useState('')
   const [sensitivity, setSensitivity] = useState('')
@@ -147,11 +145,6 @@ function PersonalizationSettings() {
         </div>
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-      />
     </div>
   )
 }

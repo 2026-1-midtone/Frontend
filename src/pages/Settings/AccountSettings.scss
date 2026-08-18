@@ -1,12 +1,16 @@
 .account-settings {
   @include flex-column($space-5);
   flex: 1;
-  padding: $space-4 $layout-gutter $space-16;
+  padding: $space-4 $layout-gutter $layout-content-bottom-space;
   background-color: $color-bg;
-  background-image: url('../../assets/background.svg');
+  background-image:
+    $gradient-page-background-fade,
+    url('../../assets/background.svg');
   background-repeat: no-repeat;
   background-position: top center;
-  background-size: 100% auto;
+  background-size:
+    100% $layout-background-fade-height,
+    100% auto;
 
   &__card {
     @include flex-column($space-5);

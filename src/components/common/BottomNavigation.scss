@@ -2,42 +2,64 @@
   position: sticky;
   bottom: 0;
   z-index: $z-sticky;
-  padding: $space-2 $space-3 $space-3;
+  height: $layout-tabbar-height;
+  padding: 0 $layout-tabbar-inline-space $layout-tabbar-bottom-space;
 
   &__list {
-    @include flex(row, space-between, stretch);
-    padding: $space-2;
-    border: 1px solid $color-border;
-    border-radius: $radius-2xl;
-    background-color: rgba($night-200, 0.86);
-    backdrop-filter: blur(16px);
+    @include flex(row, space-between, center);
+    width: 100%;
+    height: $layout-tabbar-control-height;
+    border-radius: $radius-navigation;
+    background-color: $color-navigation-surface;
+    box-shadow: inset 0 0 0 1px $color-navigation-outline;
   }
 
   &__item {
+    @include flex-center;
     flex: 1;
   }
 
   &__link {
-    @include flex-column($space-1);
-    align-items: center;
-    padding-block: $space-2;
-    border-radius: $radius-xl;
-    color: $color-text-tertiary;
+    @include flex(column, center, center, 2px);
+    width: $layout-tabbar-item-width;
+    height: $layout-tabbar-control-height;
+    border-radius: $radius-navigation;
+    color: $color-navigation-inactive;
     transition:
       color $duration-fast $easing-standard,
       background-color $duration-fast $easing-standard;
 
     &:hover {
-      color: $night-800;
+      color: $color-text;
     }
 
     &.is-active {
       color: $color-text;
-      background-color: rgba($night-1000, 0.1);
+      background-color: $color-navigation-active;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
     }
   }
 
+  &__icon {
+    display: block;
+    width: $space-6;
+    height: $space-6;
+    background-color: currentColor;
+    -webkit-mask-image: var(--bottom-navigation-icon);
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-image: var(--bottom-navigation-icon);
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+  }
+
   &__label {
-    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    @include typo($font-size-xs, $font-weight-medium, 16px);
+    letter-spacing: 0.02em;
   }
 }

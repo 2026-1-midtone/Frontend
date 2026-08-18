@@ -420,57 +420,6 @@
   }
 }
 
-.coaching-assistant {
-  position: absolute;
-  z-index: 7;
-  right: $space-6;
-  bottom: 102px;
-  width: 152px;
-  @include flex-column;
-  align-items: flex-end;
-
-  &__message {
-    position: relative;
-    width: 145px;
-    height: 35px;
-
-    > img {
-      width: 145px;
-      height: 35px;
-    }
-
-    span {
-      position: absolute;
-      top: 9px;
-      left: $space-4;
-      white-space: nowrap;
-      @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
-    }
-
-    button {
-      @include button-reset;
-
-      position: absolute;
-      top: -9px;
-      right: -6px;
-      width: 23px;
-      height: 23px;
-      border-radius: $radius-full;
-      color: $night-900;
-      font-size: $font-size-lg;
-      line-height: 1;
-    }
-  }
-
-  &__character {
-    width: 80px;
-    height: 76px;
-    margin-top: -5px;
-    object-fit: cover;
-    transform: scaleX(-1);
-  }
-}
-
 .transition-guide {
   &__checklist {
     h2 {
