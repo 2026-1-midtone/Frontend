@@ -1,135 +1,628 @@
-.daily-routine {
+.daily-routine,
+.routine-streak {
+  position: relative;
   flex: 1;
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: 64px 24px 32px;
-  background:
-    radial-gradient(circle at 88% 8%, rgba($purple-600, 0.3), transparent 30%),
-    $color-bg;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  color: $color-text;
+  background: $color-bg-elevated;
+
+  &__hero {
+    position: absolute;
+    top: -5px;
+    left: -83px;
+    width: 561px;
+    height: 736px;
+    max-width: none;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  &__hero-shade {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 532px;
+    background: linear-gradient(180deg, rgba($night-100, 0) 0%, $night-0 100%);
+    pointer-events: none;
+  }
 
   &__header {
-    @include flex(row, flex-start, flex-start, $space-3);
+    position: absolute;
+    z-index: 3;
+    top: 75px;
+    right: $space-6;
+    left: $space-6;
+    @include flex-between;
+    align-items: flex-start;
 
-    > button {
-      @include button-reset;
-      width: 32px;
-      height: 32px;
-      border-radius: $radius-full;
-      background: rgba(#ffffff, 0.08);
-      font-size: 28px;
-      line-height: 27px;
+    h1 {
+      @include flex(row, flex-start, center, $space-1);
+      @include typo(22px, $font-weight-bold, 30px);
+      letter-spacing: -0.01em;
+
+      img {
+        width: 17px;
+        height: 17px;
+      }
     }
 
     p {
-      color: $color-text-brand;
-      @include typo(13px, $font-weight-semibold, 18px);
+      margin-top: $space-1;
+      color: $night-800;
+      @include typo($font-size-lg, $font-weight-semibold, 26px);
     }
 
-    h1 {
-      margin-top: $space-1;
-      @include typo(22px, $font-weight-bold, 30px);
+    > button {
+      @include button-reset;
+
+      width: 34px;
+      height: 34px;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+        border-radius: $radius-full;
+      }
     }
   }
 
+  &__scroll {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 22px 22px 0 0;
+    overscroll-behavior: contain;
+    background: $color-bg-elevated;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__glow {
+    position: absolute;
+    width: 774px;
+    height: 774px;
+    max-width: none;
+    pointer-events: none;
+
+    &--left {
+      top: -500px;
+      left: -406px;
+    }
+
+    &--bottom {
+      top: 390px;
+      left: -98px;
+    }
+
+    &--right {
+      top: 310px;
+      left: 67px;
+    }
+  }
+}
+
+.daily-routine {
   &__progress {
-    margin-top: $space-8;
-    color: $color-text-secondary;
-    @include typo(13px, $font-weight-medium, 18px);
+    @include button-reset;
+
+    position: absolute;
+    z-index: 3;
+    top: 155px;
+    right: $space-6;
+    left: $space-6;
+    height: 80px;
+    padding: $space-2 $space-4;
+    border-radius: $radius-lg;
+    background: rgba($night-300, 0.55);
+    text-align: left;
+
+    > span:first-child {
+      display: block;
+      color: $night-800;
+      @include typo($font-size-md, $font-weight-regular, 24px);
+    }
+
+    strong {
+      color: $color-primary-hover;
+      font-weight: $font-weight-semibold;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__progress-track {
+    display: block;
+    height: 14px;
+    margin-top: $space-2;
+    overflow: hidden;
+    border-radius: $radius-full;
+    background: $night-0;
+
+    span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: $color-primary-hover;
+      box-shadow: 0 0 $space-2 rgba($purple-400, 0.48);
+      transition: width $duration-base $easing-standard;
+    }
+  }
+
+  &__scroll {
+    top: 255px;
+  }
+
+  &__body {
+    position: relative;
+    z-index: 1;
+    padding: 30px $space-6 190px;
+  }
+
+  &__section {
+    h2 {
+      margin-bottom: $space-5;
+      @include typo($font-size-lg, $font-weight-semibold, 26px);
+    }
+  }
+
+  &__divider {
+    display: block;
+    width: 330px;
+    height: 23px;
+    margin: 30px auto 18px;
+  }
+
+  &__list {
+    @include flex-column($space-3);
+  }
+
+  &__disclaimer {
+    margin: $space-8 auto 0;
+    color: $color-text-disabled;
+    text-align: center;
+    @include typo($font-size-caption, $font-weight-medium, 18px);
+    letter-spacing: 0.01em;
+  }
+
+  &__home-indicator {
+    position: absolute;
+    z-index: 110;
+    bottom: $space-1;
+    left: 50%;
+    width: 88px;
+    height: 3px;
+    border-radius: $radius-full;
+    background: $color-text-secondary;
+    transform: translateX(-50%);
+  }
+}
+
+.routine-status-bar {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  padding: 18px $space-6 0;
+  @include flex-between;
+
+  &__time {
+    @include typo($font-size-caption, $font-weight-semibold, 1);
+  }
+
+  &__camera {
+    position: absolute;
+    top: 17px;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: $radius-full;
+    background: $night-1000;
+    transform: translateX(-50%);
+  }
+
+  &__device {
+    @include flex(row, flex-end, flex-end, 5px);
+    height: 14px;
+  }
+
+  &__signal {
+    width: 13px;
+    height: 12px;
+    background: linear-gradient(to top right, transparent 49%, $night-1000 50%);
+  }
+
+  &__wifi {
+    width: 10px;
+    height: $space-2;
+    border-top: 3px solid $night-1000;
+    border-radius: 50%;
+    transform: rotate(-12deg);
+  }
+
+  &__battery {
+    width: $space-2;
+    height: 13px;
+    border-radius: 1px;
+    background: $night-1000;
+  }
+}
+
+.routine-task {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: $space-5;
+  align-items: center;
+  min-height: 93px;
+  padding: $space-5;
+  border-radius: 22px;
+  background: rgba($night-300, 0.2);
+  transition: opacity $duration-fast $easing-standard;
+
+  &--skipped {
+    opacity: 0.5;
+  }
+
+  &__check {
+    @include button-reset;
+    @include flex-center;
+
+    width: 22px;
+    height: 22px;
+    border: 1px solid $night-900;
+    border-radius: 6px;
+
+    img {
+      width: 11px;
+      height: 9px;
+    }
+
+    &--completed {
+      border-color: $night-900;
+      background: $night-900;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__copy {
+    min-width: 0;
+
+    h3 {
+      overflow: hidden;
+      color: $night-900;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      @include typo($font-size-md, $font-weight-semibold, 24px);
+    }
+
+    p {
+      overflow: hidden;
+      color: $color-text-tertiary;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      @include typo($font-size-caption, $font-weight-medium, 25px);
+      letter-spacing: 0.01em;
+    }
+  }
+
+  &__action {
+    @include button-reset;
+
+    color: $color-text;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    white-space: nowrap;
+    @include typo($font-size-caption, $font-weight-medium, 18px);
+
+    &:focus-visible {
+      @include focus-ring;
+      border-radius: $radius-sm;
+    }
+  }
+}
+
+.routine-tip {
+  position: absolute;
+  z-index: $z-modal;
+  inset: 0;
+  @include flex(column, center, center);
+  background: rgba($night-0, 0.82);
+  backdrop-filter: blur(2px);
+
+  &__dialog {
+    position: relative;
+    width: 303px;
+    min-height: 325px;
+    padding: 43px 52px 14px;
+    border: 1px solid $color-border-strong;
+    border-radius: 22px;
+    background: rgba($color-bg-elevated, 0.96);
+    box-shadow: $shadow-lg;
+
+    &--nap {
+      min-height: 334px;
+    }
+
+    h2 {
+      @include typo($font-size-lg, $font-weight-semibold, 26px);
+    }
+
+    > button {
+      @include button-reset;
+
+      width: 228px;
+      height: 60px;
+      margin-top: $space-6;
+      margin-left: -15px;
+      border: 1px solid $color-border-strong;
+      border-radius: $radius-lg;
+      background: rgba($night-300, 0.55);
+      @include typo($font-size-lg, $font-weight-semibold, 26px);
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+  }
+
+  &__character {
+    position: absolute;
+    top: -15px;
+    right: -17px;
+    width: 105px;
+    height: 100px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  &__body {
+    margin-top: 38px;
+    color: $color-text;
+    white-space: nowrap;
+    @include typo($font-size-compact, $font-weight-regular, 22px);
+
+    strong {
+      color: $color-primary-hover;
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &__note {
+    margin-top: 15px;
+    color: $color-text-tertiary;
+    text-align: center;
+    white-space: nowrap;
+    @include typo($font-size-caption, $font-weight-medium, 18px);
+    letter-spacing: 0.01em;
+  }
+
+  &__disclaimer {
+    margin-top: 27px;
+    color: $color-text-disabled;
+    font-size: 11px;
+  }
+}
+
+.routine-streak {
+  &__hero-shade {
+    height: 218px;
+  }
+
+  &__scroll {
+    top: 159px;
+  }
+
+  &__body {
+    position: relative;
+    z-index: 1;
+    padding: 30px $space-5 190px;
+  }
+
+  &__summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    height: 114px;
+    border-radius: $radius-lg;
+    background: rgba($night-300, 0.55);
 
     > div {
-      height: 8px;
+      @include flex-column;
+      align-items: center;
+    }
+
+    span {
+      color: $color-text-secondary;
+      @include typo($font-size-md, $font-weight-semibold, 24px);
+    }
+
+    strong {
+      margin-top: 2px;
+      @include typo(34px, $font-weight-bold, 42px);
+      letter-spacing: -0.02em;
+    }
+
+    > div:first-child strong {
+      color: $color-primary-hover;
+      text-shadow: 0 0 9px rgba($purple-400, 0.6);
+    }
+  }
+
+  &__weekly,
+  &__rates {
+    margin-top: $space-5;
+
+    > h2 {
+      margin: 0 0 $space-4 $space-1;
+      @include typo($font-size-lg, $font-weight-semibold, 26px);
+    }
+  }
+
+  &__chart {
+    height: 222px;
+    padding: $space-4 $space-5 $space-3;
+    border-radius: 22px;
+    background: rgba($night-300, 0.55);
+  }
+
+  &__chart-heading {
+    @include flex-between;
+    @include typo($font-size-lg, $font-weight-semibold, 26px);
+  }
+
+  &__plot {
+    position: relative;
+    height: 125px;
+    margin-top: $space-1;
+  }
+
+  &__line {
+    position: absolute;
+    top: 35px;
+    left: -1px;
+    width: 305px;
+    height: 60px;
+  }
+
+  &__start {
+    position: absolute;
+    top: 65px;
+    left: 61px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &__point {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+
+    &--1 {
+      top: 49px;
+      left: 94px;
+    }
+
+    &--2 {
+      top: 22px;
+      left: 141px;
+    }
+
+    &--3 {
+      top: 22px;
+      left: 188px;
+    }
+
+    &--4 {
+      top: 22px;
+      left: 235px;
+    }
+
+    &--5 {
+      top: 22px;
+      left: 282px;
+    }
+  }
+
+  &__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    color: $color-text-tertiary;
+    text-align: center;
+    @include typo($font-size-compact, $font-weight-regular, 22px);
+
+    span:last-child {
+      color: $color-text;
+    }
+  }
+
+  &__rates {
+    margin-top: $space-4;
+  }
+
+  &__rate-list {
+    @include flex-column($space-3);
+  }
+
+  &__rate {
+    height: 80px;
+    padding: $space-2 $space-4;
+    border-radius: $radius-lg;
+    background: rgba($night-300, 0.55);
+
+    p {
+      color: $night-800;
+      @include typo($font-size-md, $font-weight-regular, 24px);
+    }
+
+    strong {
+      color: $color-primary-hover;
+      font-weight: $font-weight-semibold;
+    }
+
+    > div {
+      height: 14px;
       margin-top: $space-2;
       overflow: hidden;
       border-radius: $radius-full;
-      background: $night-300;
+      background: $night-0;
 
       span {
         display: block;
         height: 100%;
         border-radius: inherit;
-        background: $color-primary;
-        transition: width $duration-base $easing-standard;
+        background: $color-primary-hover;
+        box-shadow: 0 0 $space-2 rgba($purple-400, 0.48);
       }
     }
   }
 
-  &__list {
-    margin-top: $space-6;
-    @include flex-column($space-3);
+  &__warning {
+    margin: $space-4 0 0 $space-4;
+    color: $red-500;
+    @include typo($font-size-caption, $font-weight-medium, 18px);
+    letter-spacing: 0.01em;
   }
 
-  &__item {
-    display: grid;
-    grid-template-columns: 34px minmax(0, 1fr);
-    gap: $space-3;
-    padding: $space-4;
-    border: 1px solid $color-border;
-    border-radius: $radius-xl;
-    background: rgba($night-300, 0.72);
+  &__disclaimer {
+    margin-top: $space-8;
+    padding: $space-3;
+    border-radius: 22px;
+    color: $color-text-secondary;
+    background: rgba($night-300, 0.55);
+    text-align: center;
+    @include typo($font-size-caption, $font-weight-medium, 18px);
   }
 
-  &__icon {
-    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
-    font-size: 24px;
-  }
+}
 
-  &__copy {
-    h2 {
-      @include typo(15px, $font-weight-semibold, 22px);
-    }
+@include respond-to('sm') {
+  .routine-task {
+    gap: $space-4;
 
-    p {
-      margin-top: 2px;
-      color: $color-text-tertiary;
-      @include typo(12px, $font-weight-medium, 19px);
-    }
-  }
-
-  &__actions,
-  &__timer,
-  &__result {
-    grid-column: 2;
-  }
-
-  &__actions {
-    margin-top: $space-2;
-    @include flex(row, flex-start, center, $space-2);
-
-    button {
-      @include button-reset;
-      padding: 7px 12px;
-      border-radius: $radius-md;
-      background: $color-primary-subtle;
-      color: $color-text-brand;
-      @include typo(12px, $font-weight-semibold, 16px);
-
-      &:last-child {
-        background: rgba(#ffffff, 0.06);
-        color: $color-text-secondary;
-      }
-    }
-  }
-
-  &__timer,
-  &__result {
-    @include button-reset;
-    width: fit-content;
-    margin-top: $space-2;
-    padding: 7px 12px;
-    border-radius: $radius-md;
-    background: $color-primary;
-    @include typo(12px, $font-weight-semibold, 16px);
-  }
-
-  &__result {
-    &--completed {
-      background: rgba($green-400, 0.18);
-      color: $green-400;
-    }
-
-    &--skipped {
-      background: rgba(#ffffff, 0.06);
-      color: $color-text-secondary;
+    &__copy h3 {
+      font-size: $font-size-compact;
     }
   }
 }

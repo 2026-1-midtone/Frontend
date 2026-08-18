@@ -11,6 +11,7 @@ export const PATH = {
   COACHING: '/coaching',
   TRANSITION_GUIDE: '/coaching/transition',
   ROUTINE: '/routine',
+  ROUTINE_STREAK: '/routine/streak',
   SETTINGS: '/settings',
   SETTINGS_PERSONALIZATION: '/settings/personalization',
   SETTINGS_COACHING_ALERTS: '/settings/coaching-alerts',

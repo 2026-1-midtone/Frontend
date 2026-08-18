@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import introDivider from '@/assets/rhythm-coaching/transition-intro-divider.svg'
 import caffeineIcon from '@/assets/rhythm-coaching/transition-caffeine.svg'
 import lightIcon from '@/assets/rhythm-coaching/transition-light.svg'
@@ -10,8 +11,7 @@ import wakeIcon from '@/assets/rhythm-coaching/transition-wake.svg'
 import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
-import AssistantPrompt from './components/AssistantPrompt.jsx'
-import CoachingBottomNavigation from './components/CoachingBottomNavigation.jsx'
+import { PATH } from '@/routes/paths.js'
 import CoachingCard from './components/CoachingCard.jsx'
 import CoachingStatusBar from './components/CoachingStatusBar.jsx'
 import './RhythmCoaching.scss'
@@ -57,6 +57,7 @@ const guideSections = [
 ]
 
 function TransitionGuide() {
+  const navigate = useNavigate()
   const [checkedItems, setCheckedItems] = useState({})
 
   const toggleItem = (itemId) => {
@@ -80,7 +81,7 @@ function TransitionGuide() {
           </h1>
           <p>나이트 → 데이 전환</p>
         </div>
-        <button type="button" aria-label="설정">
+        <button type="button" aria-label="설정" onClick={() => navigate(PATH.SETTINGS)}>
           <img src={settingsIcon} alt="" />
         </button>
       </header>
@@ -136,8 +137,6 @@ function TransitionGuide() {
         </div>
       </div>
 
-      <AssistantPrompt />
-      <CoachingBottomNavigation />
       <span className="rhythm-coaching__home-indicator" aria-hidden="true" />
     </main>
   )

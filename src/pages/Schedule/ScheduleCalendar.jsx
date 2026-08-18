@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
+import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import { PATH } from '../../routes/paths.js'
 import ScheduleAgendaList from './components/ScheduleAgendaList.jsx'
 import ScheduleMonthGrid from './components/ScheduleMonthGrid.jsx'
@@ -63,8 +63,8 @@ const AGENDA_ITEMS = [
 
 function ScheduleCalendar() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
   const [{ year, month }, setCursor] = useState({ year: MOCK_YEAR, month: MOCK_MONTH })
+  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   const handlePrevMonth = () => {
     setCursor(({ year: y, month: m }) => {

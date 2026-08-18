@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
+import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' 
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
 import ToggleRow from './components/ToggleRow.jsx'
@@ -27,12 +27,12 @@ const NAP_COUNT_OPTIONS = [
 
 function PersonalizationSettings() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
   const [caffeineIntake, setCaffeineIntake] = useState('')
   const [sensitivity, setSensitivity] = useState('')
   const [napLength, setNapLength] = useState('')
   const [napCount, setNapCount] = useState('')
+  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   const [alerts, setAlerts] = useState({
     napAlarm: true,
