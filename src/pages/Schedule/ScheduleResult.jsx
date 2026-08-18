@@ -2,11 +2,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
-import scheduleMockPreview from '../../assets/schedule-preview.svg'
+import sparkleIcon from '../../assets/sparkle.svg'
 import { PATH } from '../../routes/paths.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
-import ScheduleResultThumbnail from './components/ScheduleResultThumbnail.jsx'
 import './ScheduleResult.scss'
 
 // 근무유형 선택지. 실제 값은 근무표 정책이 확정되면 상수로 분리해 공유한다.
@@ -14,6 +13,8 @@ const SHIFT_TYPE_OPTIONS = ['데이', '이브닝', '나이트', '오프']
 
 // 실제 OCR 연동 전까지 사용하는 목업 데이터.
 // 전체 스케줄(예: 28일)의 일부만 대표로 담았다 — 통계 수치는 이 목록 길이를 기준으로 계산된다.
+// 캘린더 화면(ScheduleCalendar)의 목업과는 별도 상태라, 여기서 수정해도
+// 캘린더 쪽에는 즉시 반영되지 않는다 (공유 스토어 도입 전까지의 한계).
 const INITIAL_DATES = [
   { id: 'd1', date: '6월 1일 (월)', shiftType: '데이', resolved: true },
   { id: 'd2', date: '6월 2일 (화)', shiftType: '데이', resolved: true },
@@ -40,17 +41,14 @@ function ScheduleResult() {
     )
   }
 
-  // TODO: 실제 재처리 API 연동
-  const handleReprocess = () => {}
+  // TODO: 실제 저장 API 연동. 지금은 캘린더 화면으로 돌아가는 것으로 대신한다.
+  const handleConfirmSave = () => {
+    navigate(PATH.SCHEDULE_CALENDAR)
+  }
 
-  // TODO: 이미지 재업로드 화면/다이얼로그 연동
-  const handleReupload = () => {}
-
-  // TODO: 수동 입력 화면 라우트 연결 (별도 티켓)
-  const handleManualEntry = () => {}
-
-  // TODO: 완료 처리 후 이동할 화면 확정 필요
-  const handleComplete = () => {}
+  const handleBackToCalendar = () => {
+    navigate(PATH.SCHEDULE_CALENDAR)
+  }
 
   const total = dates.length
   const confirmed = dates.filter((item) => item.resolved).length
@@ -65,34 +63,49 @@ function ScheduleResult() {
       />
 
       <div className="schedule-result__card">
-        <h2 className="schedule-result__title">근무표 인식결과 확인</h2>
+        <p className="schedule-result__banner">
+          수정이 필요한 날짜만 선택해 근무 유형을 변경하세요.
+          <br />
+          확인된 날짜는 그대로 유지됩니다.
+        </p>
 
-        <ScheduleResultThumbnail
-          src={scheduleMockPreview}
-          onReprocess={handleReprocess}
-          onReupload={handleReupload}
+        <ScheduleDateList
+          items={dates}
+          shiftTypeOptions={SHIFT_TYPE_OPTIONS}
+          onChange={handleChangeShiftType}
+          title="날짜별 근무 유형 수정"
         />
 
-        <ScheduleResultSummary
-          total={total}
-          confirmed={confirmed}
-          needsReview={needsReview}
-        />
+        <div className="schedule-result__divider" aria-hidden="true">
+          <span className="schedule-result__divider-line" />
+          <img src={sparkleIcon} alt="" width={16} height={16} />
+          <span className="schedule-result__divider-line" />
+        </div>
+
+        <ScheduleResultSummary total={total} confirmed={confirmed} needsReview={needsReview} />
+
+        <p className="schedule-result__caption">
+          언제든지 수정하거나 삭제할 수 있습니다.
+          <br />
+          시프트메이트는 저장된 일정을 참고용으로만 활용합니다.
+        </p>
+
+        <button
+          type="button"
+          className="schedule-result__confirm"
+          onClick={handleConfirmSave}
+        >
+          일정 저장 확정
+        </button>
+
+        <button
+          type="button"
+          className="schedule-result__back"
+          onClick={handleBackToCalendar}
+        >
+          캘린더로 돌아가기
+        </button>
       </div>
-
-      <ScheduleDateList
-        items={dates}
-        shiftTypeOptions={SHIFT_TYPE_OPTIONS}
-        onChange={handleChangeShiftType}
-      />
-
-      <button type="button" className="schedule-result__complete" onClick={handleComplete}>
-        완료
-      </button>
-
-      <button type="button" className="schedule-result__manual" onClick={handleManualEntry}>
-        수동으로 직접 입력하기
-      </button>
 
       <AiAssistantBubble
         message="AI비서한테 물어보세요!"

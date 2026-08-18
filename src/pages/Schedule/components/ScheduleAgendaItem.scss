@@ -1,0 +1,40 @@
+.schedule-agenda-item {
+  @include flex-column($space-1);
+  padding: $space-3 $space-4;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: rgba($night-200, 0.4);
+
+  &__row {
+    @include flex-between;
+    gap: $space-3;
+  }
+
+  &__date {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__tags {
+    @include flex(row, flex-end, center, $space-1);
+    flex-shrink: 0;
+  }
+
+  &__status {
+    @include flex(row, flex-start, center, $space-2);
+    @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    color: $night-700;
+  }
+
+  &__badge {
+    @include flex(row, flex-start, center, $space-1);
+
+    &.is-done {
+      color: $color-success;
+    }
+
+    &.is-warning {
+      color: $color-danger;
+    }
+  }
+}

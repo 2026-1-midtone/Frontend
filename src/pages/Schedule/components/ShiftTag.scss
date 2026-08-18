@@ -1,0 +1,28 @@
+.shift-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+  white-space: nowrap;
+
+  &--off {
+    background-color: rgba($night-1000, 0.12);
+    color: $night-800;
+  }
+
+  &--night {
+    background-color: $purple-600;
+    color: $night-0;
+  }
+
+  &--day {
+    background-color: $blue-400;
+    color: $night-0;
+  }
+
+  &--evening {
+    background-color: $magenta-500;
+    color: $night-0;
+  }
+}

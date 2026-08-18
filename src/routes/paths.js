@@ -6,6 +6,7 @@ export const PATH = {
   DAILY_ROUTINE: '/daily-routine',
   HOME: '/home',
   SCHEDULE: '/schedule',
+  SCHEDULE_CALENDAR: '/schedule/calendar',
   SCHEDULE_RESULT: '/schedule/result',
   COACHING: '/coaching',
   TRANSITION_GUIDE: '/coaching/transition',

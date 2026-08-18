@@ -7,6 +7,7 @@ import Home from '../pages/Home/Home.jsx'
 import NotFound from '../pages/NotFound/NotFound.jsx'
 import Onboarding from '../pages/Onboarding/Onboarding.jsx'
 import Schedule from '../pages/Schedule/Schedule.jsx'
+import ScheduleCalendar from '../pages/Schedule/ScheduleCalendar.jsx'
 import ScheduleResult from '../pages/Schedule/ScheduleResult.jsx'
 import AccountSettings from '../pages/Settings/AccountSettings.jsx'
 import CoachingAlertSettings from '../pages/Settings/CoachingAlertSettings.jsx'
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
         children: [
           { path: PATH.HOME, element: <Home /> },
           { path: PATH.SCHEDULE, element: <Schedule /> },
+          { path: PATH.SCHEDULE_CALENDAR, element: <ScheduleCalendar /> },
           { path: PATH.SCHEDULE_RESULT, element: <ScheduleResult /> },
           
           { path: PATH.ROUTINE_SUMMARY, element: <RoutineSummary /> },
