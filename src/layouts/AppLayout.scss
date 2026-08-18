@@ -4,10 +4,15 @@
 
   &__frame {
     @include app-frame;
-    @include full-screen;
+    height: 100vh;
+    height: 100dvh;
     @include flex-column;
     position: relative;
     overflow-x: hidden;
+    overflow-y: auto;
     background-color: $color-bg;
+    // fixed 자식(AI 비서 플로팅 버튼)이 뷰포트가 아니라 이 프레임 기준으로
+    // 배치되도록 containing block을 만든다.
+    transform: translateZ(0);
   }
 }
