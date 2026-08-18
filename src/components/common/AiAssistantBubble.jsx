@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import characterImage from '../../assets/character.svg'
 import { IconClose } from './icons/index.jsx'
 import './AiAssistantBubble.scss'
@@ -10,6 +11,21 @@ import './AiAssistantBubble.scss'
  * @param {() => void} onOpen 비서 열기
  */
 function AiAssistantBubble({ message, showMessage, onDismissMessage, onOpen }) {
+  // 말풍선이 화면 위치상 다른 콘텐츠(드롭다운, 링크 등)와 겹칠 수 있어
+  // 스크롤을 시작하면 자동으로 닫는다. 마스코트 아이콘만 남아 플로팅을 유지한다.
+  useEffect(() => {
+    if (!showMessage) return undefined
+
+    const scrollContainer = document.querySelector('.app-layout__frame')
+    if (!scrollContainer) return undefined
+
+    scrollContainer.addEventListener('scroll', onDismissMessage, {
+      once: true,
+      passive: true,
+    })
+    return () => scrollContainer.removeEventListener('scroll', onDismissMessage)
+  }, [showMessage, onDismissMessage])
+
   return (
     <div className="ai-assistant">
       {showMessage && (
