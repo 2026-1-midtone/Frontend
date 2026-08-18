@@ -3,10 +3,12 @@ import AppLayout from '../layouts/AppLayout.jsx'
 import TabLayout from '../layouts/TabLayout.jsx'
 import DailyRoutine from '../pages/DailyRoutine/DailyRoutine.jsx'
 import RoutineSummary from '../pages/RoutineSummary/RoutineSummary.jsx'
+import Assistant from '../pages/Assistant/Assistant.jsx'
 import Home from '../pages/Home/Home.jsx'
 import NotFound from '../pages/NotFound/NotFound.jsx'
 import Onboarding from '../pages/Onboarding/Onboarding.jsx'
 import Schedule from '../pages/Schedule/Schedule.jsx'
+import ScheduleCalendar from '../pages/Schedule/ScheduleCalendar.jsx'
 import ScheduleResult from '../pages/Schedule/ScheduleResult.jsx'
 import AccountSettings from '../pages/Settings/AccountSettings.jsx'
 import CoachingAlertSettings from '../pages/Settings/CoachingAlertSettings.jsx'
@@ -23,11 +25,14 @@ export const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, element: <Onboarding /> },
+      // AI 비서 대화 화면 — 하단 탭 없이 전체 화면으로 띄운다.
+      { path: PATH.ASSISTANT, element: <Assistant /> },
       {
         element: <TabLayout />,
         children: [
           { path: PATH.HOME, element: <Home /> },
           { path: PATH.SCHEDULE, element: <Schedule /> },
+          { path: PATH.SCHEDULE_CALENDAR, element: <ScheduleCalendar /> },
           { path: PATH.SCHEDULE_RESULT, element: <ScheduleResult /> },
           
           { path: PATH.ROUTINE_SUMMARY, element: <RoutineSummary /> },

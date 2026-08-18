@@ -1,0 +1,12 @@
+.schedule-agenda-list {
+  @include flex-column($space-3);
+
+  &__title {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__list {
+    @include flex-column($space-3);
+  }
+}

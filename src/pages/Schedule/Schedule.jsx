@@ -23,8 +23,10 @@ function Schedule() {
     setPreviewSrc(scheduleMockPreview)
   }
 
-  const handleGoToResult = () => {
-    navigate(PATH.SCHEDULE_RESULT)
+  // 업로드가 끝나면 두 버튼 모두 캘린더 화면으로 이동한다.
+  // 세부 수정은 캘린더 화면의 "수정하러 가기"에서 이어서 진행한다.
+  const handleGoToCalendar = () => {
+    navigate(PATH.SCHEDULE_CALENDAR)
   }
 
   const isUploaded = Boolean(previewSrc)
@@ -58,11 +60,15 @@ function Schedule() {
               <button
                 type="button"
                 className="schedule__action schedule__action--primary"
-                onClick={handleGoToResult}
+                onClick={handleGoToCalendar}
               >
                 수정하러 가기
               </button>
-              <button type="button" className="schedule__action">
+              <button
+                type="button"
+                className="schedule__action"
+                onClick={handleGoToCalendar}
+              >
                 완료
               </button>
             </div>
@@ -74,6 +80,7 @@ function Schedule() {
         message="AI비서한테 물어보세요!"
         showMessage={showAssistantMessage}
         onDismissMessage={() => setShowAssistantMessage(false)}
+        onOpen={() => navigate(PATH.ASSISTANT)}
       />
     </div>
   )

@@ -6,6 +6,7 @@ export const PATH = {
   DAILY_ROUTINE: '/daily-routine',
   HOME: '/home',
   SCHEDULE: '/schedule',
+  SCHEDULE_CALENDAR: '/schedule/calendar',
   SCHEDULE_RESULT: '/schedule/result',
   COACHING: '/coaching',
   TRANSITION_GUIDE: '/coaching/transition',
@@ -14,4 +15,5 @@ export const PATH = {
   SETTINGS_PERSONALIZATION: '/settings/personalization',
   SETTINGS_COACHING_ALERTS: '/settings/coaching-alerts',
   SETTINGS_ACCOUNT: '/settings/account',
+  ASSISTANT: '/assistant',
 }

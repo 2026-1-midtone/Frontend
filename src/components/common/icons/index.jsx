@@ -256,3 +256,18 @@ export function IconPill({ size = 24, ...rest }) {
     </svg>
   )
 }
+
+/** 근무표 캘린더 - 이전 달 */
+export function IconChevronLeft({ size = 20, ...rest }) {
+  return (
+    <svg {...baseProps} width={size} height={size} {...rest}>
+      <path
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m15 5-7 7 7 7"
+      />
+    </svg>
+  )
+}

@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
+import { PATH } from '../../routes/paths.js'
 import DangerZoneCard from './components/DangerZoneCard.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import './AccountSettings.scss'
@@ -26,6 +28,7 @@ const DELETE_ITEMS = [
 const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관']
 
 function AccountSettings() {
+  const navigate = useNavigate()
   const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
   // TODO: 실제 삭제 확인 모달 + API 연동. 파괴적 동작이라 반드시 확인 단계가 필요하다.
@@ -33,7 +36,11 @@ function AccountSettings() {
 
   return (
     <div className="account-settings">
-      <PageHeader title="계정 설정" subtitle="오늘 하루는 어떤 하루였나요?" />
+      <PageHeader
+        title="계정 설정"
+        subtitle="오늘 하루는 어떤 하루였나요?"
+        onSettingsClick={() => navigate(PATH.SETTINGS)}
+      />
 
       <div className="account-settings__card">
         <ProfileCard
@@ -72,6 +79,7 @@ function AccountSettings() {
         message="AI비서한테 물어보세요!"
         showMessage={showAssistantMessage}
         onDismissMessage={() => setShowAssistantMessage(false)}
+        onOpen={() => navigate(PATH.ASSISTANT)}
       />
     </div>
   )

@@ -1,0 +1,41 @@
+.chat-bubble {
+  @include flex-column($space-2);
+  padding: $space-3 $space-4;
+  border-radius: $radius-lg;
+
+  &__text {
+    @include typo($font-size-sm, $font-weight-regular, $line-height-relaxed);
+    white-space: pre-line;
+  }
+
+  &__highlight {
+    color: $color-text-brand;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__info-row {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+  }
+
+  &__footnote {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-normal);
+    opacity: 0.7;
+  }
+
+  &.is-ai {
+    border-bottom-left-radius: $radius-sm;
+    background-color: $night-200;
+    color: $color-text;
+  }
+
+  &.is-user {
+    border-bottom-right-radius: $radius-sm;
+    background-color: $color-primary;
+    color: $night-0;
+
+    .chat-bubble__highlight {
+      color: $night-0;
+      text-decoration: underline;
+    }
+  }
+}

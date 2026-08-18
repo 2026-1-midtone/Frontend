@@ -1,0 +1,11 @@
+.chat-avatar {
+  @include flex-center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+
+  img {
+    width: 32px;
+    height: auto;
+  }
+}

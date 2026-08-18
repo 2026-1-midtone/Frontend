@@ -1,0 +1,69 @@
+.schedule-month-grid {
+  @include flex-column($space-3);
+
+  &__nav {
+    @include flex(row, center, center, $space-6);
+  }
+
+  &__nav-button {
+    @include button-reset;
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
+    color: $color-text-brand;
+
+    &:hover {
+      background-color: rgba($night-1000, 0.08);
+    }
+  }
+
+  &__label {
+    @include typo($font-size-md, $font-weight-bold, $line-height-tight);
+    color: $color-text;
+    min-width: 3.5em;
+    text-align: center;
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  &__weekday {
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+    color: $color-text-brand;
+    text-align: center;
+  }
+
+  &__weeks {
+    @include flex-column($space-2);
+  }
+
+  &__week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: $space-1;
+  }
+
+  &__cell {
+    @include flex-column($space-1);
+    align-items: center;
+    min-height: 44px;
+    padding-top: $space-1;
+
+    &.is-muted {
+      opacity: 0.32;
+    }
+  }
+
+  &__date {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__tags {
+    @include flex-column($space-1);
+    align-items: center;
+  }
+}

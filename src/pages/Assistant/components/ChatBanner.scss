@@ -1,0 +1,11 @@
+.chat-banner {
+  padding: $space-4 $space-5;
+  border-radius: $radius-lg;
+  background-color: rgba($night-1000, 0.06);
+  text-align: center;
+
+  p {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-relaxed);
+    color: $night-700;
+  }
+}

@@ -1,0 +1,26 @@
+.chat-row {
+  @include flex(row, flex-start, flex-end, $space-2);
+
+  &__avatar-spacer {
+    flex-shrink: 0;
+    width: 36px;
+  }
+
+  &__content {
+    display: flex;
+    min-width: 0;
+    max-width: 78%;
+  }
+
+  &.is-ai {
+    justify-content: flex-start;
+  }
+
+  &.is-user {
+    justify-content: flex-end;
+
+    .chat-row__content {
+      margin-left: auto;
+    }
+  }
+}
