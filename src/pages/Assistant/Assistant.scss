@@ -1,0 +1,35 @@
+.assistant {
+  @include flex-column($space-4);
+  flex: 1;
+  min-height: 0;
+  background-color: $color-bg;
+  background-image: url('../../assets/background.svg');
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% auto;
+
+  &__top {
+    @include flex-column($space-3);
+    padding: $space-4 $layout-gutter 0;
+  }
+
+  &__back {
+    @include button-reset;
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-full;
+    color: $color-text;
+
+    &:hover {
+      background-color: rgba($night-1000, 0.08);
+    }
+  }
+
+  &__messages {
+    @include flex-column($space-3);
+    flex: 1;
+    padding: 0 $layout-gutter;
+    overflow-y: auto;
+  }
+}

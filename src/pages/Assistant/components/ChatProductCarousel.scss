@@ -1,0 +1,45 @@
+.chat-product-carousel {
+  @include flex(row, flex-start, flex-start, $space-2);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &__item {
+    position: relative;
+    flex-shrink: 0;
+    width: 148px;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    scroll-snap-align: start;
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    height: 148px;
+    object-fit: cover;
+  }
+
+  &__cta {
+    @include button-reset;
+    position: absolute;
+    left: $space-2;
+    right: $space-2;
+    bottom: $space-2;
+    padding-block: $space-2;
+    border-radius: $radius-md;
+    background-color: rgba($night-900, 0.85);
+    color: $night-0;
+    text-align: center;
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+    transition: background-color $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: $night-900;
+    }
+  }
+}

@@ -136,6 +136,7 @@ function CoachingAlertSettings() {
         message="AI비서한테 물어보세요!"
         showMessage={showAssistantMessage}
         onDismissMessage={() => setShowAssistantMessage(false)}
+        onOpen={() => navigate(PATH.ASSISTANT)}
       />
     </div>
   )
