@@ -17,7 +17,11 @@ function ScheduleResultSummary({ total, confirmed, needsReview }) {
       </div>
       <div className="schedule-result-summary__row">
         <dt>수정 필요 항목</dt>
-        <dd className="is-accent">{needsReview}개 남음</dd>
+        {needsReview > 0 ? (
+          <dd className="is-accent">{needsReview}개 남음</dd>
+        ) : (
+          <dd className="is-success">해당사항 없음</dd>
+        )}
       </div>
     </dl>
   )

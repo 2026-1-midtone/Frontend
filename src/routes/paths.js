@@ -4,6 +4,7 @@ export const PATH = {
   ONBOARDING: '/',
   HOME: '/home',
   SCHEDULE: '/schedule',
+  SCHEDULE_CALENDAR: '/schedule/calendar',
   SCHEDULE_RESULT: '/schedule/result',
   COACHING: '/coaching',
   ROUTINE: '/routine',
