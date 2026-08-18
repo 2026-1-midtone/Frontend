@@ -1,0 +1,34 @@
+.schedule-calendar {
+  @include flex-column($space-6);
+  flex: 1;
+  padding: $space-4 $layout-gutter $space-16;
+  background-color: $color-bg;
+  background-image: url('../../assets/background.svg');
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% auto;
+
+  &__card {
+    @include flex-column($space-5);
+    padding: $space-5;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-100, 0.85);
+    backdrop-filter: blur(16px);
+  }
+
+  &__edit-button {
+    @include button-reset;
+    padding-block: $space-3;
+    border-radius: $radius-xl;
+    background-color: $night-400;
+    color: $color-text;
+    text-align: center;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    transition: background-color $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: $night-500;
+    }
+  }
+}

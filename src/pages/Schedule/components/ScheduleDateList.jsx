@@ -6,11 +6,12 @@ import './ScheduleDateList.scss'
  * @param {{ id: string, date: string, shiftType: string, resolved: boolean }[]} items
  * @param {string[]} shiftTypeOptions
  * @param {(id: string, value: string) => void} onChange
+ * @param {string} title
  */
-function ScheduleDateList({ items, shiftTypeOptions, onChange }) {
+function ScheduleDateList({ items, shiftTypeOptions, onChange, title = '날짜별 인식 결과' }) {
   return (
     <section className="schedule-date-list">
-      <h2 className="schedule-date-list__title">날짜별 인식 결과</h2>
+      <h2 className="schedule-date-list__title">{title}</h2>
       <ul className="schedule-date-list__list">
         {items.map((item) => (
           <ScheduleDateItem
