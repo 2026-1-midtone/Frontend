@@ -1,12 +1,17 @@
 .app-layout {
   @include full-screen;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background-color: $night-0;
 
   &__frame {
     @include app-frame;
-    @include full-screen;
     @include flex-column;
     position: relative;
+    height: 100%;
+    min-height: 0;
+    overflow-y: hidden;
     overflow-x: hidden;
     background-color: $color-bg;
   }

@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="45.2" height="45.2" viewBox="0 0 45.2 45.2" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame 303">
+<g id="Frame 300">
+<circle id="Ellipse 16" cx="22.6" cy="22.6" r="8" fill="#BE32FF" fill-opacity="0.2"/>
+<circle id="Ellipse 15" cx="22.6" cy="22.6" r="6" fill="#BE32FF" fill-opacity="0.2"/>
+<circle id="Ellipse 14" cx="22.6" cy="22.6" r="4" fill="#BE32FF" fill-opacity="0.8"/>
+</g>
+<g id="Ellipse 17" filter="url(#filter0_f_0_68)">
+<circle cx="22.6" cy="22.6" r="8" fill="#BE32FF" fill-opacity="0.36"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_68" x="0" y="0" width="45.2" height="45.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="7.3" result="effect1_foregroundBlur_0_68"/>
+</filter>
+</defs>
+</svg>

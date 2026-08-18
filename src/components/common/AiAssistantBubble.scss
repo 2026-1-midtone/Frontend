@@ -1,5 +1,7 @@
 .ai-assistant {
-  @include flex(row, flex-end, flex-end, $space-1);
+  @include flex(column, flex-end, flex-end);
+  width: 152px;
+  margin-left: auto;
   pointer-events: none;
 
   > * {
@@ -8,7 +10,7 @@
 
   &__bubble {
     position: relative;
-    margin-bottom: $space-5;
+    margin-bottom: -$space-1;
     padding: $space-2 $space-4;
     border: 1px solid $color-border-strong;
     border-radius: $radius-full;
@@ -51,9 +53,9 @@
       transform: translateY(-2px);
     }
 
-    img {
-      width: 72px;
-      height: auto;
+    .assistant-mascot {
+      width: 122px;
+      height: 95px;
     }
   }
 }

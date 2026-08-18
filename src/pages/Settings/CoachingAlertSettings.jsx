@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
+import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
 import ToggleRow from './components/ToggleRow.jsx'
@@ -15,7 +15,6 @@ const TIME_OPTIONS = Array.from({ length: 24 }, (_, hour) => {
 
 function CoachingAlertSettings() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
 
   const [caffeineCutoffAlarm, setCaffeineCutoffAlarm] = useState(true)
   const [caffeineAlarmTime, setCaffeineAlarmTime] = useState('')
@@ -29,6 +28,7 @@ function CoachingAlertSettings() {
   const [napEnd, setNapEnd] = useState('')
 
   const [nightShiftGuide, setNightShiftGuide] = useState(true)
+  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   // TODO: 실제 저장 API 연동. 지금은 설정 홈으로 돌아가는 것으로 대신한다.
   const handleSave = () => {

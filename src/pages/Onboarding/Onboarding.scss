@@ -15,9 +15,13 @@
   }
 
   &__character {
-    width: 200px;
-    height: auto;
+    width: 227px;
+    height: 218px;
     margin-bottom: $space-8;
+    filter:
+      drop-shadow(0 0 1px rgba($night-1000, 0.8))
+      drop-shadow(0 0 10px rgba($purple-300, 0.46));
+    transform: translateY(13px);
   }
 
   &__tagline {
