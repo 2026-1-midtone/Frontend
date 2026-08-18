@@ -2,7 +2,7 @@
   @include flex-column;
   flex: 1;
   padding-inline: $space-8;
-  background: $gradient-onboarding;
+  background: $night-0;
 
   &__brand {
     @include flex-column($space-2);
@@ -31,9 +31,9 @@
 
   &__title-text {
     @include typo($font-size-3xl, $font-weight-extrabold, $line-height-tight);
-    color: $color-text-brand;
+    color: $color-accent;
     letter-spacing: -0.02em;
-    text-shadow: 0 0 24px rgba($purple-500, 0.55);
+    text-shadow: 0 0 24px rgba($color-accent, 0.55);
   }
 
   &__sparkle {
