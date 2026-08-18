@@ -1,0 +1,57 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 200 200"
+  width="200"
+  height="200"
+  role="img"
+  aria-label="말차 쉐이크 제품 이미지"
+>
+  <defs>
+    <linearGradient id="productBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e9edd8" />
+      <stop offset="100%" stop-color="#c9d4ab" />
+    </linearGradient>
+    <linearGradient id="canBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#5f7a3f" />
+      <stop offset="50%" stop-color="#79974f" />
+      <stop offset="100%" stop-color="#4c6432" />
+    </linearGradient>
+  </defs>
+
+  <rect width="200" height="200" fill="url(#productBg)" />
+
+  <!-- 캔 그림자 -->
+  <ellipse cx="100" cy="172" rx="46" ry="8" fill="#2f3d1f" opacity="0.18" />
+
+  <!-- 캔 본체 -->
+  <rect x="62" y="66" width="76" height="100" rx="10" fill="url(#canBody)" />
+  <rect x="62" y="66" width="76" height="18" rx="9" fill="#3f5429" />
+
+  <!-- 라벨 -->
+  <rect x="70" y="98" width="60" height="40" rx="6" fill="#f3f1e4" opacity="0.92" />
+  <text
+    x="100"
+    y="115"
+    text-anchor="middle"
+    font-family="Pretendard, sans-serif"
+    font-size="11"
+    font-weight="700"
+    fill="#4c6432"
+  >
+    말차
+  </text>
+  <text
+    x="100"
+    y="130"
+    text-anchor="middle"
+    font-family="Pretendard, sans-serif"
+    font-size="10"
+    font-weight="600"
+    fill="#6b8347"
+  >
+    쉐이크
+  </text>
+
+  <!-- 뚜껑 하이라이트 -->
+  <rect x="62" y="66" width="76" height="6" rx="3" fill="#8aab5c" opacity="0.7" />
+</svg>

@@ -12,4 +12,5 @@ export const PATH = {
   SETTINGS_PERSONALIZATION: '/settings/personalization',
   SETTINGS_COACHING_ALERTS: '/settings/coaching-alerts',
   SETTINGS_ACCOUNT: '/settings/account',
+  ASSISTANT: '/assistant',
 }

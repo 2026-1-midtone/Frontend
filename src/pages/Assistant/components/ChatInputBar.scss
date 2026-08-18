@@ -1,0 +1,51 @@
+.chat-input-bar {
+  @include flex-column($space-2);
+  padding: $space-3 $space-5 $space-4;
+
+  &__row {
+    @include flex(row, flex-start, center, $space-3);
+  }
+
+  &__input {
+    flex: 1;
+    padding: $space-3 $space-4;
+    border: none;
+    border-radius: $radius-full;
+    background-color: rgba($night-1000, 0.08);
+    color: $color-text;
+    @include typo($font-size-sm, $font-weight-regular, $line-height-tight);
+
+    &::placeholder {
+      color: $night-600;
+    }
+  }
+
+  &__send {
+    @include button-reset;
+    @include flex-center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-full;
+    background-color: $night-900;
+    color: $night-0;
+    transition:
+      background-color $duration-fast $easing-standard,
+      opacity $duration-fast $easing-standard;
+
+    &:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    &:hover {
+      background-color: $night-1000;
+    }
+  }
+
+  &__disclaimer {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $night-600;
+    text-align: center;
+  }
+}
