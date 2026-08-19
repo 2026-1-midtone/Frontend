@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' 
+import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
+import { ApiError } from '../../lib/apiClient.js'
+import { getPersonalizationSettings, savePersonalizationSettings } from '../../lib/userApi.js'
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
 import ToggleRow from './components/ToggleRow.jsx'
@@ -32,6 +34,7 @@ function PersonalizationSettings() {
   const [sensitivity, setSensitivity] = useState('')
   const [napLength, setNapLength] = useState('')
   const [napCount, setNapCount] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   const [alerts, setAlerts] = useState({
     napAlarm: true,
@@ -39,13 +42,43 @@ function PersonalizationSettings() {
     lightExposureReminder: false,
   })
 
+  useEffect(() => {
+    let isMounted = true
+
+    getPersonalizationSettings()
+      .then((data) => {
+        if (!isMounted) return
+        if (data.caffeineDailyMg != null) setCaffeineIntake(String(data.caffeineDailyMg))
+        if (data.caffeineSensitivity) setSensitivity(data.caffeineSensitivity.toLowerCase())
+        if (data.preferredNapMinutes != null) setNapLength(String(data.preferredNapMinutes))
+        if (data.maxNapsPerDay != null) setNapCount(String(data.maxNapsPerDay))
+      })
+      .catch((error) => {
+        if (!isMounted) return
+        setErrorMessage(error instanceof ApiError ? error.message : '개인화 설정을 불러오지 못했습니다.')
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const handleToggleAlert = (key) => (checked) => {
     setAlerts((prev) => ({ ...prev, [key]: checked }))
   }
 
-  // TODO: 실제 저장 API 연동. 지금은 설정 홈으로 돌아가는 것으로 대신한다.
-  const handleSave = () => {
-    navigate(PATH.SETTINGS)
+  const handleSave = async () => {
+    try {
+      await savePersonalizationSettings({
+        caffeineDailyMg: caffeineIntake ? Number(caffeineIntake) : undefined,
+        caffeineSensitivity: sensitivity ? sensitivity.toUpperCase() : undefined,
+        preferredNapMinutes: Number(napLength),
+        maxNapsPerDay: Number(napCount),
+      })
+      navigate(PATH.SETTINGS)
+    } catch (error) {
+      setErrorMessage(error instanceof ApiError ? error.message : '개인화 설정을 저장하지 못했습니다.')
+    }
   }
 
   const handleCancel = () => {
@@ -57,6 +90,8 @@ function PersonalizationSettings() {
       <PageHeader title="개인화 설정" subtitle="오늘 하루는 어떤 하루였나요?" />
 
       <div className="personalization-settings__card">
+        {errorMessage && <p className="personalization-settings__error">{errorMessage}</p>}
+
         <section className="personalization-settings__section">
           <h2 className="personalization-settings__title">카페인 습관 ☕</h2>
 

@@ -21,6 +21,11 @@
     backdrop-filter: blur(16px);
   }
 
+  &__error {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
+    color: $color-danger;
+  }
+
   &__section {
     @include flex-column($space-1);
   }
