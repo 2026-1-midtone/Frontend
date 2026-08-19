@@ -1,16 +1,32 @@
 .schedule {
   @include flex-column($space-5);
+  position: relative;
+  z-index: 0;
   flex: 1;
+  overflow: hidden;
   padding: $space-4 $layout-gutter $layout-content-bottom-space;
   background-color: $color-bg;
-  background-image:
-    $gradient-page-background-fade,
-    url('../../assets/background.svg');
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-size:
-    100% $layout-background-fade-height,
-    100% $layout-background-fade-height;
+
+  &__hero {
+    position: absolute;
+    z-index: -1;
+    top: -70px;
+    left: -83px;
+    width: 561px;
+    height: 701px;
+    max-width: none;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  &__hero-shade {
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: 701px;
+    background: linear-gradient(180deg, rgba($night-100, 0) 0%, $night-0 100%);
+    pointer-events: none;
+  }
 
   &__card {
     @include flex-column;
