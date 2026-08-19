@@ -1,12 +1,23 @@
 .assistant {
   @include flex-column($space-4);
+  position: relative;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
   background-color: $color-bg;
-  background-image: url('../../assets/background.svg');
+  background-image:
+    url('../../assets/routine-summary/glow-left.svg'),
+    url('../../assets/routine-summary/glow-right.svg'),
+    url('../../assets/routine-summary/glow-bottom.svg');
   background-repeat: no-repeat;
-  background-position: top center;
-  background-size: 100% auto;
+  background-position:
+    left -220px top 80px,
+    right -220px top 260px,
+    center bottom -260px;
+  background-size:
+    460px 460px,
+    420px 420px,
+    520px 520px;
 
   &__top {
     @include flex-column($space-3);
@@ -28,6 +39,7 @@
 
   &__messages {
     @include flex-column($space-3);
+    @include hide-scrollbar;
     flex: 1;
     padding: 0 $layout-gutter;
     overflow-y: auto;

@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
-import AiAssistantBubble from '../components/common/AiAssistantBubble.jsx'
+import { Outlet } from 'react-router-dom'
 import BottomNavigation from '../components/common/BottomNavigation.jsx'
 import calendarIcon from '../assets/routine-summary/calendar-edit.svg'
 import cloverIcon from '../assets/routine-summary/clover-nav.svg'
@@ -39,23 +37,11 @@ const NAV_ITEMS = [
  * 하단 탭 네비게이션이 붙는 화면용 레이아웃.
  */
 function TabLayout() {
-  const { pathname } = useLocation()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
-  const isSettingsPage = pathname === PATH.SETTINGS
-    || pathname.startsWith(`${PATH.SETTINGS}/`)
-
   return (
     <div className="tab-layout">
       <div className="tab-layout__content">
         <Outlet />
       </div>
-      {!isSettingsPage && (
-        <AiAssistantBubble
-          message="AI비서한테 물어보세요!"
-          showMessage={showAssistantMessage}
-          onDismissMessage={() => setShowAssistantMessage(false)}
-        />
-      )}
       <BottomNavigation items={NAV_ITEMS} />
     </div>
   )

@@ -86,7 +86,6 @@ const RHYTHM_COACH_ITEMS = [
 function Home() {
   const navigate = useNavigate()
   const [routines, setRoutines] = useState(INITIAL_ROUTINES)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   const handleToggleRoutine = (id) => {
     setRoutines((prev) =>
@@ -125,12 +124,7 @@ function Home() {
       </div>
 
       <div className="home__bottom">
-        <AiAssistantBubble
-          message="AI비서한테 물어보세요!"
-          showMessage={showAssistantMessage}
-          onDismissMessage={() => setShowAssistantMessage(false)}
-          onOpen={() => navigate(PATH.ASSISTANT)}
-        />
+        <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
 
         <BottomSheet className="home__sheet">
           <TodayRoutineList

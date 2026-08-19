@@ -9,14 +9,15 @@
   background-repeat: no-repeat;
   background-position: top center;
   background-size:
-    100% $layout-background-fade-height,
-    100% auto;
+    100% 100px,
+    100% 100px;
 
   &__card {
     @include flex-column($space-5);
+    margin-inline: -$layout-gutter;
     padding: $space-5;
     border: 1px solid $color-border;
-    border-radius: $radius-lg;
+    border-radius: 0;
     background-color: rgba($night-100, 0.85);
     backdrop-filter: blur(16px);
   }
@@ -32,18 +33,8 @@
   }
 
   &__divider {
-    @include flex(row, center, center, $space-3);
-  }
-
-  &__divider-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      rgba($purple-500, 0) 0%,
-      rgba($purple-500, 0.6) 50%,
-      rgba($purple-500, 0) 100%
-    );
+    width: 100%;
+    height: auto;
   }
 
   &__caption {

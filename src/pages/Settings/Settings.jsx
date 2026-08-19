@@ -21,7 +21,6 @@ const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관', '�
 
 function Settings() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
   const [alerts, setAlerts] = useState({
     napAlarm: true,
     caffeineCutoffAlarm: false,
@@ -101,12 +100,7 @@ function Settings() {
         </footer>
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-        onOpen={() => navigate(PATH.ASSISTANT)}
-      />
+      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

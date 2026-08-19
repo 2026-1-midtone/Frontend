@@ -64,7 +64,6 @@ const AGENDA_ITEMS = [
 function ScheduleCalendar() {
   const navigate = useNavigate()
   const [{ year, month }, setCursor] = useState({ year: MOCK_YEAR, month: MOCK_MONTH })
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   const handlePrevMonth = () => {
     setCursor(({ year: y, month: m }) => {
@@ -118,12 +117,7 @@ function ScheduleCalendar() {
 
       <ScheduleAgendaList items={AGENDA_ITEMS} />
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-        onOpen={() => navigate(PATH.ASSISTANT)}
-      />
+      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

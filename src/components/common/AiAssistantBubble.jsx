@@ -1,56 +1,72 @@
-import { useEffect } from 'react'
+import { useRef, useState } from 'react'
 import AssistantMascot from './AssistantMascot.jsx'
-import { IconClose } from './icons/index.jsx'
 import './AiAssistantBubble.scss'
+
+// 드래그로 간주하기 위한 최소 이동 거리(px). 이보다 작으면 탭(클릭)으로 처리한다.
+const DRAG_THRESHOLD = 6
 
 /**
  * 플로팅 AI 비서 진입점. 하단 탭이 붙는 화면 전반에서 재사용한다.
- * @param {string} message 말풍선 문구
- * @param {boolean} showMessage 말풍선 노출 여부
- * @param {() => void} onDismissMessage 말풍선 닫기
+ * 휴대전화에서 손가락으로 드래그해 위치를 옮길 수 있고, 제자리에서 탭하면 비서 화면으로 이동한다.
  * @param {() => void} onOpen 비서 열기
  */
-function AiAssistantBubble({ message, showMessage, onDismissMessage, onOpen }) {
-  // 말풍선이 화면 위치상 다른 콘텐츠(드롭다운, 링크 등)와 겹칠 수 있어
-  // 스크롤을 시작하면 자동으로 닫는다. 마스코트 아이콘만 남아 플로팅을 유지한다.
-  useEffect(() => {
-    if (!showMessage) return undefined
+function AiAssistantBubble({ onOpen }) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const dragRef = useRef(null)
+  const draggedRef = useRef(false)
 
-    const scrollContainer = document.querySelector('.tab-layout__content')
-    if (!scrollContainer) return undefined
+  const handlePointerDown = (event) => {
+    dragRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: offset.x,
+      originY: offset.y,
+    }
+    draggedRef.current = false
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
 
-    scrollContainer.addEventListener('scroll', onDismissMessage, {
-      once: true,
-      passive: true,
-    })
-    return () => scrollContainer.removeEventListener('scroll', onDismissMessage)
-  }, [showMessage, onDismissMessage])
+  const handlePointerMove = (event) => {
+    const drag = dragRef.current
+    if (!drag) return
+
+    const dx = event.clientX - drag.startX
+    const dy = event.clientY - drag.startY
+
+    if (!draggedRef.current) {
+      if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return
+      draggedRef.current = true
+    }
+
+    setOffset({ x: drag.originX + dx, y: drag.originY + dy })
+  }
+
+  const handlePointerUp = () => {
+    dragRef.current = null
+  }
+
+  const handleClick = () => {
+    if (draggedRef.current) {
+      draggedRef.current = false
+      return
+    }
+    onOpen?.()
+  }
 
   return (
-    <div className="ai-assistant">
-      {showMessage && (
-        <div className="ai-assistant__bubble">
-          <p className="ai-assistant__message">{message}</p>
-          <button
-            type="button"
-            className="ai-assistant__close"
-            onClick={onDismissMessage}
-            aria-label="안내 닫기"
-          >
-            <IconClose size={14} />
-          </button>
-        </div>
-      )}
-
-      <button
-        type="button"
-        className="ai-assistant__trigger"
-        onClick={onOpen}
-        aria-label="AI 비서에게 물어보기"
-      >
-        <AssistantMascot />
-      </button>
-    </div>
+    <button
+      type="button"
+      className="ai-assistant"
+      style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onClick={handleClick}
+      aria-label="AI 비서에게 물어보기"
+    >
+      <AssistantMascot />
+    </button>
   )
 }
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
-import sparkleIcon from '../../assets/sparkle.svg'
+import sectionDividerIcon from '../../assets/rhythm-coaching/transition-section-divider.svg'
 import { PATH } from '../../routes/paths.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
@@ -29,7 +29,6 @@ const INITIAL_DATES = [
 function ScheduleResult() {
   const navigate = useNavigate()
   const [dates, setDates] = useState(INITIAL_DATES)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   // 인식 불확실 항목을 사용자가 직접 고치면 확인 완료로 전환하고,
   // 요약 통계(확인 완료 / 수정 필요)도 함께 갱신되도록 한다.
@@ -78,11 +77,12 @@ function ScheduleResult() {
           title="날짜별 근무 유형 수정"
         />
 
-        <div className="schedule-result__divider" aria-hidden="true">
-          <span className="schedule-result__divider-line" />
-          <img src={sparkleIcon} alt="" width={16} height={16} />
-          <span className="schedule-result__divider-line" />
-        </div>
+        <img
+          className="schedule-result__divider"
+          src={sectionDividerIcon}
+          alt=""
+          aria-hidden="true"
+        />
 
         <ScheduleResultSummary total={total} confirmed={confirmed} needsReview={needsReview} />
 
@@ -109,12 +109,7 @@ function ScheduleResult() {
         </button>
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-        onOpen={() => navigate(PATH.ASSISTANT)}
-      />
+      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

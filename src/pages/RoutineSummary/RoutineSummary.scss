@@ -232,7 +232,7 @@
     padding: 0 $space-6 calc($layout-tabbar-height + $space-16);
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-width: none;
+    @include hide-scrollbar;
     touch-action: pan-y;
     cursor: grab;
     user-select: none;

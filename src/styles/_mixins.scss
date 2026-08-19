@@ -138,3 +138,13 @@
   min-height: 100vh;
   min-height: 100dvh;
 }
+
+// 스크롤 기능은 유지하되 스크롤바만 시각적으로 숨긴다.
+@mixin hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
