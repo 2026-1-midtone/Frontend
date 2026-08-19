@@ -1,56 +1,111 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import sparkleIcon from '../../assets/sparkle.svg'
+import { ApiError } from '../../lib/apiClient.js'
+import { confirmUpload, correctUploadDrafts, getUploadDrafts } from '../../lib/ocrApi.js'
 import { PATH } from '../../routes/paths.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
+import { formatWorkDate, shiftTypeCode, shiftTypeLabel } from './utils/shiftType.js'
 import './ScheduleResult.scss'
 
 // 근무유형 선택지. 실제 값은 근무표 정책이 확정되면 상수로 분리해 공유한다.
 const SHIFT_TYPE_OPTIONS = ['데이', '이브닝', '나이트', '오프']
 
-// 실제 OCR 연동 전까지 사용하는 목업 데이터.
-// 전체 스케줄(예: 28일)의 일부만 대표로 담았다 — 통계 수치는 이 목록 길이를 기준으로 계산된다.
-// 캘린더 화면(ScheduleCalendar)의 목업과는 별도 상태라, 여기서 수정해도
-// 캘린더 쪽에는 즉시 반영되지 않는다 (공유 스토어 도입 전까지의 한계).
-const INITIAL_DATES = [
-  { id: 'd1', date: '6월 1일 (월)', shiftType: '데이', resolved: true },
-  { id: 'd2', date: '6월 2일 (화)', shiftType: '데이', resolved: true },
-  { id: 'd3', date: '6월 3일 (수)', shiftType: '나이트', resolved: false },
-  { id: 'd4', date: '6월 4일 (목)', shiftType: '나이트', resolved: true },
-  { id: 'd5', date: '6월 5일 (금)', shiftType: '오프', resolved: true },
-  { id: 'd6', date: '6월 6일 (토)', shiftType: '오프', resolved: false },
-  { id: 'd7', date: '6월 7일 (일)', shiftType: '이브닝', resolved: true },
-  { id: 'd8', date: '6월 8일 (월)', shiftType: '데이', resolved: false },
-]
+function mapDraftToItem(draft) {
+  return {
+    id: String(draft.draftId),
+    draftId: draft.draftId,
+    date: formatWorkDate(draft.workDate),
+    shiftType: shiftTypeLabel(draft.shiftType),
+    resolved: !draft.isUncertain,
+  }
+}
+
+function errorMessageOf(error, fallback) {
+  return error instanceof ApiError || error instanceof Error ? error.message : fallback
+}
 
 function ScheduleResult() {
   const navigate = useNavigate()
-  const [dates, setDates] = useState(INITIAL_DATES)
+  const location = useLocation()
+  const uploadId = location.state?.uploadId
+
+  const [dates, setDates] = useState([])
+  const [progress, setProgress] = useState({ requiredDays: 0, resolvedDays: 0 })
+  const [isLoading, setIsLoading] = useState(Boolean(uploadId))
+  const [errorMessage, setErrorMessage] = useState('')
+
+  // 업로드된 근무표의 OCR 인식 결과(초안)를 불러온다.
+  useEffect(() => {
+    if (!uploadId) return undefined
+
+    let isMounted = true
+    getUploadDrafts(uploadId)
+      .then((data) => {
+        if (!isMounted) return
+        setDates(data.drafts.map(mapDraftToItem))
+        setProgress(data.progress)
+      })
+      .catch((error) => {
+        if (!isMounted) return
+        setErrorMessage(errorMessageOf(error, '인식 결과를 불러오지 못했습니다.'))
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [uploadId])
 
   // 인식 불확실 항목을 사용자가 직접 고치면 확인 완료로 전환하고,
   // 요약 통계(확인 완료 / 수정 필요)도 함께 갱신되도록 한다.
-  const handleChangeShiftType = (id, value) => {
+  const handleChangeShiftType = async (id, value) => {
     setDates((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, shiftType: value, resolved: true } : item,
       ),
     )
+
+    const draft = dates.find((item) => item.id === id)
+    if (!uploadId || !draft) return
+
+    try {
+      const result = await correctUploadDrafts(uploadId, [
+        { draftId: draft.draftId, shiftType: shiftTypeCode(value) },
+      ])
+      if (result?.progress) setProgress(result.progress)
+    } catch (error) {
+      setErrorMessage(errorMessageOf(error, '보정 내용을 저장하지 못했습니다.'))
+    }
   }
 
-  // TODO: 실제 저장 API 연동. 지금은 캘린더 화면으로 돌아가는 것으로 대신한다.
-  const handleConfirmSave = () => {
-    navigate(PATH.SCHEDULE_CALENDAR)
+  const handleConfirmSave = async () => {
+    if (!uploadId) {
+      navigate(PATH.SCHEDULE_CALENDAR)
+      return
+    }
+
+    try {
+      await confirmUpload(uploadId)
+      navigate(PATH.SCHEDULE_CALENDAR)
+    } catch (error) {
+      setErrorMessage(errorMessageOf(error, '일정을 확정하지 못했습니다.'))
+    }
   }
 
   const handleBackToCalendar = () => {
     navigate(PATH.SCHEDULE_CALENDAR)
   }
 
-  const total = dates.length
-  const confirmed = dates.filter((item) => item.resolved).length
+  const total = uploadId ? progress.requiredDays : dates.length
+  const confirmed = uploadId
+    ? progress.resolvedDays
+    : dates.filter((item) => item.resolved).length
   const needsReview = total - confirmed
 
   return (
@@ -70,12 +125,18 @@ function ScheduleResult() {
           확인된 날짜는 그대로 유지됩니다.
         </p>
 
-        <ScheduleDateList
-          items={dates}
-          shiftTypeOptions={SHIFT_TYPE_OPTIONS}
-          onChange={handleChangeShiftType}
-          title="날짜별 근무 유형 수정"
-        />
+        {errorMessage && <p className="schedule-result__error">{errorMessage}</p>}
+
+        {isLoading ? (
+          <p className="schedule-result__loading">인식 결과를 불러오는 중...</p>
+        ) : (
+          <ScheduleDateList
+            items={dates}
+            shiftTypeOptions={SHIFT_TYPE_OPTIONS}
+            onChange={handleChangeShiftType}
+            title="날짜별 근무 유형 수정"
+          />
+        )}
 
         <div className="schedule-result__divider" aria-hidden="true">
           <span className="schedule-result__divider-line" />

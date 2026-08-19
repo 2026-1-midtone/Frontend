@@ -31,6 +31,18 @@
     color: $night-700;
   }
 
+  &__error {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
+    color: $color-danger;
+  }
+
+  &__loading {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+    color: $night-700;
+    text-align: center;
+    padding-block: $space-4;
+  }
+
   &__divider {
     @include flex(row, center, center, $space-3);
   }

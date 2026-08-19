@@ -35,28 +35,9 @@
     overflow: hidden;
   }
 
-  &__actions {
-    @include flex-column($space-3);
-    padding: $space-5;
-  }
-
-  &__action {
-    @include button-reset;
-    padding-block: $space-3;
-    border-radius: $radius-xl;
-    text-align: center;
-    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
-    color: $night-700;
-    background-color: rgba($night-1000, 0.06);
-    transition: background-color $duration-fast $easing-standard;
-
-    &--primary {
-      color: $color-text;
-      background-color: $night-400;
-    }
-
-    &:hover {
-      background-color: rgba($night-1000, 0.12);
-    }
+  &__error {
+    padding: $space-4 $space-5;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
+    color: $color-danger;
   }
 }

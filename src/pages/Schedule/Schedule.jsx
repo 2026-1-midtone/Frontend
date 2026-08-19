@@ -1,35 +1,63 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import routineHero from '../../assets/routine-summary/routine-hero.png'
-import scheduleMockPreview from '../../assets/schedule-preview.svg'
+import { ApiError } from '../../lib/apiClient.js'
+import { getUploadStatus, uploadScheduleImage } from '../../lib/ocrApi.js'
 import { PATH } from '../../routes/paths.js'
-import ScheduleStats from './components/ScheduleStats.jsx'
 import ScheduleUploadCard from './components/ScheduleUploadCard.jsx'
-import ScheduleWarningBanner from './components/ScheduleWarningBanner.jsx'
 import './Schedule.scss'
 
-// 실제 업로드·OCR 연동 전까지 사용하는 목업 통계.
-const MOCK_STATS = { confirmed: 18, needsReview: 6, total: 28 }
+const POLL_INTERVAL_FALLBACK_MS = 1500
+const MAX_POLL_ATTEMPTS = 30
+
+// OCR 처리가 끝날 때까지 pollingIntervalMs 간격으로 상태를 확인한다.
+async function pollUntilDone(uploadId, intervalMs) {
+  for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, intervalMs))
+    const status = await getUploadStatus(uploadId)
+    if (status.status !== 'PROCESSING') return status
+  }
+  throw new Error('근무표 인식이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.')
+}
 
 function Schedule() {
   const navigate = useNavigate()
   const [previewSrc, setPreviewSrc] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const fileInputRef = useRef(null)
 
-  // TODO: 실제 파일 선택 다이얼로그 + 업로드 API 연동.
-  // 지금은 클릭하면 목업 이미지를 채워 "업로드 후" 상태를 보여준다.
-  const handleUpload = () => {
-    setPreviewSrc(scheduleMockPreview)
+  const handlePickImage = () => {
+    fileInputRef.current?.click()
   }
 
-  // 업로드가 끝나면 두 버튼 모두 캘린더 화면으로 이동한다.
-  // 세부 수정은 캘린더 화면의 "수정하러 가기"에서 이어서 진행한다.
-  const handleGoToCalendar = () => {
-    navigate(PATH.SCHEDULE_CALENDAR)
-  }
+  const handleFileChange = async (event) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
 
-  const isUploaded = Boolean(previewSrc)
+    setErrorMessage('')
+    setIsUploading(true)
+    setPreviewSrc(URL.createObjectURL(file))
+
+    try {
+      const { uploadId, pollingIntervalMs } = await uploadScheduleImage(file)
+      const status = await pollUntilDone(uploadId, pollingIntervalMs || POLL_INTERVAL_FALLBACK_MS)
+
+      if (status.status === 'FAILED') {
+        setErrorMessage(status.failReason || '근무표를 인식하지 못했습니다. 다른 이미지를 업로드해 주세요.')
+        return
+      }
+
+      navigate(PATH.SCHEDULE_RESULT, { state: { uploadId } })
+    } catch (error) {
+      setErrorMessage(error instanceof ApiError || error instanceof Error ? error.message : '업로드에 실패했습니다.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   return (
     <div className="schedule">
@@ -43,40 +71,20 @@ function Schedule() {
       />
 
       <div className="schedule__card">
-        <ScheduleUploadCard previewSrc={previewSrc} onUpload={handleUpload} />
+        <ScheduleUploadCard
+          previewSrc={previewSrc}
+          isUploading={isUploading}
+          onUpload={handlePickImage}
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png,image/jpeg"
+          className="visually-hidden"
+          onChange={handleFileChange}
+        />
 
-        {isUploaded && (
-          <>
-            <ScheduleStats
-              stats={MOCK_STATS}
-              caption="최소 4주(28일) 일정 기준 · 보정 항목을 먼저 확인해 주세요"
-            />
-
-            {MOCK_STATS.needsReview > 0 && (
-              <ScheduleWarningBanner
-                title="인식이 어려운 날짜가 있어요"
-                description="직접 근무유형을 선택해 수정해주세요"
-              />
-            )}
-
-            <div className="schedule__actions">
-              <button
-                type="button"
-                className="schedule__action schedule__action--primary"
-                onClick={handleGoToCalendar}
-              >
-                수정하러 가기
-              </button>
-              <button
-                type="button"
-                className="schedule__action"
-                onClick={handleGoToCalendar}
-              >
-                완료
-              </button>
-            </div>
-          </>
-        )}
+        {errorMessage && <p className="schedule__error">{errorMessage}</p>}
       </div>
 
       <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />

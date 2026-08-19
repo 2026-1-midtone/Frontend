@@ -5,13 +5,13 @@ import './ScheduleUploadCard.scss'
  * 근무표 이미지 업로드 카드.
  *
  * `previewSrc`가 없으면 빈 업로드 상태, 있으면 업로드된 이미지 위에
- * 재업로드 버튼을 겹쳐 보여준다. 실제 파일 선택/전송은 아직 없고
- * 클릭 시 목업 이미지를 채워 넣는 것으로 대신한다.
+ * 재업로드 버튼을 겹쳐 보여준다.
  *
  * @param {string|null} previewSrc
+ * @param {boolean} isUploading 업로드·OCR 처리 중이면 true
  * @param {() => void} onUpload
  */
-function ScheduleUploadCard({ previewSrc, onUpload }) {
+function ScheduleUploadCard({ previewSrc, isUploading = false, onUpload }) {
   const isUploaded = Boolean(previewSrc)
 
   return (
@@ -31,6 +31,7 @@ function ScheduleUploadCard({ previewSrc, onUpload }) {
             : 'schedule-upload__dropzone'
         }
         onClick={onUpload}
+        disabled={isUploading}
         style={
           isUploaded ? { backgroundImage: `url(${previewSrc})` } : undefined
         }
@@ -38,7 +39,9 @@ function ScheduleUploadCard({ previewSrc, onUpload }) {
         <span className="schedule-upload__icon">
           <IconUpload size={26} />
         </span>
-        <span className="schedule-upload__label">이미지 업로드</span>
+        <span className="schedule-upload__label">
+          {isUploading ? '인식 중...' : '이미지 업로드'}
+        </span>
         <span className="schedule-upload__caption">Png, Jpg 업로드가능</span>
       </button>
     </section>
