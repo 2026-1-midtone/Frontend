@@ -1,4 +1,6 @@
-import { Outlet } from 'react-router-dom'
+import { useLayoutEffect, useRef } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import AiAssistantBubble from '../components/common/AiAssistantBubble.jsx'
 import BottomNavigation from '../components/common/BottomNavigation.jsx'
 import calendarIcon from '../assets/routine-summary/calendar-edit.svg'
 import cloverIcon from '../assets/routine-summary/clover-nav.svg'
@@ -37,11 +39,31 @@ const NAV_ITEMS = [
  * 하단 탭 네비게이션이 붙는 화면용 레이아웃.
  */
 function TabLayout() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const contentRef = useRef(null)
+  const isSettingsRoute = location.pathname.startsWith(PATH.SETTINGS)
+
+  useLayoutEffect(() => {
+    const content = contentRef.current
+
+    if (!content) return
+
+    content.scrollTop = 0
+    content.scrollLeft = 0
+  }, [location.pathname])
+
   return (
     <div className="tab-layout">
-      <div className="tab-layout__content">
+      <div ref={contentRef} className="tab-layout__content">
         <Outlet />
       </div>
+      {!isSettingsRoute && (
+        <AiAssistantBubble
+          key={location.pathname}
+          onOpen={() => navigate(PATH.ASSISTANT)}
+        />
+      )}
       <BottomNavigation items={NAV_ITEMS} />
     </div>
   )

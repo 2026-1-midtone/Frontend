@@ -1,11 +1,84 @@
 .ai-assistant {
-  @include button-reset;
-  @include flex-center;
-  touch-action: none;
+  position: relative;
+  @include flex-column;
+  align-items: flex-end;
+  width: 152px;
   filter: drop-shadow(0 6px 16px rgba($purple-500, 0.5));
 
-  .assistant-mascot {
-    width: 122px;
-    height: 95px;
+  &__message {
+    @include button-reset;
+
+    position: relative;
+    width: 152px;
+    height: 35px;
+    overflow: visible;
+    color: $color-text;
+
+    > img {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 153px;
+      height: 43px;
+      max-width: none;
+    }
+
+    > span {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      left: 15px;
+      display: flex;
+      align-items: center;
+      width: 122px;
+      height: 29px;
+      white-space: nowrap;
+      @include typo($font-size-xs, $font-weight-semibold, 16px);
+      letter-spacing: 0.02em;
+    }
+  }
+
+  &__close {
+    @include button-reset;
+    @include flex-center;
+
+    position: absolute;
+    z-index: 2;
+    top: -9px;
+    right: 1px;
+    width: 24px;
+    height: 23px;
+    border-radius: $radius-full;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__mascot {
+    @include button-reset;
+
+    width: 98px;
+    height: 76px;
+    margin-top: -2px;
+    margin-right: 7px;
+    overflow: visible;
+
+    .assistant-mascot {
+      width: 122px;
+      height: 95px;
+      transform: scale(0.8);
+      transform-origin: top left;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+      border-radius: $radius-xl;
+    }
   }
 }

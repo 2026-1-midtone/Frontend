@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
 import ToggleRow from './components/ToggleRow.jsx'
@@ -131,9 +130,6 @@ function CoachingAlertSettings() {
         </button>
       </div>
 
-      <AiAssistantBubble
-        onOpen={() => navigate(PATH.ASSISTANT)}
-      />
     </div>
   )
 }

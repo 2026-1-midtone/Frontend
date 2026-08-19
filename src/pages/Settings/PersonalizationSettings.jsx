@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' 
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
 import ToggleRow from './components/ToggleRow.jsx'
@@ -146,7 +145,6 @@ function PersonalizationSettings() {
         </div>
       </div>
 
-      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import { PATH } from '../../routes/paths.js'
 import ScheduleAgendaList from './components/ScheduleAgendaList.jsx'
@@ -121,7 +120,6 @@ function ScheduleCalendar() {
 
       <ScheduleAgendaList items={AGENDA_ITEMS} />
 
-      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

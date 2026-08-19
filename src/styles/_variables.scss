@@ -105,6 +105,18 @@ $gradient-page-background-fade: linear-gradient(
   $color-bg 100%
 );
 
+$gradient-page-sheet-glow:
+  radial-gradient(
+    120% 42% at 0% 34%,
+    rgba($purple-700, 0.14) 0%,
+    rgba($purple-700, 0) 72%
+  ),
+  radial-gradient(
+    110% 38% at 100% 72%,
+    rgba($purple-600, 0.12) 0%,
+    rgba($purple-600, 0) 74%
+  );
+
 // -------------------------------------------------------------
 // Typography
 // -------------------------------------------------------------
@@ -129,6 +141,7 @@ $font-size-xl: 1.25rem; // 20px
 $font-size-2xl: 1.5rem; // 24px
 $font-size-3xl: 2rem; // 32px
 $font-size-4xl: 2.5rem; // 40px
+$font-size-page-title: 1.375rem; // 22px, 피그마 Text/H2
 
 $font-weight-regular: 400;
 $font-weight-medium: 500;
@@ -139,6 +152,8 @@ $font-weight-extrabold: 800;
 $line-height-tight: 1.25;
 $line-height-normal: 1.5;
 $line-height-relaxed: 1.7;
+$line-height-page-title: 1.875rem; // 30px
+$line-height-page-subtitle: 1.625rem; // 26px
 
 // -------------------------------------------------------------
 // Spacing (4px 기반 스케일)
@@ -176,7 +191,19 @@ $glow-primary: 0 0 48px rgba($purple-500, 0.45);
 // -------------------------------------------------------------
 // 앱 기준 폭. 데스크톱에서도 이 폭으로 중앙 정렬하고 양옆은 배경만 노출한다.
 $layout-app-width: 393px;
+$layout-app-radius: $radius-lg;
 $layout-gutter: $space-5;
+$layout-page-hero-width: 561px;
+$layout-page-hero-height: 736px;
+$layout-page-hero-top: -5px;
+$layout-page-hero-left: -83px;
+$layout-page-hero-fade-height: 532px;
+$layout-page-hero-short-fade-height: 218px;
+$layout-page-header-top-space: 31px;
+$layout-settings-header-top-space: $space-4;
+$layout-page-sheet-top: 115px;
+$layout-quick-menu-inline-space: $space-6;
+$layout-quick-menu-gap: 18px;
 $layout-header-height: 56px;
 $layout-tabbar-height: 102px;
 $layout-tabbar-control-height: 57px;

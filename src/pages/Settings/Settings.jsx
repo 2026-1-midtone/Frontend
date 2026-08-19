@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import NavRow from '../../components/common/NavRow.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
 import { PATH } from '../../routes/paths.js'
 import ProfileCard from './components/ProfileCard.jsx'
@@ -100,7 +99,6 @@ function Settings() {
         </footer>
       </div>
 
-      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

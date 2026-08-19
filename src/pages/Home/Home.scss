@@ -2,17 +2,27 @@
   @include flex-column;
   position: relative;
   z-index: 0;
-  flex: 1;
-  overflow: hidden;
+  isolation: isolate;
+  flex: 0 0 auto;
+  min-height: 100%;
+  overflow: visible;
   background-color: $color-bg;
+
+  &__backdrop {
+    position: sticky;
+    z-index: 0;
+    top: 0;
+    height: 0;
+    pointer-events: none;
+  }
 
   &__hero {
     position: absolute;
-    z-index: -1;
-    top: -70px;
-    left: -83px;
-    width: 561px;
-    height: 701px;
+    z-index: 0;
+    top: $layout-page-hero-top;
+    left: $layout-page-hero-left;
+    width: $layout-page-hero-width;
+    height: $layout-page-hero-height;
     max-width: none;
     object-fit: cover;
     pointer-events: none;
@@ -20,15 +30,22 @@
 
   &__hero-shade {
     position: absolute;
-    z-index: -1;
-    inset: 0 0 auto;
-    height: 701px;
+    z-index: 1;
+    top: $layout-page-hero-top;
+    left: 0;
+    width: $layout-app-width;
+    height: $layout-page-hero-fade-height;
     background: linear-gradient(180deg, rgba($night-100, 0) 0%, $night-0 100%);
     pointer-events: none;
   }
 
   &__top {
     @include flex-column;
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    flex: 0 0 495px;
+    min-height: 495px;
     padding: $space-4 $layout-gutter 0;
   }
 
@@ -44,7 +61,8 @@
 
   &__bottom {
     position: relative;
-    margin-top: auto;
+    z-index: 2;
+    margin-top: 0;
   }
 
   &__sheet {

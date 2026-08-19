@@ -14,7 +14,7 @@ function SettingsButton({ onClick, className = '' }) {
       onClick={onClick}
       aria-label="설정"
     >
-      <img src={settingsIcon} alt="" width={26} height={26} />
+      <img src={settingsIcon} alt="" width={34} height={34} />
     </button>
   )
 }
