@@ -50,6 +50,13 @@
     padding-bottom: $space-12;
   }
 
+  &__error {
+    margin-bottom: $space-3;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
+    color: $color-danger;
+    text-align: center;
+  }
+
   &__login {
     @include button-reset;
     display: block;
@@ -70,6 +77,11 @@
 
     &:active {
       transform: scale(0.985);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      pointer-events: none;
     }
   }
 }
