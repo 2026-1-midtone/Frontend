@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { deleteMyAccount, getMyProfile } from '@/api/settingsApi.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
 import { PATH } from '../../routes/paths.js'
+import { clearSession } from '../../lib/session.js'
 import DangerZoneCard from './components/DangerZoneCard.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import './AccountSettings.scss'
@@ -27,9 +30,37 @@ const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관']
 
 function AccountSettings() {
   const navigate = useNavigate()
+  const [profile, setProfile] = useState(MOCK_PROFILE)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  // TODO: 실제 삭제 확인 모달 + API 연동. 파괴적 동작이라 반드시 확인 단계가 필요하다.
-  const handleDeleteAllData = () => {}
+  useEffect(() => {
+    const controller = new AbortController()
+
+    getMyProfile({ signal: controller.signal })
+      .then((data) => setProfile({
+        avatarSrc: data.profileImageUrl || avatarPlaceholder,
+        name: data.nickname,
+        nameSuffix: '(님)',
+        email: data.email,
+        joinedAt: data.createdAt?.slice(0, 10),
+      }))
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [])
+
+  const handleDeleteAllData = async () => {
+    const confirmed = window.confirm('계정과 모든 데이터를 삭제할까요? 이 작업은 되돌릴 수 없습니다.')
+    if (!confirmed) return
+
+    try {
+      await deleteMyAccount()
+      clearSession()
+      navigate(PATH.ONBOARDING)
+    } catch (error) {
+      setErrorMessage(error.message)
+    }
+  }
 
   return (
     <div className="account-settings">
@@ -41,13 +72,15 @@ function AccountSettings() {
 
       <div className="account-settings__card">
         <ProfileCard
-          avatarSrc={MOCK_PROFILE.avatarSrc}
-          name={MOCK_PROFILE.name}
-          nameSuffix={MOCK_PROFILE.nameSuffix}
-          email={MOCK_PROFILE.email}
-          joinedAt={MOCK_PROFILE.joinedAt}
+          avatarSrc={profile.avatarSrc}
+          name={profile.name}
+          nameSuffix={profile.nameSuffix}
+          email={profile.email}
+          joinedAt={profile.joinedAt}
           readOnly
         />
+
+        {errorMessage && <p className="account-settings__error" role="alert">{errorMessage}</p>}
 
         <div className="account-settings__divider" aria-hidden="true" />
 

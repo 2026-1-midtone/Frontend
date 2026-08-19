@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getTransitionGuide } from '@/api/coachingApi.js'
 import introDivider from '@/assets/rhythm-coaching/transition-intro-divider.svg'
 import caffeineIcon from '@/assets/rhythm-coaching/transition-caffeine.svg'
 import lightIcon from '@/assets/rhythm-coaching/transition-light.svg'
@@ -12,6 +13,12 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
+import {
+  formatCoachingCategory,
+  formatDateTimeRange,
+  formatShiftType,
+  toDateString,
+} from '@/lib/formatApiData.js'
 import CoachingCard from './components/CoachingCard.jsx'
 import './RhythmCoaching.scss'
 
@@ -22,7 +29,7 @@ const checklistItems = [
   { id: 'snack', label: '야식 대신 가벼운 간식으로 대체' },
 ]
 
-const guideSections = [
+const initialGuideSections = [
   {
     id: 'before',
     title: '전날',
@@ -57,7 +64,55 @@ const guideSections = [
 
 function TransitionGuide() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [checkedItems, setCheckedItems] = useState({})
+  const [guide, setGuide] = useState(null)
+  const [guideSections, setGuideSections] = useState(initialGuideSections)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    const controller = new AbortController()
+    const date = new URLSearchParams(location.search).get('date') ?? toDateString()
+    setErrorMessage('')
+    const iconByCategory = {
+      SLEEP: sleepIcon,
+      CAFFEINE: caffeineIcon,
+      CAFFEINE_CUTOFF: caffeineIcon,
+      LIGHT: lightIcon,
+      LIGHT_EXPOSURE: lightIcon,
+      MEAL: mealIcon,
+      NAP: napIcon,
+      WAKE: wakeIcon,
+    }
+
+    getTransitionGuide(date, { signal: controller.signal })
+      .then((data) => {
+        setGuide(data)
+        setGuideSections(data.phases.map((phase) => ({
+          id: phase.phase,
+          title: phase.label,
+          cards: phase.steps.map((step) => ({
+            id: step.stepId,
+            icon: iconByCategory[step.category] ?? lightIcon,
+            title: step.title ?? formatCoachingCategory(step.category),
+            timing: formatDateTimeRange(step.windowStart, step.windowEnd),
+            description: step.actionText
+              ?? step.action
+              ?? step.description
+              ?? '권장 시간에 맞춰 실행해 주세요.',
+          })),
+        })))
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') return
+
+        setGuide(null)
+        setGuideSections([])
+        setErrorMessage(error.message ?? '전환일 가이드를 불러오지 못했습니다.')
+      })
+
+    return () => controller.abort()
+  }, [location.search])
 
   const toggleItem = (itemId) => {
     setCheckedItems((current) => ({
@@ -77,7 +132,9 @@ function TransitionGuide() {
             전환일 안내
             <img src={sparkleIcon} alt="" aria-hidden="true" />
           </h1>
-          <p>나이트 → 데이 전환</p>
+          <p>{guide
+            ? `${formatShiftType(guide.fromShiftType)} → ${formatShiftType(guide.toShiftType)} 전환`
+            : '나이트 → 데이 전환'}</p>
         </div>
         <button type="button" aria-label="설정" onClick={() => navigate(PATH.SETTINGS)}>
           <img src={settingsIcon} alt="" />
@@ -106,9 +163,11 @@ function TransitionGuide() {
           <img className="transition-guide__divider" src={introDivider} alt="" aria-hidden="true" />
 
           <p className="rhythm-coaching__notice transition-guide__notice">
-            나이트 근무 종료 후 데이 근무 복귀까지
+            {errorMessage || guide?.description || '나이트 근무 종료 후 데이 근무 복귀까지'}
             <br />
-            72시간 적응 가이드입니다. 각 단계를 순서대로 따라 주세요.
+            {errorMessage
+              ? '전환일 날짜를 확인한 뒤 다시 시도해 주세요.'
+              : '각 단계를 순서대로 따라 주세요.'}
           </p>
 
           <div className="transition-guide__sections">
@@ -116,8 +175,11 @@ function TransitionGuide() {
               <section className="transition-guide__section" key={section.id}>
                 <h2>{section.title}</h2>
                 <div className="rhythm-coaching__cards">
-                  {section.cards.map((card) => (
-                    <CoachingCard key={`${section.id}-${card.title}`} {...card} />
+                  {section.cards.map((card, cardIndex) => (
+                    <CoachingCard
+                      key={`${section.id}-${card.id ?? cardIndex}`}
+                      {...card}
+                    />
                   ))}
                 </div>
                 {index < guideSections.length - 1 && (
@@ -128,7 +190,7 @@ function TransitionGuide() {
           </div>
 
           <p className="rhythm-coaching__disclaimer">
-            이 가이드는 일반적인 참고 정보입니다. 개인 건강 상태에 따라 다를 수 있으며,
+            {guide?.disclaimer ?? '이 가이드는 일반적인 참고 정보입니다. 개인 건강 상태에 따라 다를 수 있으며,'}
             <br />
             이상 증상 발생 시 전문가 상담을 권장합니다.
           </p>

@@ -8,7 +8,7 @@ import './ChatInputBar.scss'
  * @param {() => void} onSend
  * @param {string} disclaimer
  */
-function ChatInputBar({ value, onChange, onSend, disclaimer }) {
+function ChatInputBar({ value, onChange, onSend, disclaimer, maxLength = 500 }) {
   const handleSubmit = (event) => {
     event.preventDefault()
     if (value.trim()) {
@@ -24,6 +24,7 @@ function ChatInputBar({ value, onChange, onSend, disclaimer }) {
           className="chat-input-bar__input"
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          maxLength={maxLength}
           placeholder="궁금한 점을 물어보세요"
           aria-label="AI 비서에게 질문 입력"
         />

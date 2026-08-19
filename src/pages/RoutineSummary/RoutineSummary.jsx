@@ -1,5 +1,6 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getDailyRoutineSummary, getTodayRoutines } from '@/api/routineApi.js'
 import cloverSectionIcon from '@/assets/routine-summary/clover-section.svg'
 import glowBottom from '@/assets/routine-summary/glow-bottom.svg'
 import glowLeft from '@/assets/routine-summary/glow-left.svg'
@@ -10,21 +11,49 @@ import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
 import './RoutineSummary.scss'
 
-const routines = [
-  { id: 1, completed: false },
-  { id: 2, completed: false },
-  { id: 3, completed: true },
-  { id: 4, completed: false },
-  { id: 5, completed: false },
+const initialRoutines = [
+  { id: 1, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
+  { id: 2, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
+  { id: 3, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: true },
+  { id: 4, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
+  { id: 5, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
 ]
 
 function RoutineSummary() {
   const navigate = useNavigate()
+  const [routines, setRoutines] = useState(initialRoutines)
+  const [summary, setSummary] = useState(null)
   const routineListDrag = useRef({
     active: false,
     startY: 0,
     scrollTop: 0,
   })
+
+  useEffect(() => {
+    const controller = new AbortController()
+    const options = { signal: controller.signal }
+
+    Promise.allSettled([
+      getTodayRoutines(undefined, options),
+      getDailyRoutineSummary(undefined, options),
+    ]).then(([routineResult, summaryResult]) => {
+      if (routineResult.status === 'fulfilled') {
+        setRoutines(routineResult.value.tasks.map((task) => ({
+          id: task.taskId,
+          title: task.title,
+          detail: task.tip || '권장 시간에 맞춰 실행해 보세요.',
+          completed: task.status === 'DONE',
+          skipped: task.status === 'SKIPPED',
+        })))
+      }
+
+      if (summaryResult.status === 'fulfilled') setSummary(summaryResult.value)
+    })
+
+    return () => controller.abort()
+  }, [])
+
+  const completionRate = Math.round((summary?.completionRate ?? 0.3) * 100)
 
   const handleListPointerDown = (event) => {
     if (event.pointerType !== 'mouse') return
@@ -87,16 +116,16 @@ function RoutineSummary() {
         aria-label="오늘의 루틴 현황"
       >
         <p>
-          오늘의 루틴 현황 - <strong>30% 완료</strong>
+          오늘의 루틴 현황 - <strong>{completionRate}% 완료</strong>
         </p>
         <div
           className="routine-summary__progress-track"
           role="progressbar"
           aria-valuemin="0"
           aria-valuemax="100"
-          aria-valuenow="30"
+          aria-valuenow={completionRate}
         >
-          <span />
+          <span style={{ width: `${completionRate}%` }} />
         </div>
       </section>
 
@@ -126,11 +155,11 @@ function RoutineSummary() {
             <li className="routine-summary__routine" key={routine.id}>
               <span className="routine-summary__emoji" aria-hidden="true">☕</span>
               <div className="routine-summary__routine-copy">
-                <h3>카페인 컷오프 준수</h3>
-                <p>14:00 이전 마지막 카페인 섭취 권장</p>
+                <h3>{routine.title}</h3>
+                <p>{routine.detail}</p>
               </div>
               <span className="routine-summary__routine-status">
-                {routine.completed ? '완료' : '미실행'}
+                {routine.completed ? '완료' : routine.skipped ? '건너뜀' : '미실행'}
               </span>
             </li>
           ))}

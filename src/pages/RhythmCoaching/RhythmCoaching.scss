@@ -298,6 +298,14 @@
   border-radius: 22px;
   background: rgba($night-300, 0.2);
 
+  &[role='button'] {
+    cursor: pointer;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
   &__icon {
     @include flex-center;
 

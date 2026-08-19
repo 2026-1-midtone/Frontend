@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getTodayRoutines, updateRoutineTask } from '@/api/routineApi.js'
 import divider from '@/assets/daily-routine/divider.svg'
 import glowBottom from '@/assets/routine-summary/glow-bottom.svg'
 import glowLeft from '@/assets/routine-summary/glow-left.svg'
@@ -8,6 +9,7 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
+import { formatTimeRange } from '@/lib/formatApiData.js'
 import RoutineTaskCard from './components/RoutineTaskCard.jsx'
 import RoutineTipModal from './components/RoutineTipModal.jsx'
 import './DailyRoutine.scss'
@@ -95,28 +97,81 @@ function DailyRoutine() {
   const [tasks, setTasks] = useState(initialTasks)
   const [activeTip, setActiveTip] = useState(null)
 
-  const progress = useMemo(() => {
-    const actionableCompleted = tasks
-      .filter((task) => task.group !== 'completed' && task.completed)
-      .length
+  useEffect(() => {
+    const controller = new AbortController()
 
-    return Math.min(100, Math.max(0, 30 + (actionableCompleted - 1) * 10))
+    getTodayRoutines(undefined, { signal: controller.signal })
+      .then((data) => {
+        const tipByCategory = {
+          LIGHT: 'light',
+          CAFFEINE_CUTOFF: 'caffeine',
+          NAP: 'nap',
+        }
+
+        setTasks(data.tasks.map((task) => ({
+          id: task.taskId,
+          group: task.status === 'DONE'
+            ? 'completed'
+            : task.sourceType === 'COACHING'
+              ? 'suggested'
+              : 'remaining',
+          title: task.title,
+          time: formatTimeRange(task.windowStart, task.windowEnd) || '권장 시간 확인',
+          tip: tipByCategory[task.category],
+          skippable: task.status !== 'DONE',
+          completed: task.status === 'DONE',
+          status: task.status === 'SKIPPED' ? 'skipped' : undefined,
+        })))
+      })
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [])
+
+  const progress = useMemo(() => {
+    if (tasks.length === 0) return 0
+
+    const completedCount = tasks.filter((task) => task.completed).length
+    return Math.round((completedCount / tasks.length) * 100)
   }, [tasks])
 
-  const toggleTask = (taskId) => {
+  const toggleTask = async (taskId) => {
+    const previous = tasks
+    const selected = tasks.find((task) => task.id === taskId)
+
     setTasks((current) => current.map((task) => (
       task.id === taskId
         ? { ...task, completed: !task.completed, status: undefined }
         : task
     )))
+
+    if (typeof taskId !== 'number') return
+
+    try {
+      await updateRoutineTask(taskId, selected?.completed ? 'PENDING' : 'DONE')
+    } catch {
+      setTasks(previous)
+    }
   }
 
-  const toggleSkip = (taskId) => {
+  const toggleSkip = async (taskId) => {
+    const previous = tasks
+    const selected = tasks.find((task) => task.id === taskId)
+    const nextStatus = selected?.status === 'skipped' ? 'PENDING' : 'SKIPPED'
+
     setTasks((current) => current.map((task) => (
       task.id === taskId
         ? { ...task, completed: false, status: task.status === 'skipped' ? undefined : 'skipped' }
         : task
     )))
+
+    if (typeof taskId !== 'number') return
+
+    try {
+      await updateRoutineTask(taskId, nextStatus)
+    } catch {
+      setTasks(previous)
+    }
   }
 
   return (

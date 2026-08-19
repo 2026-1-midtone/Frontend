@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconCamera } from '../../../components/common/icons/index.jsx'
 import './ProfileCard.scss'
 
@@ -22,9 +22,19 @@ function ProfileCard({
   email,
   joinedAt,
   readOnly = false,
+  onSave,
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [name, setName] = useState(initialName)
+
+  useEffect(() => {
+    setName(initialName)
+  }, [initialName])
+
+  const handleEdit = async () => {
+    if (isEditing) await onSave?.(name)
+    setIsEditing((prev) => !prev)
+  }
 
   return (
     <div className="profile-card">
@@ -64,7 +74,7 @@ function ProfileCard({
               ? 'profile-card__edit-button is-editing'
               : 'profile-card__edit-button'
           }
-          onClick={() => setIsEditing((prev) => !prev)}
+          onClick={handleEdit}
         >
           {isEditing ? '수정완료' : '수정하기'}
         </button>

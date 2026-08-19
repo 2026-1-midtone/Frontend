@@ -17,6 +17,17 @@
     @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
   }
 
+  &__contacts {
+    @include flex-column($space-1);
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
   &__footnote {
     @include typo($font-size-xs, $font-weight-regular, $line-height-normal);
     opacity: 0.7;

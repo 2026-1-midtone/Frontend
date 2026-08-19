@@ -1,8 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getShifts } from '@/api/scheduleApi.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import { PATH } from '../../routes/paths.js'
+import {
+  formatDate,
+  formatShiftType,
+  getMonthRange,
+} from '../../lib/formatApiData.js'
 import ScheduleAgendaList from './components/ScheduleAgendaList.jsx'
 import ScheduleMonthGrid from './components/ScheduleMonthGrid.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
@@ -64,6 +70,42 @@ const AGENDA_ITEMS = [
 function ScheduleCalendar() {
   const navigate = useNavigate()
   const [{ year, month }, setCursor] = useState({ year: MOCK_YEAR, month: MOCK_MONTH })
+  const [shifts, setShifts] = useState(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    const { from, to } = getMonthRange(year, month)
+
+    getShifts(from, to, { signal: controller.signal })
+      .then((data) => setShifts(data.shifts))
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [month, year])
+
+  const shiftsByDate = useMemo(() => {
+    if (!shifts) return SHIFTS_BY_DATE
+
+    return shifts.reduce((result, shift) => ({
+      ...result,
+      [shift.workDate]: [
+        ...(result[shift.workDate] ?? []),
+        formatShiftType(shift.shiftType),
+      ],
+    }), {})
+  }, [shifts])
+
+  const agendaItems = useMemo(() => {
+    if (!shifts) return AGENDA_ITEMS
+
+    return shifts.map((shift) => ({
+      id: shift.shiftId,
+      date: formatDate(shift.workDate),
+      checkInTime: shift.startTime ? `${shift.startTime} 출근` : null,
+      tags: [formatShiftType(shift.shiftType)],
+      resolved: shift.confirmed,
+    }))
+  }, [shifts])
 
   const handlePrevMonth = () => {
     setCursor(({ year: y, month: m }) => {
@@ -83,8 +125,8 @@ function ScheduleCalendar() {
     navigate(PATH.SCHEDULE_RESULT)
   }
 
-  const total = AGENDA_ITEMS.length
-  const confirmed = AGENDA_ITEMS.filter((item) => item.resolved).length
+  const total = agendaItems.length
+  const confirmed = agendaItems.filter((item) => item.resolved).length
   const needsReview = total - confirmed
 
   return (
@@ -114,11 +156,11 @@ function ScheduleCalendar() {
           month={month}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
-          shiftsByDate={SHIFTS_BY_DATE}
+          shiftsByDate={shiftsByDate}
         />
       </div>
 
-      <ScheduleAgendaList items={AGENDA_ITEMS} />
+      <ScheduleAgendaList items={agendaItems} />
 
     </div>
   )

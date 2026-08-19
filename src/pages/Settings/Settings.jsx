@@ -1,5 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  getMyProfile,
+  getNotificationSettings,
+  saveNotificationSettings,
+  updateMyProfile,
+} from '@/api/settingsApi.js'
 import NavRow from '../../components/common/NavRow.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
@@ -20,14 +26,68 @@ const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관', '�
 
 function Settings() {
   const navigate = useNavigate()
+  const [profile, setProfile] = useState(MOCK_PROFILE)
+  const [errorMessage, setErrorMessage] = useState('')
   const [alerts, setAlerts] = useState({
     napAlarm: true,
     caffeineCutoffAlarm: false,
     lightExposureReminder: false,
   })
 
+  useEffect(() => {
+    const controller = new AbortController()
+    const options = { signal: controller.signal }
+
+    Promise.allSettled([
+      getMyProfile(options),
+      getNotificationSettings(options),
+    ]).then(([profileResult, notificationResult]) => {
+      if (profileResult.status === 'fulfilled') {
+        setProfile({
+          avatarSrc: profileResult.value.profileImageUrl || avatarPlaceholder,
+          name: profileResult.value.nickname,
+          nameSuffix: '(님)',
+          email: profileResult.value.email,
+        })
+      }
+
+      if (notificationResult.status === 'fulfilled') {
+        const byType = Object.fromEntries(
+          notificationResult.value.settings.map((item) => [item.type, item.enabled]),
+        )
+        setAlerts({
+          napAlarm: Boolean(byType.NAP),
+          caffeineCutoffAlarm: Boolean(byType.CAFFEINE_CUTOFF),
+          lightExposureReminder: Boolean(byType.LIGHT_EXPOSURE),
+        })
+      }
+    })
+
+    return () => controller.abort()
+  }, [])
+
   const handleToggleAlert = (key) => (checked) => {
-    setAlerts((prev) => ({ ...prev, [key]: checked }))
+    const next = { ...alerts, [key]: checked }
+    setAlerts(next)
+    setErrorMessage('')
+
+    saveNotificationSettings([
+      { type: 'NAP', enabled: next.napAlarm, customTime: null },
+      { type: 'CAFFEINE_CUTOFF', enabled: next.caffeineCutoffAlarm, customTime: null },
+      { type: 'LIGHT_EXPOSURE', enabled: next.lightExposureReminder, customTime: null },
+    ]).catch((error) => {
+      setAlerts(alerts)
+      setErrorMessage(error.message)
+    })
+  }
+
+  const handleSaveProfile = async (nickname) => {
+    try {
+      await updateMyProfile({ nickname })
+      setProfile((current) => ({ ...current, name: nickname }))
+    } catch (error) {
+      setErrorMessage(error.message)
+    }
   }
 
   return (
@@ -36,11 +96,14 @@ function Settings() {
 
       <div className="settings__card">
         <ProfileCard
-          avatarSrc={MOCK_PROFILE.avatarSrc}
-          name={MOCK_PROFILE.name}
-          nameSuffix={MOCK_PROFILE.nameSuffix}
-          email={MOCK_PROFILE.email}
+          avatarSrc={profile.avatarSrc}
+          name={profile.name}
+          nameSuffix={profile.nameSuffix}
+          email={profile.email}
+          onSave={handleSaveProfile}
         />
+
+        {errorMessage && <p className="settings__error" role="alert">{errorMessage}</p>}
 
         <div className="settings__divider" aria-hidden="true" />
 
