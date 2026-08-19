@@ -1,18 +1,22 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
+import { ApiError } from '../../lib/apiClient.js'
+import { clearSession } from '../../lib/session.js'
+import { deleteMe, getMe } from '../../lib/userApi.js'
 import { PATH } from '../../routes/paths.js'
 import DangerZoneCard from './components/DangerZoneCard.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import './AccountSettings.scss'
 
-const MOCK_PROFILE = {
+const FALLBACK_PROFILE = {
   avatarSrc: avatarPlaceholder,
-  name: '근로자1',
+  name: '',
   nameSuffix: '(님)',
-  email: '2453082@hansung.ac.kr',
-  joinedAt: '25.12.12',
+  email: '',
+  joinedAt: '',
 }
 
 const DELETE_ITEMS = [
@@ -26,11 +30,52 @@ const DELETE_ITEMS = [
 
 const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관']
 
+function formatJoinedAt(createdAt) {
+  if (!createdAt) return ''
+  const date = new Date(createdAt)
+  return `${String(date.getFullYear()).slice(2)}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
+}
+
 function AccountSettings() {
   const navigate = useNavigate()
+  const [profile, setProfile] = useState(FALLBACK_PROFILE)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  // TODO: 실제 삭제 확인 모달 + API 연동. 파괴적 동작이라 반드시 확인 단계가 필요하다.
-  const handleDeleteAllData = () => {}
+  useEffect(() => {
+    let isMounted = true
+    getMe()
+      .then((user) => {
+        if (!isMounted) return
+        setProfile({
+          avatarSrc: user.profileImageUrl || avatarPlaceholder,
+          name: user.nickname,
+          nameSuffix: '(님)',
+          email: user.email,
+          joinedAt: formatJoinedAt(user.createdAt),
+        })
+      })
+      .catch((error) => {
+        if (!isMounted) return
+        setErrorMessage(error instanceof ApiError ? error.message : '내 정보를 불러오지 못했습니다.')
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const handleDeleteAllData = async () => {
+    const confirmed = window.confirm('계정을 탈퇴하면 모든 데이터가 삭제됩니다. 계속할까요?')
+    if (!confirmed) return
+
+    try {
+      await deleteMe()
+      clearSession()
+      navigate(PATH.ONBOARDING)
+    } catch (error) {
+      setErrorMessage(error instanceof ApiError ? error.message : '회원 탈퇴에 실패했습니다.')
+    }
+  }
 
   return (
     <div className="account-settings">
@@ -41,12 +86,14 @@ function AccountSettings() {
       />
 
       <div className="account-settings__card">
+        {errorMessage && <p className="account-settings__error">{errorMessage}</p>}
+
         <ProfileCard
-          avatarSrc={MOCK_PROFILE.avatarSrc}
-          name={MOCK_PROFILE.name}
-          nameSuffix={MOCK_PROFILE.nameSuffix}
-          email={MOCK_PROFILE.email}
-          joinedAt={MOCK_PROFILE.joinedAt}
+          avatarSrc={profile.avatarSrc}
+          name={profile.name}
+          nameSuffix={profile.nameSuffix}
+          email={profile.email}
+          joinedAt={profile.joinedAt}
           readOnly
         />
 

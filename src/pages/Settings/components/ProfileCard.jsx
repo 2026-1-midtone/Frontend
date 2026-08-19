@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconCamera } from '../../../components/common/icons/index.jsx'
 import './ProfileCard.scss'
 
@@ -14,6 +14,7 @@ import './ProfileCard.scss'
  * @param {string} email
  * @param {string} joinedAt 가입일 (있으면 이메일 아래에 표시, 계정 설정 화면용)
  * @param {boolean} readOnly true면 편집 진입점을 아예 숨긴다 (계정 설정 화면용)
+ * @param {(name: string) => void} [onSave] "수정완료"를 누른 시점의 이름을 전달한다
  */
 function ProfileCard({
   avatarSrc,
@@ -22,9 +23,14 @@ function ProfileCard({
   email,
   joinedAt,
   readOnly = false,
+  onSave,
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [name, setName] = useState(initialName)
+
+  useEffect(() => {
+    setName(initialName)
+  }, [initialName])
 
   return (
     <div className="profile-card">
@@ -64,7 +70,10 @@ function ProfileCard({
               ? 'profile-card__edit-button is-editing'
               : 'profile-card__edit-button'
           }
-          onClick={() => setIsEditing((prev) => !prev)}
+          onClick={() => {
+            if (isEditing) onSave?.(name)
+            setIsEditing((prev) => !prev)
+          }}
         >
           {isEditing ? '수정완료' : '수정하기'}
         </button>
