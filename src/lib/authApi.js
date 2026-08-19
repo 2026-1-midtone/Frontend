@@ -7,3 +7,13 @@ import { apiPost } from './apiClient.js'
 export function loginWithGoogle(idToken, timezone) {
   return apiPost('/api/v1/auth/google', { idToken, timezone })
 }
+
+/** @param {string} refreshToken */
+export function logout(refreshToken) {
+  return apiPost('/api/v1/auth/logout', { refreshToken }, { auth: true })
+}
+
+/** @param {string} refreshToken */
+export function reissueToken(refreshToken) {
+  return apiPost('/api/v1/auth/reissue', { refreshToken })
+}
