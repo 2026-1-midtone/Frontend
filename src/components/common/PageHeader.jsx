@@ -21,8 +21,8 @@ function PageHeader({ title, subtitle, onSettingsClick }) {
             className="page-header__sparkle"
             src={sparkleIcon}
             alt=""
-            width={18}
-            height={18}
+            width={17}
+            height={17}
           />
         </h1>
         <SettingsButton onClick={onSettingsClick} />

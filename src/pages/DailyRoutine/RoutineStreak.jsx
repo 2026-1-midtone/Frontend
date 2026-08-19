@@ -9,7 +9,6 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
-import RoutineStatusBar from './components/RoutineStatusBar.jsx'
 import './DailyRoutine.scss'
 
 const completionRates = [
@@ -28,7 +27,6 @@ function RoutineStreak() {
     <main className="routine-streak" aria-labelledby="routine-streak-title">
       <img className="routine-streak__hero" src={routineHero} alt="" aria-hidden="true" />
       <div className="routine-streak__hero-shade" />
-      <RoutineStatusBar />
 
       <header className="routine-streak__header">
         <div>

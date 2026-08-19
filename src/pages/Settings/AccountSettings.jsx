@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
 import { PATH } from '../../routes/paths.js'
@@ -78,7 +77,6 @@ function AccountSettings() {
         </footer>
       </div>
 
-      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

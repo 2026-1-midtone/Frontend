@@ -12,6 +12,8 @@
     border-radius: $radius-navigation;
     background-color: $color-navigation-surface;
     box-shadow: inset 0 0 0 1px $color-navigation-outline;
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    backdrop-filter: blur(18px) saturate(130%);
   }
 
   &__item {

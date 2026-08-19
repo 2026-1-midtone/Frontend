@@ -1,25 +1,33 @@
 .page-header {
-  @include flex-column($space-2);
+  @include flex-column($space-1);
 
   &__row {
     @include flex-between;
   }
 
   &__title {
-    @include flex(row, flex-start, center, $space-2);
-    @include typo($font-size-xl, $font-weight-extrabold, $line-height-tight);
+    @include flex(row, flex-start, center, $space-1);
+    @include typo(
+      $font-size-page-title,
+      $font-weight-bold,
+      $line-height-page-title
+    );
     color: $color-text;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   &__sparkle {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
     flex-shrink: 0;
   }
 
   &__subtitle {
-    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+    @include typo(
+      $font-size-lg,
+      $font-weight-semibold,
+      $line-height-page-subtitle
+    );
     color: $night-800;
   }
 }

@@ -1,16 +1,39 @@
 .account-settings {
   @include flex-column($space-5);
-  flex: 1;
-  padding: $space-4 $layout-gutter $layout-content-bottom-space;
-  background-color: $color-bg;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  flex: 0 0 auto;
+  min-height: 100%;
+  padding: $layout-settings-header-top-space $layout-gutter $layout-content-bottom-space;
+  background-color: $night-200;
   background-image:
-    $gradient-page-background-fade,
-    url('../../assets/background.svg');
+    linear-gradient(180deg, rgba($night-200, 0) 0%, $night-0 100%),
+    url('../../assets/routine-summary/routine-hero.png');
   background-repeat: no-repeat;
-  background-position: top center;
+  background-position: center $layout-page-hero-top;
   background-size:
-    100% $layout-background-fade-height,
-    100% $layout-background-fade-height;
+    100% $layout-page-hero-short-fade-height,
+    $layout-page-hero-width $layout-page-hero-height;
+
+  &::before {
+    position: absolute;
+    z-index: 0;
+    top: $layout-page-sheet-top;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: $radius-navigation $radius-navigation 0 0;
+    background: $gradient-page-sheet-glow, rgba($night-200, 0.96);
+    backdrop-filter: blur(24px);
+    content: '';
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   &__card {
     @include flex-column($space-5);

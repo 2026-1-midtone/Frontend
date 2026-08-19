@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import scheduleMockPreview from '../../assets/schedule-preview.svg'
 import { PATH } from '../../routes/paths.js'
@@ -71,6 +70,7 @@ function Schedule() {
                 type="button"
                 className="schedule__action"
                 onClick={handleGoToCalendar}
+                disabled={MOCK_STATS.needsReview > 0}
               >
                 완료
               </button>
@@ -78,8 +78,6 @@ function Schedule() {
           </>
         )}
       </div>
-
-      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

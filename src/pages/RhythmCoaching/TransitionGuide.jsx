@@ -13,7 +13,6 @@ import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
 import CoachingCard from './components/CoachingCard.jsx'
-import CoachingStatusBar from './components/CoachingStatusBar.jsx'
 import './RhythmCoaching.scss'
 
 const checklistItems = [
@@ -71,7 +70,6 @@ function TransitionGuide() {
     <main className="rhythm-coaching rhythm-coaching--transition">
       <img className="rhythm-coaching__hero" src={routineHero} alt="" aria-hidden="true" />
       <div className="rhythm-coaching__hero-shade" />
-      <CoachingStatusBar />
 
       <header className="rhythm-coaching__header">
         <div>

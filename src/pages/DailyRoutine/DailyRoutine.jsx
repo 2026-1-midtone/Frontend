@@ -8,7 +8,6 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
-import RoutineStatusBar from './components/RoutineStatusBar.jsx'
 import RoutineTaskCard from './components/RoutineTaskCard.jsx'
 import RoutineTipModal from './components/RoutineTipModal.jsx'
 import './DailyRoutine.scss'
@@ -124,7 +123,6 @@ function DailyRoutine() {
     <main className="daily-routine" aria-labelledby="daily-routine-title">
       <img className="daily-routine__hero" src={routineHero} alt="" aria-hidden="true" />
       <div className="daily-routine__hero-shade" />
-      <RoutineStatusBar />
 
       <header className="daily-routine__header">
         <div>

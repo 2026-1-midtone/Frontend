@@ -12,10 +12,10 @@
 
   &__hero {
     position: absolute;
-    top: -70px;
-    left: -83px;
-    width: 561px;
-    height: 701px;
+    top: $layout-page-hero-top;
+    left: $layout-page-hero-left;
+    width: $layout-page-hero-width;
+    height: $layout-page-hero-height;
     max-width: none;
     object-fit: cover;
     pointer-events: none;
@@ -24,67 +24,15 @@
   &__hero-shade {
     position: absolute;
     inset: 0 0 auto;
-    height: 532px;
+    height: $layout-page-hero-fade-height;
     background: linear-gradient(180deg, rgba($night-100, 0) 0%, $night-0 100%);
     pointer-events: none;
-  }
-
-  &__status-bar {
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 44px;
-    padding: 18px 24px 0;
-    @include flex-between;
-  }
-
-  &__time {
-    @include typo($font-size-caption, $font-weight-semibold, 1);
-  }
-
-  &__camera {
-    position: absolute;
-    top: 17px;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    border-radius: $radius-full;
-    background: $night-1000;
-    transform: translateX(-50%);
-  }
-
-  &__device-status {
-    @include flex(row, flex-end, flex-end, 5px);
-    height: 14px;
-  }
-
-  &__signal {
-    width: 13px;
-    height: 12px;
-    background: linear-gradient(to top right, transparent 49%, $night-1000 50%);
-  }
-
-  &__wifi {
-    width: 10px;
-    height: 8px;
-    border-top: 3px solid $night-1000;
-    border-radius: 50%;
-    transform: rotate(-12deg);
-  }
-
-  &__battery {
-    width: 8px;
-    height: 13px;
-    border-radius: 1px;
-    background-color: $night-1000;
   }
 
   &__header {
     position: absolute;
     z-index: 2;
-    top: 78px;
+    top: $layout-page-header-top-space;
     right: 24px;
     left: 24px;
     @include flex-between;
@@ -93,7 +41,11 @@
 
   &__title {
     @include flex(row, flex-start, center, $space-1);
-    @include typo($font-size-xl, $font-weight-bold, $line-height-tight);
+    @include typo(
+      $font-size-page-title,
+      $font-weight-bold,
+      $line-height-page-title
+    );
     letter-spacing: -0.01em;
     white-space: nowrap;
 
@@ -106,13 +58,17 @@
   &__subtitle {
     margin-top: $space-1;
     color: $night-800;
-    @include typo($font-size-md, $font-weight-semibold, 24px);
+    @include typo(
+      $font-size-lg,
+      $font-weight-semibold,
+      $line-height-page-subtitle
+    );
   }
 
   &__settings {
     @include button-reset;
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
 
     img {
       width: 100%;
@@ -123,7 +79,7 @@
   &__progress {
     position: absolute;
     z-index: 2;
-    top: 157px;
+    top: 113px;
     right: 24px;
     left: 24px;
     height: 72px;
@@ -165,7 +121,7 @@
   &__content {
     position: absolute;
     z-index: 1;
-    top: 245px;
+    top: 201px;
     right: 0;
     bottom: 0;
     left: 0;

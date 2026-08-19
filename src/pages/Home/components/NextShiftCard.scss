@@ -7,7 +7,7 @@
   backdrop-filter: blur(12px);
 
   &__label {
-    @include typo($font-size-sm, $font-weight-medium, $line-height-tight);
+    @include typo($font-size-md, $font-weight-regular, 24px);
     color: $night-900;
   }
 

@@ -18,20 +18,6 @@ const routines = [
   { id: 5, completed: false },
 ]
 
-function StatusBar() {
-  return (
-    <div className="routine-summary__status-bar" aria-hidden="true">
-      <span className="routine-summary__time">9:30</span>
-      <span className="routine-summary__camera" />
-      <div className="routine-summary__device-status">
-        <span className="routine-summary__signal" />
-        <span className="routine-summary__wifi" />
-        <span className="routine-summary__battery" />
-      </div>
-    </div>
-  )
-}
-
 function RoutineSummary() {
   const navigate = useNavigate()
   const routineListDrag = useRef({
@@ -77,7 +63,6 @@ function RoutineSummary() {
         aria-hidden="true"
       />
       <div className="routine-summary__hero-shade" />
-      <StatusBar />
 
       <header className="routine-summary__header">
         <div>

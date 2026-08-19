@@ -3,19 +3,27 @@
 
   &__message {
     @include flex(row, flex-start, center, $space-2);
-    @include typo($font-size-lg, $font-weight-bold, $line-height-tight);
+    @include typo(
+      $font-size-page-title,
+      $font-weight-bold,
+      $line-height-page-title
+    );
     color: $color-text;
     letter-spacing: -0.02em;
   }
 
   &__sparkle {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     flex-shrink: 0;
   }
 
   &__shift {
-    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+    @include typo(
+      $font-size-lg,
+      $font-weight-semibold,
+      $line-height-page-subtitle
+    );
     color: $night-800;
   }
 }
