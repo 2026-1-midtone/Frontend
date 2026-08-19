@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
-import sectionDividerIcon from '../../assets/rhythm-coaching/transition-section-divider.svg'
+import sparkleIcon from '../../assets/sparkle.svg'
 import { PATH } from '../../routes/paths.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
@@ -77,12 +77,11 @@ function ScheduleResult() {
           title="날짜별 근무 유형 수정"
         />
 
-        <img
-          className="schedule-result__divider"
-          src={sectionDividerIcon}
-          alt=""
-          aria-hidden="true"
-        />
+        <div className="schedule-result__divider" aria-hidden="true">
+          <span className="schedule-result__divider-line" />
+          <img src={sparkleIcon} alt="" width={16} height={16} />
+          <span className="schedule-result__divider-line" />
+        </div>
 
         <ScheduleResultSummary total={total} confirmed={confirmed} needsReview={needsReview} />
 

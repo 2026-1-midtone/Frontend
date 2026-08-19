@@ -1,18 +1,31 @@
 .home {
   @include flex-column;
   position: relative;
+  z-index: 0;
   flex: 1;
-
-  // 시안 배경 에셋(393x731)을 상단 정렬로 깔고, 그 아래는 기본 다크 배경이 이어진다.
+  overflow: hidden;
   background-color: $color-bg;
-  background-image:
-    $gradient-page-background-fade,
-    url('../../assets/background.svg');
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-size:
-    100% $layout-background-fade-height,
-    100% $layout-background-fade-height;
+
+  &__hero {
+    position: absolute;
+    z-index: -1;
+    top: -70px;
+    left: -83px;
+    width: 561px;
+    height: 701px;
+    max-width: none;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  &__hero-shade {
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: 701px;
+    background: linear-gradient(180deg, rgba($night-100, 0) 0%, $night-0 100%);
+    pointer-events: none;
+  }
 
   &__top {
     @include flex-column;

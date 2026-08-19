@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // 컴포넌트 불러오기 추가
+import routineHero from '../../assets/routine-summary/routine-hero.png'
 import {
   IconCoffee,
   IconEdit,
@@ -107,6 +108,9 @@ function Home() {
 
   return (
     <div className="home">
+      <img className="home__hero" src={routineHero} alt="" aria-hidden="true" />
+      <div className="home__hero-shade" aria-hidden="true" />
+
       <div className="home__top">
         <SettingsButton
           className="home__settings"

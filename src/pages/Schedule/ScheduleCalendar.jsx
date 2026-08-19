@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
+import routineHero from '../../assets/routine-summary/routine-hero.png'
 import { PATH } from '../../routes/paths.js'
 import ScheduleAgendaList from './components/ScheduleAgendaList.jsx'
 import ScheduleMonthGrid from './components/ScheduleMonthGrid.jsx'
@@ -89,6 +90,9 @@ function ScheduleCalendar() {
 
   return (
     <div className="schedule-calendar">
+      <img className="schedule-calendar__hero" src={routineHero} alt="" aria-hidden="true" />
+      <div className="schedule-calendar__hero-shade" aria-hidden="true" />
+
       <PageHeader
         title="근무표 캘린더"
         subtitle="오늘 근무도 시프트메이트가 챙겨드릴게요!"
