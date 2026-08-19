@@ -1,0 +1,510 @@
+.rhythm-coaching {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  color: $color-text;
+  background: $color-bg-elevated;
+
+  &__hero {
+    position: absolute;
+    top: -70px;
+    left: -83px;
+    width: 561px;
+    height: 701px;
+    max-width: none;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  &__hero-shade {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 532px;
+    background: linear-gradient(180deg, rgba($night-100, 0) 0%, $night-0 100%);
+    pointer-events: none;
+  }
+
+  &__header {
+    position: absolute;
+    z-index: 3;
+    top: 75px;
+    right: $space-6;
+    left: $space-6;
+    @include flex-between;
+    align-items: flex-start;
+
+    h1 {
+      @include flex(row, flex-start, center, $space-1);
+      @include typo($font-size-xl, $font-weight-bold, $line-height-tight);
+      letter-spacing: -0.01em;
+
+      img {
+        width: 17px;
+        height: 17px;
+      }
+    }
+
+    p {
+      margin-top: $space-1;
+      color: $night-800;
+      @include typo($font-size-md, $font-weight-semibold, $line-height-normal);
+    }
+
+    > button {
+      @include button-reset;
+
+      width: 34px;
+      height: 34px;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+        border-radius: $radius-full;
+      }
+    }
+  }
+
+  &__countdown {
+    position: absolute;
+    z-index: 3;
+    top: 155px;
+    right: $space-6;
+    left: $space-6;
+    height: 80px;
+    padding: $space-2 $space-4;
+    border-radius: $radius-lg;
+    background: rgba($night-300, 0.55);
+
+    p {
+      color: $night-800;
+      @include typo($font-size-md, $font-weight-regular, $line-height-normal);
+    }
+
+    strong {
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
+    }
+
+    > div {
+      height: 14px;
+      margin-top: $space-2;
+      overflow: hidden;
+      border-radius: $radius-full;
+      background: $night-0;
+
+      span {
+        display: block;
+        width: 50%;
+        height: 100%;
+        border-radius: inherit;
+        background: $night-1000;
+        box-shadow: 0 0 $space-2 rgba($night-1000, 0.45);
+      }
+    }
+  }
+
+  &__scroll {
+    position: absolute;
+    z-index: 1;
+    top: 255px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 22px 22px 0 0;
+    overscroll-behavior: contain;
+    background: $color-bg-elevated;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__body {
+    position: relative;
+    z-index: 1;
+    padding: $space-6 $space-6 190px;
+  }
+
+  &__glow {
+    position: absolute;
+    width: 774px;
+    height: 774px;
+    max-width: none;
+    pointer-events: none;
+
+    &--left {
+      top: -500px;
+      left: -406px;
+    }
+
+    &--bottom {
+      top: 390px;
+      left: -98px;
+    }
+
+    &--right {
+      top: 310px;
+      left: 67px;
+    }
+  }
+
+  &__notice {
+    margin: 0;
+    padding: $space-2 $space-3;
+    border-radius: 22px;
+    color: $color-text-secondary;
+    background: rgba($night-300, 0.55);
+    text-align: center;
+    @include typo($font-size-caption, $font-weight-medium, $line-height-normal);
+    letter-spacing: 0.01em;
+  }
+
+  &__transition-button {
+    @include button-reset;
+
+    width: 100%;
+    height: 60px;
+    margin-top: $space-3;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-lg;
+    background: rgba($night-300, 0.55);
+    text-align: center;
+    @include typo($font-size-lg, $font-weight-semibold, $line-height-normal);
+    transition:
+      background-color $duration-fast $easing-standard,
+      transform $duration-fast $easing-standard;
+
+    &:hover {
+      background: rgba($night-400, 0.72);
+    }
+
+    &:active {
+      transform: scale(0.985);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__section,
+  &__preview {
+    margin-top: $space-4;
+
+    > h2 {
+      margin-bottom: $space-5;
+      @include typo($font-size-lg, $font-weight-semibold, $line-height-normal);
+    }
+  }
+
+  &__cards {
+    @include flex-column($space-3);
+  }
+
+  &__preview {
+    margin-top: $space-8;
+  }
+
+  &__preview-card {
+    padding: $space-5 $space-4;
+    border-radius: 22px;
+    background: rgba($night-300, 0.55);
+
+    > p,
+    dl > div {
+      @include flex-between;
+    }
+
+    > p {
+      color: $color-primary;
+      @include typo($font-size-compact, $font-weight-regular, $line-height-normal);
+
+      strong {
+        font-size: $font-size-md;
+      }
+    }
+
+    dl {
+      margin-top: $space-2;
+      @include flex-column($space-2);
+    }
+
+    dl > div {
+      color: $color-text-tertiary;
+      @include typo($font-size-compact, $font-weight-regular, $line-height-normal);
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__disclaimer {
+    margin: $space-8 auto 0;
+    color: $color-text-disabled;
+    text-align: center;
+    @include typo($font-size-caption, $font-weight-medium, $line-height-normal);
+    letter-spacing: 0.01em;
+  }
+
+  &__home-indicator {
+    position: absolute;
+    z-index: 7;
+    bottom: $space-1;
+    left: 50%;
+    width: 88px;
+    height: 3px;
+    border-radius: $radius-full;
+    background: $color-text-secondary;
+    transform: translateX(-50%);
+  }
+
+  &--transition {
+    .rhythm-coaching__hero-shade {
+      height: 218px;
+    }
+
+    .rhythm-coaching__scroll {
+      top: 159px;
+    }
+
+    .rhythm-coaching__body {
+      padding-top: $space-6;
+    }
+  }
+}
+
+.coaching-status-bar {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  padding: 18px $space-6 0;
+  @include flex-between;
+
+  &__time {
+    @include typo($font-size-caption, $font-weight-semibold, 1);
+  }
+
+  &__camera {
+    position: absolute;
+    top: 17px;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: $radius-full;
+    background: $night-1000;
+    transform: translateX(-50%);
+  }
+
+  &__device {
+    @include flex(row, flex-end, flex-end, 5px);
+    height: 14px;
+  }
+
+  &__signal {
+    width: 13px;
+    height: 12px;
+    background: linear-gradient(to top right, transparent 49%, $night-1000 50%);
+  }
+
+  &__wifi {
+    width: 10px;
+    height: $space-2;
+    border-top: 3px solid $night-1000;
+    border-radius: 50%;
+    transform: rotate(-12deg);
+  }
+
+  &__battery {
+    width: $space-2;
+    height: 13px;
+    border-radius: 1px;
+    background: $night-1000;
+  }
+}
+
+.coaching-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 29px;
+  align-items: flex-start;
+  padding: $space-5;
+  border-radius: 22px;
+  background: rgba($night-300, 0.2);
+
+  &__icon {
+    @include flex-center;
+
+    width: 44px;
+    min-height: 44px;
+
+    img {
+      width: 100%;
+      max-height: 49px;
+      object-fit: contain;
+    }
+  }
+
+  &__copy {
+    min-width: 0;
+
+    h3 {
+      color: $night-900;
+      @include typo($font-size-md, $font-weight-semibold, $line-height-normal);
+
+      strong {
+        margin-left: $space-2;
+        color: $color-primary;
+        @include typo($font-size-caption, $font-weight-medium, $line-height-normal);
+      }
+    }
+
+    p {
+      margin-top: $space-1;
+      color: $color-text-tertiary;
+      @include typo($font-size-caption, $font-weight-medium, 1.9);
+      letter-spacing: 0.01em;
+    }
+  }
+}
+
+.coaching-navigation {
+  position: absolute;
+  z-index: 6;
+  right: $space-6;
+  bottom: $space-5;
+  left: $space-6;
+  height: 57px;
+  border: 1px solid rgba($night-700, 0.6);
+  border-radius: 22px;
+  background: rgba($night-300, 0.55);
+  @include flex(row, space-between, center);
+
+  &__item {
+    @include button-reset;
+
+    width: 85px;
+    height: 57px;
+    border-radius: 22px;
+    color: $color-text-tertiary;
+    @include flex(column, center, center, 2px);
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+
+    img {
+      width: $space-6;
+      height: $space-6;
+    }
+
+    &--active {
+      color: $color-text;
+      background: rgba($night-1000, 0.3);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+}
+
+.transition-guide {
+  &__checklist {
+    h2 {
+      margin-bottom: $space-5;
+      @include typo($font-size-lg, $font-weight-semibold, $line-height-normal);
+    }
+
+    > div {
+      @include flex-column($space-2);
+    }
+
+    label {
+      min-height: 48px;
+      padding: $space-2 $space-8;
+      border-radius: 22px;
+      background: rgba($night-300, 0.55);
+      cursor: pointer;
+      @include flex(row, flex-start, center, $space-5);
+
+      input {
+        @include visually-hidden;
+      }
+
+      > span {
+        @include flex-center;
+
+        flex: 0 0 22px;
+        width: 22px;
+        height: 22px;
+        border: 1px solid $night-900;
+        border-radius: 6px;
+      }
+
+      input:checked + span {
+        border-color: $color-primary;
+        background: $color-primary;
+
+        &::after {
+          width: 10px;
+          height: 6px;
+          border-bottom: 2px solid $color-text;
+          border-left: 2px solid $color-text;
+          content: '';
+          transform: rotate(-45deg) translateY(-1px);
+        }
+      }
+
+      input:focus-visible + span {
+        @include focus-ring;
+      }
+
+      strong {
+        color: $color-text-secondary;
+        @include typo($font-size-caption, $font-weight-medium, $line-height-normal);
+      }
+    }
+  }
+
+  &__divider {
+    display: block;
+    width: 100%;
+    height: 23px;
+    margin: $space-6 auto $space-4;
+  }
+
+  &__notice {
+    margin-top: 0;
+  }
+
+  &__sections {
+    margin-top: $space-8;
+    @include flex-column($space-6);
+  }
+
+  &__section {
+    > h2 {
+      margin-bottom: $space-2;
+      @include typo($font-size-lg, $font-weight-semibold, $line-height-normal);
+    }
+
+    > img {
+      display: block;
+      width: 100%;
+      height: 23px;
+      margin-top: $space-3;
+    }
+  }
+}

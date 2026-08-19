@@ -63,11 +63,16 @@ function AccountSettings() {
           <div className="account-settings__policy-links">
             {POLICY_LINKS.map((label) => (
               // TODO: 실제 정책 문서 화면이 생기면 연결한다.
-              <button type="button" key={label} className="account-settings__policy-link">
+              <button
+                type="button"
+                key={label}
+                className="account-settings__policy-link"
+              >
                 {label}
               </button>
             ))}
           </div>
+
           <p className="account-settings__disclaimer">
             시프트메이트는 참고용 정보이며 개인 상황에 따라 다를 수 있습니다.
             의료적 판단을 대체하지 않습니다.

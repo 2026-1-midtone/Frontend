@@ -1,0 +1,29 @@
+.assistant-mascot {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: 122px;
+  height: 95px;
+  overflow: hidden;
+
+  > img {
+    position: absolute;
+    top: -6.73%;
+    left: -4.01%;
+    width: 387.88%;
+    height: 333.55%;
+    max-width: none;
+  }
+
+  &--onboarding {
+    width: 227px;
+    height: 218px;
+
+    > img {
+      top: -238.1%;
+      left: -369.53%;
+      width: 497.09%;
+      height: 343.62%;
+    }
+  }
+}

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import NavRow from '../../components/common/NavRow.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
+import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
 import { PATH } from '../../routes/paths.js'
 import ProfileCard from './components/ProfileCard.jsx'
@@ -21,7 +21,7 @@ const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관', '�
 
 function Settings() {
   const navigate = useNavigate()
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
+  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
   const [alerts, setAlerts] = useState({
     napAlarm: true,
     caffeineCutoffAlarm: false,

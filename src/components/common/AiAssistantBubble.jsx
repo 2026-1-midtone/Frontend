@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import characterImage from '../../assets/character.svg'
+import AssistantMascot from './AssistantMascot.jsx'
 import { IconClose } from './icons/index.jsx'
 import './AiAssistantBubble.scss'
 
@@ -16,7 +16,7 @@ function AiAssistantBubble({ message, showMessage, onDismissMessage, onOpen }) {
   useEffect(() => {
     if (!showMessage) return undefined
 
-    const scrollContainer = document.querySelector('.app-layout__frame')
+    const scrollContainer = document.querySelector('.tab-layout__content')
     if (!scrollContainer) return undefined
 
     scrollContainer.addEventListener('scroll', onDismissMessage, {
@@ -48,7 +48,7 @@ function AiAssistantBubble({ message, showMessage, onDismissMessage, onOpen }) {
         onClick={onOpen}
         aria-label="AI 비서에게 물어보기"
       >
-        <img src={characterImage} alt="" width={72} height={60} />
+        <AssistantMascot />
       </button>
     </div>
   )

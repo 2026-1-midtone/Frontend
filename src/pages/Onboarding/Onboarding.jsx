@@ -1,4 +1,4 @@
-import characterImage from '../../assets/character.svg'
+import AssistantMascot from '@/components/common/AssistantMascot'
 import sparkleIcon from '../../assets/sparkle.svg'
 import './Onboarding.scss'
 
@@ -10,12 +10,9 @@ function Onboarding() {
   return (
     <div className="onboarding">
       <div className="onboarding__brand">
-        <img
+        <AssistantMascot
           className="onboarding__character"
-          src={characterImage}
-          alt=""
-          width={240}
-          height={200}
+          variant="onboarding"
         />
 
         <p className="onboarding__tagline">뒤바뀐 근무시간에도, 나만의 루틴을</p>

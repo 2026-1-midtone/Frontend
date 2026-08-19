@@ -1,11 +1,16 @@
 .tab-layout {
   @include flex-column;
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
   background-color: $color-bg;
 
   &__content {
     @include flex-column;
     flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   // 네비게이션이 콘텐츠 위에 겹쳐 뜨도록 아래쪽 여백을 상쇄한다.
@@ -13,11 +18,17 @@
     margin-top: -$layout-tabbar-height;
   }
 
-  // AI 비서는 콘텐츠 길이와 무관하게 하단 네비게이션 바로 위에 고정된 채로 떠 있는다.
+  // AI 비서는 피그마 앱 프레임 기준으로 하단 네비게이션 위에 고정한다.
   .ai-assistant {
     position: fixed;
-    right: $space-4;
-    bottom: calc(#{$layout-tabbar-height} + #{$space-4});
+    right: max(
+      $layout-assistant-right,
+      calc((100vw - #{$layout-app-width}) / 2 + #{$layout-assistant-right})
+    );
+    bottom: $layout-assistant-bottom;
     z-index: $z-sticky;
+    height: $layout-assistant-height;
+    overflow: visible;
+    justify-content: center;
   }
 }

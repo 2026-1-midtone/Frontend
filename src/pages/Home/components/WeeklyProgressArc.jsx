@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './WeeklyProgressArc.scss'
 
 const VIEW_WIDTH = 280
@@ -13,9 +14,9 @@ const CIRCUMFERENCE = Math.PI * RADIUS
  * 주간 루틴 실행률을 보여주는 반원형 게이지.
  * @param {number} percent 0~100
  * @param {string} label 게이지 아래 설명 문구
- * @param {() => void} onViewAll "전체 현황 보러가기" 클릭 핸들러
+ * @param {string} to "전체 현황 보러가기" 이동 경로
  */
-function WeeklyProgressArc({ percent, label, onViewAll }) {
+function WeeklyProgressArc({ percent, label, to }) {
   const clamped = Math.min(100, Math.max(0, percent))
   const dash = (clamped / 100) * CIRCUMFERENCE
 
@@ -53,9 +54,9 @@ function WeeklyProgressArc({ percent, label, onViewAll }) {
 
       <p className="weekly-progress__label">{label}</p>
 
-      <button type="button" className="weekly-progress__link" onClick={onViewAll}>
+      <Link className="weekly-progress__link" to={to}>
         전체 현황 보러가기 →
-      </button>
+      </Link>
     </section>
   )
 }

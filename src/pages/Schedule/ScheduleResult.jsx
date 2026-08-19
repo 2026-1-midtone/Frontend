@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
+import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import sparkleIcon from '../../assets/sparkle.svg'
 import { PATH } from '../../routes/paths.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
@@ -29,7 +29,7 @@ const INITIAL_DATES = [
 function ScheduleResult() {
   const navigate = useNavigate()
   const [dates, setDates] = useState(INITIAL_DATES)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true)
+  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   // 인식 불확실 항목을 사용자가 직접 고치면 확인 완료로 전환하고,
   // 요약 통계(확인 완료 / 수정 필요)도 함께 갱신되도록 한다.
