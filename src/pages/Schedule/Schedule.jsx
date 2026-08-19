@@ -4,7 +4,7 @@ import PageHeader from '../../components/common/PageHeader.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import { ApiError } from '../../lib/apiClient.js'
-import { getUploadStatus, uploadScheduleImage } from '../../lib/ocrApi.js'
+import { getUploadStatus, retryUpload, uploadScheduleImage } from '../../lib/ocrApi.js'
 import { PATH } from '../../routes/paths.js'
 import ScheduleUploadCard from './components/ScheduleUploadCard.jsx'
 import './Schedule.scss'
@@ -27,10 +27,21 @@ function Schedule() {
   const [previewSrc, setPreviewSrc] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [failedUploadId, setFailedUploadId] = useState(null)
   const fileInputRef = useRef(null)
 
   const handlePickImage = () => {
     fileInputRef.current?.click()
+  }
+
+  const finishWithStatus = (status) => {
+    if (status.status === 'FAILED') {
+      setFailedUploadId(status.uploadId)
+      setErrorMessage(status.failReason || '근무표를 인식하지 못했습니다. 다른 이미지를 업로드해 주세요.')
+      return
+    }
+
+    navigate(PATH.SCHEDULE_RESULT, { state: { uploadId: status.uploadId } })
   }
 
   const handleFileChange = async (event) => {
@@ -39,21 +50,34 @@ function Schedule() {
     if (!file) return
 
     setErrorMessage('')
+    setFailedUploadId(null)
     setIsUploading(true)
     setPreviewSrc(URL.createObjectURL(file))
 
     try {
       const { uploadId, pollingIntervalMs } = await uploadScheduleImage(file)
       const status = await pollUntilDone(uploadId, pollingIntervalMs || POLL_INTERVAL_FALLBACK_MS)
-
-      if (status.status === 'FAILED') {
-        setErrorMessage(status.failReason || '근무표를 인식하지 못했습니다. 다른 이미지를 업로드해 주세요.')
-        return
-      }
-
-      navigate(PATH.SCHEDULE_RESULT, { state: { uploadId } })
+      finishWithStatus({ ...status, uploadId })
     } catch (error) {
       setErrorMessage(error instanceof ApiError || error instanceof Error ? error.message : '업로드에 실패했습니다.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  // 같은 이미지로 OCR만 다시 수행한다 (재업로드 없이).
+  const handleRetrySameImage = async () => {
+    if (!failedUploadId) return
+
+    setErrorMessage('')
+    setIsUploading(true)
+
+    try {
+      const { pollingIntervalMs } = await retryUpload(failedUploadId)
+      const status = await pollUntilDone(failedUploadId, pollingIntervalMs || POLL_INTERVAL_FALLBACK_MS)
+      finishWithStatus({ ...status, uploadId: failedUploadId })
+    } catch (error) {
+      setErrorMessage(error instanceof ApiError || error instanceof Error ? error.message : '재처리에 실패했습니다.')
     } finally {
       setIsUploading(false)
     }
@@ -85,6 +109,17 @@ function Schedule() {
         />
 
         {errorMessage && <p className="schedule__error">{errorMessage}</p>}
+
+        {failedUploadId && (
+          <button
+            type="button"
+            className="schedule__retry"
+            onClick={handleRetrySameImage}
+            disabled={isUploading}
+          >
+            같은 이미지로 다시 인식하기
+          </button>
+        )}
       </div>
 
       <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />

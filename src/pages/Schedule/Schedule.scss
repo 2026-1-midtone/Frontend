@@ -36,8 +36,24 @@
   }
 
   &__error {
-    padding: $space-4 $space-5;
+    padding: $space-4 $space-5 0;
     @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
     color: $color-danger;
+  }
+
+  &__retry {
+    @include button-reset;
+    margin: 0 $space-5 $space-5;
+    padding-block: $space-3;
+    border-radius: $radius-xl;
+    background-color: $night-400;
+    color: $color-text;
+    text-align: center;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+
+    &:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
   }
 }
