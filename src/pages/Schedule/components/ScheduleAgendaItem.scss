@@ -28,13 +28,6 @@
 
   &__badge {
     @include flex(row, flex-start, center, $space-1);
-
-    &.is-done {
-      color: $color-success;
-    }
-
-    &.is-warning {
-      color: $color-danger;
-    }
+    color: $night-700;
   }
 }

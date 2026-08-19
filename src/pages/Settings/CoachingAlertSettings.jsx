@@ -28,7 +28,6 @@ function CoachingAlertSettings() {
   const [napEnd, setNapEnd] = useState('')
 
   const [nightShiftGuide, setNightShiftGuide] = useState(true)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   // TODO: 실제 저장 API 연동. 지금은 설정 홈으로 돌아가는 것으로 대신한다.
   const handleSave = () => {
@@ -133,9 +132,6 @@ function CoachingAlertSettings() {
       </div>
 
       <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
         onOpen={() => navigate(PATH.ASSISTANT)}
       />
     </div>

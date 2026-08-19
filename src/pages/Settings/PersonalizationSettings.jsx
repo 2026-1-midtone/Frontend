@@ -32,7 +32,6 @@ function PersonalizationSettings() {
   const [sensitivity, setSensitivity] = useState('')
   const [napLength, setNapLength] = useState('')
   const [napCount, setNapCount] = useState('')
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   const [alerts, setAlerts] = useState({
     napAlarm: true,
@@ -147,12 +146,7 @@ function PersonalizationSettings() {
         </div>
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-        onOpen={() => navigate(PATH.ASSISTANT)}
-      />
+      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

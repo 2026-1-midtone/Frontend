@@ -2,11 +2,7 @@
   @include flex(row, flex-start, flex-start, $space-2);
   overflow-x: auto;
   scroll-snap-type: x proximity;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  @include hide-scrollbar;
 
   &__item {
     position: relative;

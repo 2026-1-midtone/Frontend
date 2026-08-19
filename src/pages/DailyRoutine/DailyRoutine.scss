@@ -85,11 +85,7 @@
     border-radius: 22px 22px 0 0;
     overscroll-behavior: contain;
     background: $color-bg-elevated;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    @include hide-scrollbar;
   }
 
   &__glow {

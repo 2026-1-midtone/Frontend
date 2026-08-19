@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // 컴포넌트 불러오기 추가
+import routineHero from '../../assets/routine-summary/routine-hero.png'
 import {
   IconCoffee,
   IconEdit,
@@ -86,7 +87,6 @@ const RHYTHM_COACH_ITEMS = [
 function Home() {
   const navigate = useNavigate()
   const [routines, setRoutines] = useState(INITIAL_ROUTINES)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   const handleToggleRoutine = (id) => {
     setRoutines((prev) =>
@@ -108,6 +108,9 @@ function Home() {
 
   return (
     <div className="home">
+      <img className="home__hero" src={routineHero} alt="" aria-hidden="true" />
+      <div className="home__hero-shade" aria-hidden="true" />
+
       <div className="home__top">
         <SettingsButton
           className="home__settings"
@@ -125,12 +128,7 @@ function Home() {
       </div>
 
       <div className="home__bottom">
-        <AiAssistantBubble
-          message="AI비서한테 물어보세요!"
-          showMessage={showAssistantMessage}
-          onDismissMessage={() => setShowAssistantMessage(false)}
-          onOpen={() => navigate(PATH.ASSISTANT)}
-        />
+        <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
 
         <BottomSheet className="home__sheet">
           <TodayRoutineList

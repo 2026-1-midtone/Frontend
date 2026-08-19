@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IconChevronLeft } from '../../components/common/icons/index.jsx'
-import productPlaceholder from '../../assets/product-placeholder.svg'
+import menu1Image from '../../assets/menu1.png'
+import menu2Image from '../../assets/menu2.png'
 import ChatBanner from './components/ChatBanner.jsx'
 import ChatInputBar from './components/ChatInputBar.jsx'
 import ChatMessageBubble from './components/ChatMessageBubble.jsx'
@@ -15,8 +16,8 @@ const DISCLAIMER =
   '약물 복용·질환 진단·응급 증상 관련 질문은 답변을 드리지 않습니다.\n의료 전문가 또는 긴급 서비스에 문의해 주세요.'
 
 const PRODUCT_ITEMS = [
-  { id: 'p1', image: productPlaceholder, name: '말차 쉐이크', ctaLabel: '스토어 바로가기' },
-  { id: 'p2', image: productPlaceholder, name: '말차 쉐이크', ctaLabel: '스토어 바로가기' },
+  { id: 'p1', image: menu1Image, name: '말차 쉐이크', ctaLabel: '스토어 바로가기' },
+  { id: 'p2', image: menu2Image, name: '말차 쉐이크', ctaLabel: '스토어 바로가기' },
 ]
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))

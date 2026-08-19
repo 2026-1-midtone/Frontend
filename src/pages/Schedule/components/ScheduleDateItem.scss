@@ -48,13 +48,6 @@
   &__status {
     @include flex(row, flex-start, center, $space-1);
     @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
-
-    &.is-done {
-      color: $color-success;
-    }
-
-    &.is-warning {
-      color: $color-danger;
-    }
+    color: $night-700;
   }
 }

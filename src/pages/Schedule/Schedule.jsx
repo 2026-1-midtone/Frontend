@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import AiAssistantBubble from '../../components/common/AiAssistantBubble.jsx' // AI 비서 컴포넌트 추가
+import routineHero from '../../assets/routine-summary/routine-hero.png'
 import scheduleMockPreview from '../../assets/schedule-preview.svg'
 import { PATH } from '../../routes/paths.js'
 import ScheduleStats from './components/ScheduleStats.jsx'
@@ -15,7 +16,6 @@ const MOCK_STATS = { confirmed: 18, needsReview: 6, total: 28 }
 function Schedule() {
   const navigate = useNavigate()
   const [previewSrc, setPreviewSrc] = useState(null)
-  const [showAssistantMessage, setShowAssistantMessage] = useState(true) // 말풍선 상태값 추가
 
   // TODO: 실제 파일 선택 다이얼로그 + 업로드 API 연동.
   // 지금은 클릭하면 목업 이미지를 채워 "업로드 후" 상태를 보여준다.
@@ -33,6 +33,9 @@ function Schedule() {
 
   return (
     <div className="schedule">
+      <img className="schedule__hero" src={routineHero} alt="" aria-hidden="true" />
+      <div className="schedule__hero-shade" aria-hidden="true" />
+
       <PageHeader
         title="근무표 관리"
         subtitle="오늘 근무도 시프트메이트가 챙겨드릴게요!"
@@ -76,12 +79,7 @@ function Schedule() {
         )}
       </div>
 
-      <AiAssistantBubble
-        message="AI비서한테 물어보세요!"
-        showMessage={showAssistantMessage}
-        onDismissMessage={() => setShowAssistantMessage(false)}
-        onOpen={() => navigate(PATH.ASSISTANT)}
-      />
+      <AiAssistantBubble onOpen={() => navigate(PATH.ASSISTANT)} />
     </div>
   )
 }

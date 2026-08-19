@@ -36,8 +36,8 @@
     color: $night-900;
 
     &--danger {
-      background-color: rgba($red-400, 0.16);
-      color: $red-400;
+      background-color: $color-primary;
+      color: $night-0;
     }
   }
 

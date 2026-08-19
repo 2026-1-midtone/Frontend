@@ -1,4 +1,4 @@
-import { IconSettings } from './icons/index.jsx'
+import settingsIcon from '../../assets/routine-summary/settings.svg'
 import './SettingsButton.scss'
 
 /**
@@ -14,7 +14,7 @@ function SettingsButton({ onClick, className = '' }) {
       onClick={onClick}
       aria-label="설정"
     >
-      <IconSettings size={26} />
+      <img src={settingsIcon} alt="" width={26} height={26} />
     </button>
   )
 }

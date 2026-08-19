@@ -10,7 +10,7 @@
   background-position: top center;
   background-size:
     100% $layout-background-fade-height,
-    100% auto;
+    100% $layout-background-fade-height;
 
   &__card {
     @include flex-column($space-6);
