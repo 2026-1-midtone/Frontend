@@ -1,5 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  getNotificationSettings,
+  getPersonalizationSettings,
+  saveNotificationSettings,
+  savePersonalizationSettings,
+} from '@/api/settingsApi.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
@@ -8,9 +14,9 @@ import './PersonalizationSettings.scss'
 
 // 실제 옵션 값은 정책이 확정되면 교체한다.
 const SENSITIVITY_OPTIONS = [
-  { value: 'low', label: '낮음' },
-  { value: 'medium', label: '보통' },
-  { value: 'high', label: '높음' },
+  { value: 'LOW', label: '낮음' },
+  { value: 'MEDIUM', label: '보통' },
+  { value: 'HIGH', label: '높음' },
 ]
 const NAP_LENGTH_OPTIONS = [
   { value: '10', label: '10분' },
@@ -31,6 +37,8 @@ function PersonalizationSettings() {
   const [sensitivity, setSensitivity] = useState('')
   const [napLength, setNapLength] = useState('')
   const [napCount, setNapCount] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
   const [alerts, setAlerts] = useState({
     napAlarm: true,
@@ -38,13 +46,64 @@ function PersonalizationSettings() {
     lightExposureReminder: false,
   })
 
+  useEffect(() => {
+    const controller = new AbortController()
+    const options = { signal: controller.signal }
+
+    Promise.allSettled([
+      getPersonalizationSettings(options),
+      getNotificationSettings(options),
+    ]).then(([settingsResult, notificationResult]) => {
+      if (settingsResult.status === 'fulfilled') {
+        const data = settingsResult.value
+        setCaffeineIntake(String(data.caffeineDailyMg ?? ''))
+        setSensitivity(data.caffeineSensitivity ?? '')
+        setNapLength(String(data.preferredNapMinutes ?? ''))
+        setNapCount(String(data.maxNapsPerDay ?? ''))
+      }
+
+      if (notificationResult.status === 'fulfilled') {
+        const byType = Object.fromEntries(
+          notificationResult.value.settings.map((item) => [item.type, item.enabled]),
+        )
+        setAlerts({
+          napAlarm: Boolean(byType.NAP),
+          caffeineCutoffAlarm: Boolean(byType.CAFFEINE_CUTOFF),
+          lightExposureReminder: Boolean(byType.LIGHT_EXPOSURE),
+        })
+      }
+    })
+
+    return () => controller.abort()
+  }, [])
+
   const handleToggleAlert = (key) => (checked) => {
     setAlerts((prev) => ({ ...prev, [key]: checked }))
   }
 
-  // TODO: 실제 저장 API 연동. 지금은 설정 홈으로 돌아가는 것으로 대신한다.
-  const handleSave = () => {
-    navigate(PATH.SETTINGS)
+  const handleSave = async () => {
+    setErrorMessage('')
+    setIsSaving(true)
+
+    try {
+      await Promise.all([
+        savePersonalizationSettings({
+          caffeineDailyMg: caffeineIntake ? Number(caffeineIntake) : undefined,
+          caffeineSensitivity: sensitivity || undefined,
+          preferredNapMinutes: Number(napLength),
+          maxNapsPerDay: Number(napCount),
+        }),
+        saveNotificationSettings([
+          { type: 'NAP', enabled: alerts.napAlarm, customTime: null },
+          { type: 'CAFFEINE_CUTOFF', enabled: alerts.caffeineCutoffAlarm, customTime: null },
+          { type: 'LIGHT_EXPOSURE', enabled: alerts.lightExposureReminder, customTime: null },
+        ]),
+      ])
+      navigate(PATH.SETTINGS)
+    } catch (error) {
+      setErrorMessage(error.message)
+      setIsSaving(false)
+    }
   }
 
   const handleCancel = () => {
@@ -128,6 +187,7 @@ function PersonalizationSettings() {
         </section>
 
         <div className="personalization-settings__actions">
+          {errorMessage && <p className="personalization-settings__error" role="alert">{errorMessage}</p>}
           <button
             type="button"
             className="personalization-settings__action"
@@ -139,8 +199,9 @@ function PersonalizationSettings() {
             type="button"
             className="personalization-settings__action personalization-settings__action--primary"
             onClick={handleSave}
+            disabled={isSaving || !napLength || !napCount}
           >
-            저장
+            {isSaving ? '저장 중' : '저장'}
           </button>
         </div>
       </div>

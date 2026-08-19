@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getHomeDashboard } from '@/api/homeApi.js'
+import { getRoutineReport, getTodayRoutines, updateRoutineTask } from '@/api/routineApi.js'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
@@ -13,6 +15,11 @@ import {
   IconSun,
 } from '../../components/common/icons/index.jsx'
 import { PATH } from '../../routes/paths.js'
+import {
+  formatRemainingMinutes,
+  formatShiftType,
+  formatTimeRange,
+} from '../../lib/formatApiData.js'
 import HomeGreeting from './components/HomeGreeting.jsx'
 import NextShiftCard from './components/NextShiftCard.jsx'
 import QuickMenuList from './components/QuickMenuList.jsx'
@@ -86,13 +93,81 @@ const RHYTHM_COACH_ITEMS = [
 function Home() {
   const navigate = useNavigate()
   const [routines, setRoutines] = useState(INITIAL_ROUTINES)
+  const [dashboard, setDashboard] = useState(null)
+  const [coachItems, setCoachItems] = useState(RHYTHM_COACH_ITEMS)
+  const [weeklyPercent, setWeeklyPercent] = useState(60)
 
-  const handleToggleRoutine = (id) => {
+  useEffect(() => {
+    const controller = new AbortController()
+    const options = { signal: controller.signal }
+
+    const loadHome = async () => {
+      const [dashboardResult, reportResult] = await Promise.allSettled([
+        getHomeDashboard(options),
+        getRoutineReport('7d', options),
+      ])
+
+      if (dashboardResult.status === 'fulfilled') {
+        const dashboardData = dashboardResult.value
+        const iconByType = {
+          CAFFEINE_CUTOFF: IconCoffee,
+          LIGHT_EXPOSURE: IconEyeOff,
+          NAP: IconSun,
+        }
+
+        setDashboard(dashboardData)
+        setCoachItems((dashboardData.topCoachingCards ?? []).slice(0, 3).map((card) => ({
+          id: card.cardId,
+          icon: iconByType[card.cardType] ?? IconSun,
+          tone: card.cardType === 'CAFFEINE_CUTOFF' ? 'danger' : 'default',
+          label: card.title,
+          detail: formatTimeRange(card.windowStart, card.windowEnd),
+        })))
+
+        if ((dashboardData.routineProgress?.total ?? 0) > 0) {
+          try {
+            const routineData = await getTodayRoutines(undefined, options)
+            setRoutines(routineData.tasks.slice(0, 4).map((task) => ({
+              id: task.taskId,
+              title: task.title,
+              detail: formatTimeRange(task.windowStart, task.windowEnd) || task.tip || '',
+              done: task.status === 'DONE',
+            })))
+          } catch (error) {
+            if (error.name !== 'AbortError') setRoutines([])
+          }
+        } else {
+          setRoutines([])
+        }
+      }
+
+      if (reportResult.status === 'fulfilled') {
+        setWeeklyPercent(Math.round(reportResult.value.overallCompletionRate * 100))
+      }
+    }
+
+    loadHome()
+
+    return () => controller.abort()
+  }, [])
+
+  const handleToggleRoutine = async (id) => {
+    const previous = routines
+    const selected = routines.find((routine) => routine.id === id)
+
     setRoutines((prev) =>
       prev.map((routine) =>
         routine.id === id ? { ...routine, done: !routine.done } : routine,
       ),
     )
+
+    if (typeof id !== 'number') return
+
+    try {
+      await updateRoutineTask(id, selected?.done ? 'PENDING' : 'DONE')
+    } catch {
+      setRoutines(previous)
+    }
   }
 
   const handleSelectQuickMenu = (id) => {
@@ -121,9 +196,14 @@ function Home() {
         <div className="home__summary">
           <HomeGreeting
             message="오늘 근무도 화이팅하세요"
-            shiftLabel="나이트 근무 D+2"
+            shiftLabel={dashboard?.todayShift
+              ? `${formatShiftType(dashboard.todayShift.shiftType)} 근무`
+              : '오늘 근무 일정이 없어요'}
           />
-          <NextShiftCard remainingLabel="n시간 n분" progress={45} />
+          <NextShiftCard
+            remainingLabel={formatRemainingMinutes(dashboard?.nextShift?.startInMinutes)}
+            progress={dashboard?.nextShift ? 45 : 0}
+          />
           <QuickMenuList items={QUICK_MENU_ITEMS} onSelect={handleSelectQuickMenu} />
         </div>
       </div>
@@ -135,9 +215,9 @@ function Home() {
             onToggle={handleToggleRoutine}
             onViewAll={handleViewAllRoutines}
           />
-          <RhythmCoachList items={RHYTHM_COACH_ITEMS} />
+          <RhythmCoachList items={coachItems} />
           <WeeklyProgressArc
-            percent={60}
+            percent={weeklyPercent}
             label="주간 실행 현황"
             to={PATH.ROUTINE_SUMMARY}
           />

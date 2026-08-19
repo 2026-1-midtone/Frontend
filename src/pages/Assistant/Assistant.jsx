@@ -1,33 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getChatMessages, sendChatMessage } from '@/api/chatApi.js'
 import { IconChevronLeft } from '../../components/common/icons/index.jsx'
-import menu1Image from '../../assets/menu1.png'
-import menu2Image from '../../assets/menu2.png'
 import ChatBanner from './components/ChatBanner.jsx'
 import ChatInputBar from './components/ChatInputBar.jsx'
 import ChatMessageBubble from './components/ChatMessageBubble.jsx'
-import ChatProductCarousel from './components/ChatProductCarousel.jsx'
 import ChatRow from './components/ChatRow.jsx'
 import ChatTypingIndicator from './components/ChatTypingIndicator.jsx'
 import './Assistant.scss'
 
-const FOOTNOTE = '*이 정보는 참고용이며 개인 건강 상태에 따라 다를 수 있습니다.'
 const DISCLAIMER =
-  '약물 복용·질환 진단·응급 증상 관련 질문은 답변을 드리지 않습니다.\n의료 전문가 또는 긴급 서비스에 문의해 주세요.'
-
-const PRODUCT_ITEMS = [
-  { id: 'p1', image: menu1Image, name: '말차 쉐이크', ctaLabel: '스토어 바로가기' },
-  { id: 'p2', image: menu2Image, name: '말차 쉐이크', ctaLabel: '스토어 바로가기' },
-]
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+  '의료적 진단은 제공하지 않으며, 응급 상황에는 전문기관 연락처를 안내합니다.\n위급한 경우 즉시 119 또는 안내된 기관에 연락해 주세요.'
 
 function Assistant() {
   const navigate = useNavigate()
   const [messages, setMessages] = useState([])
-  const [isTyping, setIsTyping] = useState(true)
+  const [isTyping, setIsTyping] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const [hasRepliedOnce, setHasRepliedOnce] = useState(false)
 
   const nextId = useRef(0)
   const isMounted = useRef(true)
@@ -38,29 +27,46 @@ function Assistant() {
     return `m${nextId.current}`
   }
 
-  // 실제 API 연동 전까지 쓰는 목업. 컴포넌트가 사라진 뒤 setState가 불리지
-  // 않도록 매 스텝마다 isMounted를 확인한다.
   useEffect(() => {
     isMounted.current = true
+    const controller = new AbortController()
 
-    const introduce = async () => {
-      await wait(900)
-      if (!isMounted.current) return
-      setIsTyping(false)
-      setMessages([
-        {
+    setIsTyping(true)
+    getChatMessages({ size: 50 }, { signal: controller.signal })
+      .then((data) => {
+        if (!isMounted.current) return
+
+        const history = data.messages.map((message) => ({
+          id: message.messageId,
+          sender: message.role === 'USER' ? 'user' : 'ai',
+          kind: 'text',
+          segments: [{ text: message.content }],
+          safetyFlag: message.safetyFlag,
+        }))
+
+        setMessages(history.length > 0 ? history : [{
           id: makeId(),
           sender: 'ai',
           kind: 'text',
           segments: [{ text: '안녕하세요 시프트메이트입니다\n무엇을 도와드릴까요?' }],
-        },
-      ])
-    }
-
-    introduce()
+        }])
+      })
+      .catch(() => {
+        if (!isMounted.current) return
+        setMessages([{
+          id: makeId(),
+          sender: 'ai',
+          kind: 'text',
+          segments: [{ text: '안녕하세요 시프트메이트입니다\n무엇을 도와드릴까요?' }],
+        }])
+      })
+      .finally(() => {
+        if (isMounted.current) setIsTyping(false)
+      })
 
     return () => {
       isMounted.current = false
+      controller.abort()
     }
   }, [])
 
@@ -72,91 +78,60 @@ function Assistant() {
     navigate(-1)
   }
 
-  const runFirstReply = async () => {
-    await wait(1100)
-    if (!isMounted.current) return
-    setIsTyping(false)
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: makeId(),
-        sender: 'ai',
-        kind: 'text',
-        segments: [
-          { text: '지금은 카페인 섭취를 피하는 것이 좋습니다.\n' },
-          { text: '다음 나이트 근무 시작까지 4시간', highlight: true },
-          { text: ' 남아 있어 카페인이 수면에 영향을 줄 수 있습니다.' },
-        ],
-      },
-      {
-        id: makeId(),
-        sender: 'ai',
-        kind: 'text',
-        segments: [{ text: '디카페인 음료 또는 10~20분 짧은 낮잠을 추천드려요.' }],
-        infoRow: { icon: '☕', label: '컷오프 시간', value: '21:00' },
-        footnote: FOOTNOTE,
-      },
-    ])
-
-    await wait(900)
-    if (!isMounted.current) return
-    setIsTyping(true)
-    await wait(1000)
-    if (!isMounted.current) return
-    setIsTyping(false)
-    setMessages((prev) => [
-      ...prev,
-      { id: makeId(), sender: 'ai', kind: 'products', items: PRODUCT_ITEMS },
-      {
-        id: makeId(),
-        sender: 'ai',
-        kind: 'text',
-        segments: [
-          { text: '카페인이 부담된다면\n' },
-          { text: '윔쉐이크 말차', highlight: true },
-          { text: '를 추천드려요!\n근무 전 가볍게 컨디션을 관리해 보세요.' },
-        ],
-        infoRow: { icon: '☕', label: '추천 시간', value: '21:00' },
-        footnote: FOOTNOTE,
-      },
-    ])
-    setHasRepliedOnce(true)
-  }
-
-  const runFallbackReply = async () => {
-    await wait(700)
-    if (!isMounted.current) return
-    setIsTyping(false)
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: makeId(),
-        sender: 'ai',
-        kind: 'text',
-        segments: [
-          {
-            text: '죄송해요, 아직 이 질문에는 답변을 준비하지 못했어요.\n다른 질문을 시도해 주세요!',
-          },
-        ],
-      },
-    ])
-  }
-
-  const handleSend = () => {
+  const handleSend = async () => {
     const question = inputValue.trim()
-    if (!question) return
+    if (!question || isTyping) return
 
+    const temporaryId = makeId()
     setMessages((prev) => [
       ...prev,
-      { id: makeId(), sender: 'user', kind: 'text', segments: [{ text: question }] },
+      { id: temporaryId, sender: 'user', kind: 'text', segments: [{ text: question }] },
     ])
     setInputValue('')
     setIsTyping(true)
 
-    if (!hasRepliedOnce) {
-      runFirstReply()
-    } else {
-      runFallbackReply()
+    try {
+      const data = await sendChatMessage(question)
+      if (!isMounted.current) return
+
+      const additionalText = [
+        ...(data.reasons ?? []),
+        ...(data.alternatives?.length ? [`대안: ${data.alternatives.join(', ')}`] : []),
+      ]
+      const cutoff = data.context?.caffeineCutoffAt
+
+      setMessages((prev) => [
+        ...prev.map((message) => message.id === temporaryId
+          ? { ...message, id: data.userMessageId }
+          : message),
+        {
+          id: data.assistantMessageId,
+          sender: 'ai',
+          kind: 'text',
+          segments: [{
+            text: [data.answer, ...additionalText].filter(Boolean).join('\n\n'),
+          }],
+          infoRow: cutoff
+            ? { icon: '☕', label: '카페인 컷오프', value: cutoff.slice(11, 16) }
+            : undefined,
+          footnote: data.disclaimer,
+          emergencyContacts: data.emergencyContacts ?? [],
+          safetyFlag: data.safetyFlag,
+        },
+      ])
+    } catch (error) {
+      if (!isMounted.current) return
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: makeId(),
+          sender: 'ai',
+          kind: 'text',
+          segments: [{ text: error.message ?? '답변을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.' }],
+        },
+      ])
+    } finally {
+      if (isMounted.current) setIsTyping(false)
     }
   }
 
@@ -184,16 +159,14 @@ function Assistant() {
 
           return (
             <ChatRow key={message.id} sender={message.sender} showAvatar={showAvatar}>
-              {message.kind === 'text' ? (
-                <ChatMessageBubble
-                  sender={message.sender}
-                  segments={message.segments}
-                  infoRow={message.infoRow}
-                  footnote={message.footnote}
-                />
-              ) : (
-                <ChatProductCarousel items={message.items} />
-              )}
+              <ChatMessageBubble
+                sender={message.sender}
+                segments={message.segments}
+                infoRow={message.infoRow}
+                footnote={message.footnote}
+                emergencyContacts={message.emergencyContacts}
+                safetyFlag={message.safetyFlag}
+              />
             </ChatRow>
           )
         })}
@@ -212,6 +185,7 @@ function Assistant() {
         onChange={setInputValue}
         onSend={handleSend}
         disclaimer={DISCLAIMER}
+        maxLength={500}
       />
     </div>
   )

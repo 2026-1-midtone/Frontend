@@ -1,5 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  getNotificationSettings,
+  saveNotificationSettings,
+} from '@/api/settingsApi.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
@@ -27,10 +31,54 @@ function CoachingAlertSettings() {
   const [napEnd, setNapEnd] = useState('')
 
   const [nightShiftGuide, setNightShiftGuide] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
-  // TODO: 실제 저장 API 연동. 지금은 설정 홈으로 돌아가는 것으로 대신한다.
-  const handleSave = () => {
-    navigate(PATH.SETTINGS)
+  useEffect(() => {
+    const controller = new AbortController()
+
+    getNotificationSettings({ signal: controller.signal })
+      .then((data) => {
+        const byType = Object.fromEntries(data.settings.map((item) => [item.type, item]))
+        setCaffeineCutoffAlarm(Boolean(byType.CAFFEINE_CUTOFF?.enabled))
+        setCaffeineAlarmTime(byType.CAFFEINE_CUTOFF?.customTime
+          ?? byType.CAFFEINE_CUTOFF?.suggestedTime
+          ?? '')
+        setLightReminder(Boolean(byType.LIGHT_EXPOSURE?.enabled))
+        setLightStart(byType.LIGHT_EXPOSURE?.customTime
+          ?? byType.LIGHT_EXPOSURE?.suggestedTime
+          ?? '')
+        setNapAlarm(Boolean(byType.NAP?.enabled))
+        setNapStart(byType.NAP?.customTime ?? byType.NAP?.suggestedTime ?? '')
+      })
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [])
+
+  const handleSave = async () => {
+    setErrorMessage('')
+    setIsSaving(true)
+
+    try {
+      await saveNotificationSettings([
+        {
+          type: 'CAFFEINE_CUTOFF',
+          enabled: caffeineCutoffAlarm,
+          customTime: caffeineAlarmTime || null,
+        },
+        {
+          type: 'LIGHT_EXPOSURE',
+          enabled: lightReminder,
+          customTime: lightStart || null,
+        },
+        { type: 'NAP', enabled: napAlarm, customTime: napStart || null },
+      ])
+      navigate(PATH.SETTINGS)
+    } catch (error) {
+      setErrorMessage(error.message)
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -125,9 +173,11 @@ function CoachingAlertSettings() {
           type="button"
           className="coaching-alert-settings__save"
           onClick={handleSave}
+          disabled={isSaving}
         >
-          저장
+          {isSaving ? '저장 중' : '저장'}
         </button>
+        {errorMessage && <p className="coaching-alert-settings__error" role="alert">{errorMessage}</p>}
       </div>
 
     </div>

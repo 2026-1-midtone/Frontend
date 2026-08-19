@@ -9,11 +9,21 @@ import './ChatMessageBubble.scss'
  * @param {{ icon: string, label: string, value: string }} infoRow
  * @param {string} footnote
  */
-function ChatMessageBubble({ sender, segments, infoRow, footnote }) {
+function ChatMessageBubble({
+  sender,
+  segments,
+  infoRow,
+  footnote,
+  emergencyContacts,
+  safetyFlag,
+}) {
   const isAi = sender === 'ai'
 
   return (
-    <div className={isAi ? 'chat-bubble is-ai' : 'chat-bubble is-user'}>
+    <div
+      className={isAi ? 'chat-bubble is-ai' : 'chat-bubble is-user'}
+      data-safety-flag={safetyFlag || undefined}
+    >
       <p className="chat-bubble__text">
         {segments.map((segment, index) => (
           <span
@@ -28,6 +38,16 @@ function ChatMessageBubble({ sender, segments, infoRow, footnote }) {
       {infoRow && (
         <p className="chat-bubble__info-row">
           {infoRow.icon} {infoRow.label} / {infoRow.value}
+        </p>
+      )}
+
+      {emergencyContacts?.length > 0 && (
+        <p className="chat-bubble__contacts">
+          {emergencyContacts.map((contact) => (
+            <a key={`${contact.name}-${contact.number}`} href={`tel:${contact.number}`}>
+              {contact.name} {contact.number}
+            </a>
+          ))}
         </p>
       )}
 

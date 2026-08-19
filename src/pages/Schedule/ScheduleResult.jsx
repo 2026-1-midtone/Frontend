@@ -1,9 +1,15 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import {
+  confirmScheduleUpload,
+  correctScheduleDrafts,
+  getScheduleDrafts,
+} from '@/api/scheduleApi.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import sparkleIcon from '../../assets/sparkle.svg'
 import { PATH } from '../../routes/paths.js'
+import { formatDate, formatShiftType, toShiftType } from '../../lib/formatApiData.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
 import './ScheduleResult.scss'
@@ -28,7 +34,29 @@ const INITIAL_DATES = [
 
 function ScheduleResult() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [dates, setDates] = useState(INITIAL_DATES)
+  const [errorMessage, setErrorMessage] = useState('')
+  const uploadId = location.state?.uploadId
+    ?? sessionStorage.getItem('shiftmate.scheduleUploadId')
+
+  useEffect(() => {
+    if (!uploadId) return undefined
+
+    const controller = new AbortController()
+
+    getScheduleDrafts(uploadId, { signal: controller.signal })
+      .then((data) => setDates(data.drafts.map((draft) => ({
+        id: draft.draftId,
+        date: formatDate(draft.workDate),
+        shiftType: formatShiftType(draft.shiftType),
+        originalShiftType: formatShiftType(draft.shiftType),
+        resolved: !draft.isUncertain || draft.isReviewed,
+      }))))
+      .catch((error) => setErrorMessage(error.message))
+
+    return () => controller.abort()
+  }, [uploadId])
 
   // 인식 불확실 항목을 사용자가 직접 고치면 확인 완료로 전환하고,
   // 요약 통계(확인 완료 / 수정 필요)도 함께 갱신되도록 한다.
@@ -40,9 +68,27 @@ function ScheduleResult() {
     )
   }
 
-  // TODO: 실제 저장 API 연동. 지금은 캘린더 화면으로 돌아가는 것으로 대신한다.
-  const handleConfirmSave = () => {
-    navigate(PATH.SCHEDULE_CALENDAR)
+  const handleConfirmSave = async () => {
+    if (!uploadId) {
+      navigate(PATH.SCHEDULE_CALENDAR)
+      return
+    }
+
+    try {
+      const corrections = dates
+        .filter((item) => item.shiftType !== item.originalShiftType)
+        .map((item) => ({ draftId: item.id, shiftType: toShiftType(item.shiftType) }))
+
+      if (corrections.length > 0) {
+        await correctScheduleDrafts(uploadId, corrections)
+      }
+
+      await confirmScheduleUpload(uploadId)
+      sessionStorage.removeItem('shiftmate.scheduleUploadId')
+      navigate(PATH.SCHEDULE_CALENDAR)
+    } catch (error) {
+      setErrorMessage(error.message)
+    }
   }
 
   const handleBackToCalendar = () => {
@@ -72,6 +118,8 @@ function ScheduleResult() {
           <br />
           확인된 날짜는 그대로 유지됩니다.
         </p>
+
+        {errorMessage && <p className="schedule-result__error" role="alert">{errorMessage}</p>}
 
         <ScheduleDateList
           items={dates}
