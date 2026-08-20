@@ -145,8 +145,6 @@ function DailyRoutine() {
         : task
     )))
 
-    if (typeof taskId !== 'number') return
-
     try {
       await updateRoutineTask(taskId, selected?.completed ? 'PENDING' : 'DONE')
     } catch {
@@ -164,8 +162,6 @@ function DailyRoutine() {
         ? { ...task, completed: false, status: task.status === 'skipped' ? undefined : 'skipped' }
         : task
     )))
-
-    if (typeof taskId !== 'number') return
 
     try {
       await updateRoutineTask(taskId, nextStatus)
