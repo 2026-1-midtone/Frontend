@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  getScheduleDrafts,
+  confirmScheduleUpload,
   getScheduleUpload,
   uploadScheduleImage,
 } from '@/api/scheduleApi.js'
@@ -14,6 +14,28 @@ import ScheduleWarningBanner from './components/ScheduleWarningBanner.jsx'
 import './Schedule.scss'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png'])
+const OCR_JOB_STORAGE_KEY = 'shiftmate.ocrJobId'
+const OCR_PENDING_STATUSES = new Set(['PENDING', 'PROCESSING'])
+const OCR_REVIEW_CONFIDENCE = 0.8
+
+function getCurrentMonth() {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+}
+
+function getDraftStats(drafts = []) {
+  const needsReview = drafts.filter((draft) =>
+    draft.excluded
+    || draft.confidence === null
+    || Number(draft.confidence) < OCR_REVIEW_CONFIDENCE,
+  ).length
+
+  return {
+    confirmed: drafts.length - needsReview,
+    needsReview,
+    total: drafts.length,
+  }
+}
 
 function getUploadErrorMessage(error) {
   if (error.status === 401) {
@@ -38,14 +60,15 @@ function getUploadErrorMessage(error) {
 function Schedule() {
   const navigate = useNavigate()
   const [previewSrc, setPreviewSrc] = useState(null)
-  const [uploadId, setUploadId] = useState(null)
-  const [pollingIntervalMs, setPollingIntervalMs] = useState(1000)
+  const [targetMonth, setTargetMonth] = useState(getCurrentMonth)
+  const [jobId, setJobId] = useState(null)
   const [stats, setStats] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [isConfirming, setIsConfirming] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
-    if (!uploadId || !isUploading) return undefined
+    if (!jobId || !isUploading) return undefined
 
     let cancelled = false
     let timeoutId = null
@@ -53,35 +76,40 @@ function Schedule() {
     const scheduleNextPoll = () => {
       if (cancelled) return
 
-      timeoutId = window.setTimeout(poll, pollingIntervalMs)
+      timeoutId = window.setTimeout(poll, 1000)
     }
 
     const poll = async () => {
       try {
-        const status = await getScheduleUpload(uploadId)
+        const job = await getScheduleUpload(jobId)
 
         if (cancelled) return
 
-        if (status.status === 'FAILED') {
-          setErrorMessage(status.failReason ?? '근무표를 인식하지 못했습니다.')
+        if (job.status === 'FAILED') {
+          setErrorMessage(job.errorMessage ?? '근무표를 인식하지 못했습니다.')
           setIsUploading(false)
           return
         }
 
-        if (status.status !== 'PROCESSING') {
-          const draftData = await getScheduleDrafts(uploadId)
-          if (cancelled) return
+        if (job.status === 'COMPLETED') {
+          if (!job.drafts?.length) {
+            setErrorMessage('인식된 근무 일정이 없습니다. 다른 이미지를 사용해 주세요.')
+            setIsUploading(false)
+            return
+          }
 
-          setStats({
-            confirmed: draftData.progress.resolvedDays,
-            needsReview: draftData.progress.remainingDays,
-            total: draftData.progress.requiredDays,
-          })
+          setStats(getDraftStats(job.drafts))
           setIsUploading(false)
           return
         }
 
-        scheduleNextPoll()
+        if (OCR_PENDING_STATUSES.has(job.status)) {
+          scheduleNextPoll()
+          return
+        }
+
+        setErrorMessage('근무표 처리 상태를 확인할 수 없습니다. 다시 업로드해 주세요.')
+        setIsUploading(false)
       } catch (error) {
         if (!cancelled) {
           setErrorMessage(getUploadErrorMessage(error))
@@ -96,7 +124,7 @@ function Schedule() {
       cancelled = true
       window.clearTimeout(timeoutId)
     }
-  }, [isUploading, pollingIntervalMs, uploadId])
+  }, [isUploading, jobId])
 
   const handleUpload = async (file) => {
     if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
@@ -115,27 +143,39 @@ function Schedule() {
     setErrorMessage('')
     setStats(null)
     setIsUploading(true)
+    sessionStorage.removeItem('shiftmate.scheduleUploadId')
+    sessionStorage.removeItem(OCR_JOB_STORAGE_KEY)
 
     try {
-      const upload = await uploadScheduleImage(file)
-      sessionStorage.setItem('shiftmate.scheduleUploadId', String(upload.uploadId))
-      setPollingIntervalMs(Math.min(
-        Math.max(Number(upload.pollingIntervalMs) || 1000, 500),
-        5000,
-      ))
-      setUploadId(upload.uploadId)
+      const upload = await uploadScheduleImage(file, targetMonth)
+      sessionStorage.setItem(OCR_JOB_STORAGE_KEY, String(upload.jobId))
+      setJobId(upload.jobId)
     } catch (error) {
       setErrorMessage(getUploadErrorMessage(error))
       setIsUploading(false)
     }
   }
 
-  // 업로드가 끝나면 두 버튼 모두 캘린더 화면으로 이동한다.
-  // 세부 수정은 캘린더 화면의 "수정하러 가기"에서 이어서 진행한다.
-  const handleGoToCalendar = () => {
-    navigate(stats?.needsReview > 0 ? PATH.SCHEDULE_RESULT : PATH.SCHEDULE_CALENDAR, {
-      state: { uploadId },
+  const handleGoToResult = () => {
+    navigate(PATH.SCHEDULE_RESULT, {
+      state: { jobId },
     })
+  }
+
+  const handleConfirm = async () => {
+    if (!jobId || stats?.needsReview > 0) return
+
+    setErrorMessage('')
+    setIsConfirming(true)
+
+    try {
+      await confirmScheduleUpload(jobId)
+      sessionStorage.removeItem(OCR_JOB_STORAGE_KEY)
+      navigate(PATH.SCHEDULE_CALENDAR)
+    } catch (error) {
+      setErrorMessage(getUploadErrorMessage(error))
+      setIsConfirming(false)
+    }
   }
 
   const isUploaded = Boolean(previewSrc && stats)
@@ -154,6 +194,8 @@ function Schedule() {
       <div className="schedule__card">
         <ScheduleUploadCard
           previewSrc={previewSrc}
+          targetMonth={targetMonth}
+          onTargetMonthChange={setTargetMonth}
           onUpload={handleUpload}
           loading={isUploading}
         />
@@ -182,17 +224,17 @@ function Schedule() {
               <button
                 type="button"
                 className="schedule__action schedule__action--primary"
-                onClick={handleGoToCalendar}
+                onClick={handleGoToResult}
               >
                 수정하러 가기
               </button>
               <button
                 type="button"
                 className="schedule__action"
-                onClick={handleGoToCalendar}
-                disabled={stats.needsReview > 0}
+                onClick={handleConfirm}
+                disabled={stats.needsReview > 0 || isConfirming}
               >
-                완료
+                {isConfirming ? '저장 중' : '완료'}
               </button>
             </div>
           </>

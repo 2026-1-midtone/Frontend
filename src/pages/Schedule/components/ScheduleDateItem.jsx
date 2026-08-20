@@ -45,6 +45,9 @@ function ScheduleDateItem({ item, shiftTypeOptions, onChange }) {
             value={shiftType}
             onChange={(event) => onChange(id, event.target.value)}
           >
+            <option value="" disabled>
+              선택...
+            </option>
             {shiftTypeOptions.map((option) => (
               <option key={option} value={option}>
                 {option}

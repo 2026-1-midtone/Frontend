@@ -21,6 +21,45 @@
     text-align: right;
   }
 
+  &__month {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: $space-1 $space-3;
+  }
+
+  &__month-label {
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__month-input {
+    min-width: 126px;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    color: $color-text;
+    background-color: rgba($night-300, 0.8);
+    color-scheme: dark;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+
+    &:focus-visible {
+      outline: 2px solid $color-border-focus;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      color: $color-text-disabled;
+      cursor: not-allowed;
+    }
+  }
+
+  &__month-help {
+    grid-column: 1 / -1;
+    @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    color: $color-text-tertiary;
+  }
+
   &__dropzone {
     @include button-reset;
     @include flex-column($space-2);

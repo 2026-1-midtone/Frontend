@@ -16,6 +16,8 @@ import './ScheduleResult.scss'
 
 // 근무유형 선택지. 실제 값은 근무표 정책이 확정되면 상수로 분리해 공유한다.
 const SHIFT_TYPE_OPTIONS = ['데이', '이브닝', '나이트', '오프']
+const OCR_JOB_STORAGE_KEY = 'shiftmate.ocrJobId'
+const OCR_REVIEW_CONFIDENCE = 0.8
 
 // 실제 OCR 연동 전까지 사용하는 목업 데이터.
 // 전체 스케줄(예: 28일)의 일부만 대표로 담았다 — 통계 수치는 이 목록 길이를 기준으로 계산된다.
@@ -35,59 +37,88 @@ const INITIAL_DATES = [
 function ScheduleResult() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [dates, setDates] = useState(INITIAL_DATES)
+  const jobId = location.state?.jobId
+    ?? sessionStorage.getItem(OCR_JOB_STORAGE_KEY)
+  const [dates, setDates] = useState(() => jobId ? [] : INITIAL_DATES)
   const [errorMessage, setErrorMessage] = useState('')
-  const uploadId = location.state?.uploadId
-    ?? sessionStorage.getItem('shiftmate.scheduleUploadId')
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
-    if (!uploadId) return undefined
+    if (!jobId) return undefined
 
     const controller = new AbortController()
 
-    getScheduleDrafts(uploadId, { signal: controller.signal })
-      .then((data) => setDates(data.drafts.map((draft) => ({
-        id: draft.draftId,
-        date: formatDate(draft.workDate),
-        shiftType: formatShiftType(draft.shiftType),
-        originalShiftType: formatShiftType(draft.shiftType),
-        resolved: !draft.isUncertain || draft.isReviewed,
-      }))))
-      .catch((error) => setErrorMessage(error.message))
+    getScheduleDrafts(jobId, { signal: controller.signal })
+      .then((data) => {
+        if (data.status !== 'COMPLETED') {
+          throw new Error('분석이 완료된 근무표만 검수할 수 있습니다.')
+        }
+
+        setDates(data.drafts.map((draft) => {
+          const originalShiftType = formatShiftType(draft.shiftType)
+          const resolved = !draft.excluded
+            && draft.confidence !== null
+            && Number(draft.confidence) >= OCR_REVIEW_CONFIDENCE
+
+          return {
+            id: draft.draftId,
+            date: formatDate(draft.workDate),
+            shiftType: resolved ? originalShiftType : '',
+            originalShiftType,
+            excluded: Boolean(draft.excluded),
+            resolved,
+          }
+        }))
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') setErrorMessage(error.message)
+      })
 
     return () => controller.abort()
-  }, [uploadId])
+  }, [jobId])
 
   // 인식 불확실 항목을 사용자가 직접 고치면 확인 완료로 전환하고,
   // 요약 통계(확인 완료 / 수정 필요)도 함께 갱신되도록 한다.
   const handleChangeShiftType = (id, value) => {
     setDates((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, shiftType: value, resolved: true } : item,
+        item.id === id
+          ? { ...item, shiftType: value, excluded: false, resolved: true }
+          : item,
       ),
     )
   }
 
   const handleConfirmSave = async () => {
-    if (!uploadId) {
+    if (dates.some((item) => !item.resolved) || isSaving) return
+
+    if (!jobId) {
       navigate(PATH.SCHEDULE_CALENDAR)
       return
     }
 
+    setErrorMessage('')
+    setIsSaving(true)
+
     try {
       const corrections = dates
-        .filter((item) => item.shiftType !== item.originalShiftType)
-        .map((item) => ({ draftId: item.id, shiftType: toShiftType(item.shiftType) }))
+        .filter((item) => item.excluded || item.shiftType !== item.originalShiftType)
+        .map((item) => ({
+          draftId: item.id,
+          shiftType: toShiftType(item.shiftType),
+          excluded: false,
+        }))
 
       if (corrections.length > 0) {
-        await correctScheduleDrafts(uploadId, corrections)
+        await correctScheduleDrafts(jobId, corrections)
       }
 
-      await confirmScheduleUpload(uploadId)
-      sessionStorage.removeItem('shiftmate.scheduleUploadId')
+      await confirmScheduleUpload(jobId)
+      sessionStorage.removeItem(OCR_JOB_STORAGE_KEY)
       navigate(PATH.SCHEDULE_CALENDAR)
     } catch (error) {
       setErrorMessage(error.message)
+      setIsSaving(false)
     }
   }
 
@@ -146,8 +177,9 @@ function ScheduleResult() {
           type="button"
           className="schedule-result__confirm"
           onClick={handleConfirmSave}
+          disabled={needsReview > 0 || isSaving}
         >
-          일정 저장 확정
+          {isSaving ? '저장 중' : '일정 저장 확정'}
         </button>
 
         <button

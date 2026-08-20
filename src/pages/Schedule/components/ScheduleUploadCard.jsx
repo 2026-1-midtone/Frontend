@@ -12,7 +12,13 @@ import './ScheduleUploadCard.scss'
  * @param {string|null} previewSrc
  * @param {(file: File) => void} onUpload
  */
-function ScheduleUploadCard({ previewSrc, onUpload, loading = false }) {
+function ScheduleUploadCard({
+  previewSrc,
+  targetMonth,
+  onTargetMonthChange,
+  onUpload,
+  loading = false,
+}) {
   const inputRef = useRef(null)
   const isUploaded = Boolean(previewSrc)
 
@@ -30,6 +36,20 @@ function ScheduleUploadCard({ previewSrc, onUpload, loading = false }) {
           사진 또는 캡처 이미지를 업로드하면 날짜·근무 유형을 자동으로 인식합니다
         </p>
       </div>
+
+      <label className="schedule-upload__month">
+        <span className="schedule-upload__month-label">근무표 기준 월</span>
+        <input
+          className="schedule-upload__month-input"
+          type="month"
+          value={targetMonth}
+          onChange={(event) => onTargetMonthChange(event.target.value)}
+          disabled={loading}
+        />
+        <span className="schedule-upload__month-help">
+          과거 근무표는 이미지에 표시된 연·월을 선택해 주세요.
+        </span>
+      </label>
 
       <button
         type="button"

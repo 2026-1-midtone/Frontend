@@ -45,33 +45,32 @@ export function deleteShiftPattern(patternId, options) {
   return apiDelete(`/api/v1/shift-patterns/${patternId}`, undefined, options)
 }
 
-export function uploadScheduleImage(image, options) {
+export function uploadScheduleImage(image, month, options) {
   const formData = new FormData()
   formData.append('image', image)
+  if (month) formData.append('month', month)
 
-  return apiPost('/api/v1/schedule-uploads', formData, options)
+  return apiPost('/api/v1/ocr/jobs', formData, options)
 }
 
-export function getScheduleUpload(uploadId, options) {
-  return apiGet(`/api/v1/schedule-uploads/${uploadId}`, undefined, options)
+export function getScheduleUpload(jobId, options) {
+  return apiGet(`/api/v1/ocr/jobs/${jobId}`, undefined, options)
 }
 
-export function retryScheduleUpload(uploadId, options) {
-  return apiPost(`/api/v1/schedule-uploads/${uploadId}/retry`, undefined, options)
+export function retryScheduleUpload(jobId, options) {
+  return apiPost(`/api/v1/ocr/jobs/${jobId}:retry`, undefined, options)
 }
 
-export function getScheduleDrafts(uploadId, options) {
-  return apiGet(`/api/v1/schedule-uploads/${uploadId}/drafts`, undefined, options)
+export function getScheduleDrafts(jobId, options) {
+  return getScheduleUpload(jobId, options)
 }
 
-export function correctScheduleDrafts(uploadId, corrections, options) {
-  return apiPatch(`/api/v1/schedule-uploads/${uploadId}/drafts`, { corrections }, options)
+export function correctScheduleDrafts(jobId, corrections, options) {
+  return Promise.all(corrections.map(({ draftId, ...correction }) =>
+    apiPatch(`/api/v1/ocr/jobs/${jobId}/drafts/${draftId}`, correction, options),
+  ))
 }
 
-export function confirmScheduleUpload(uploadId, overwriteExisting = false, options) {
-  return apiPost(
-    `/api/v1/schedule-uploads/${uploadId}/confirm`,
-    { overwriteExisting },
-    options,
-  )
+export function confirmScheduleUpload(jobId, options) {
+  return apiPost(`/api/v1/ocr/jobs/${jobId}:confirm`, undefined, options)
 }
