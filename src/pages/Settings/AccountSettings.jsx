@@ -6,6 +6,7 @@ import avatarPlaceholder from '../../assets/avatar-placeholder.svg'
 import { PATH } from '../../routes/paths.js'
 import { clearSession } from '../../lib/session.js'
 import DangerZoneCard from './components/DangerZoneCard.jsx'
+import DeleteAllDataModal from './components/DeleteAllDataModal.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import './AccountSettings.scss'
 
@@ -33,6 +34,8 @@ function AccountSettings() {
   const navigate = useNavigate()
   const [profile, setProfile] = useState(EMPTY_PROFILE)
   const [errorMessage, setErrorMessage] = useState('')
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -50,9 +53,9 @@ function AccountSettings() {
     return () => controller.abort()
   }, [])
 
-  const handleDeleteAllData = async () => {
-    const confirmed = window.confirm('계정과 모든 데이터를 삭제할까요? 이 작업은 되돌릴 수 없습니다.')
-    if (!confirmed) return
+  const handleConfirmDelete = async () => {
+    setErrorMessage('')
+    setIsDeleting(true)
 
     try {
       await deleteMyAccount()
@@ -60,6 +63,8 @@ function AccountSettings() {
       navigate(PATH.ONBOARDING)
     } catch (error) {
       setErrorMessage(error.message)
+      setIsDeleting(false)
+      setIsConfirmOpen(false)
     }
   }
 
@@ -87,7 +92,7 @@ function AccountSettings() {
 
         <section className="account-settings__section">
           <h2 className="account-settings__title">데이터 관리</h2>
-          <DangerZoneCard items={DELETE_ITEMS} onDelete={handleDeleteAllData} />
+          <DangerZoneCard items={DELETE_ITEMS} onDelete={() => setIsConfirmOpen(true)} />
         </section>
 
         <footer className="account-settings__footer">
@@ -111,6 +116,14 @@ function AccountSettings() {
         </footer>
       </div>
 
+      {isConfirmOpen && (
+        <DeleteAllDataModal
+          items={DELETE_ITEMS}
+          isDeleting={isDeleting}
+          onCancel={() => setIsConfirmOpen(false)}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
     </div>
   )
 }

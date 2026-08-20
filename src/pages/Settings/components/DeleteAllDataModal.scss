@@ -1,0 +1,93 @@
+.delete-all-data {
+  position: absolute;
+  z-index: $z-modal;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: $space-6;
+  background: rgba($night-0, 0.82);
+  backdrop-filter: blur(2px);
+
+  &__dialog {
+    @include flex-column($space-2);
+    position: relative;
+    align-items: center;
+    width: 100%;
+    max-width: 320px;
+    padding: $space-6 $space-5 $space-5;
+    border: 1px solid $color-border;
+    border-radius: $radius-2xl;
+    background-color: $night-100;
+    text-align: center;
+  }
+
+  &__mascot {
+    width: 88px;
+    height: 88px;
+    margin-bottom: $space-2;
+  }
+
+  &__title {
+    @include typo($font-size-lg, $font-weight-bold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__lead {
+    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+    color: $color-text-secondary;
+  }
+
+  &__note {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-normal);
+    color: $color-danger;
+  }
+
+  &__list {
+    @include flex-column($space-1);
+    width: 100%;
+    margin-top: $space-3;
+    padding: $space-3 $space-4;
+    border-radius: $radius-lg;
+    background-color: rgba($night-200, 0.6);
+    list-style: none;
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $color-text-tertiary;
+    text-align: left;
+  }
+
+  &__actions {
+    @include flex(row, flex-start, stretch, $space-2);
+    width: 100%;
+    margin-top: $space-5;
+  }
+
+  &__action {
+    @include button-reset;
+    flex: 1;
+    padding-block: $space-3;
+    border-radius: $radius-xl;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text-secondary;
+    background-color: rgba($night-1000, 0.06);
+    transition: background-color $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: rgba($night-1000, 0.12);
+    }
+
+    &--danger {
+      color: $color-text;
+      background-color: $color-danger;
+
+      &:hover {
+        background-color: $color-danger;
+        filter: brightness(1.1);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+    }
+  }
+}

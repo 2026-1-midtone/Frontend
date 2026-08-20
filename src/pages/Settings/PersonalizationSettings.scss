@@ -61,6 +61,14 @@
     background-color: rgba($night-200, 0.4);
   }
 
+  &__field-list {
+    @include flex-column($space-3);
+    padding: $space-4;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-200, 0.4);
+  }
+
   &__caption {
     @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
     color: $night-700;

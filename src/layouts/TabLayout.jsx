@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import AiAssistantBubble from '../components/common/AiAssistantBubble.jsx'
 import BottomNavigation from '../components/common/BottomNavigation.jsx'
+import { hasSeenAssistantIntro } from '../lib/assistantIntro.js'
 import calendarIcon from '../assets/routine-summary/calendar-edit.svg'
 import cloverIcon from '../assets/routine-summary/clover-nav.svg'
 import draftsIcon from '../assets/routine-summary/drafts.svg'
@@ -61,7 +62,9 @@ function TabLayout() {
       {!isSettingsRoute && (
         <AiAssistantBubble
           key={location.pathname}
-          onOpen={() => navigate(PATH.ASSISTANT)}
+          onOpen={() => navigate(
+            hasSeenAssistantIntro() ? PATH.ASSISTANT : PATH.ASSISTANT_INTRO,
+          )}
         />
       )}
       <BottomNavigation items={NAV_ITEMS} />

@@ -17,4 +17,5 @@ export const PATH = {
   SETTINGS_COACHING_ALERTS: '/settings/coaching-alerts',
   SETTINGS_ACCOUNT: '/settings/account',
   ASSISTANT: '/assistant',
+  ASSISTANT_INTRO: '/assistant/intro',
 }

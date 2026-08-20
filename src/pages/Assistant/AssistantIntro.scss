@@ -1,0 +1,63 @@
+.assistant-intro {
+  @include flex-column;
+  flex: 1;
+  padding-inline: $space-8;
+  background: $night-0;
+
+  &__brand {
+    @include flex-column($space-2);
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: $space-16;
+    text-align: center;
+  }
+
+  &__character {
+    width: 227px;
+    height: 218px;
+    margin-bottom: $space-8;
+    filter:
+      drop-shadow(0 0 1px rgba($night-1000, 0.8))
+      drop-shadow(0 0 10px rgba($purple-300, 0.46));
+  }
+
+  &__lead {
+    @include typo($font-size-lg, $font-weight-semibold, $line-height-relaxed);
+    color: $color-text;
+  }
+
+  &__actions {
+    @include flex-column($space-5);
+    padding-bottom: $space-12;
+  }
+
+  &__disclaimer {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $color-text-tertiary;
+    text-align: center;
+  }
+
+  &__start {
+    @include button-reset;
+    display: block;
+    width: 100%;
+    padding-block: $space-4;
+    border-radius: $radius-xl;
+    background-color: $color-surface-strong;
+    color: $color-text;
+    @include typo($font-size-md, $font-weight-semibold);
+    text-align: center;
+    transition:
+      background-color $duration-fast $easing-standard,
+      transform $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: $night-400;
+    }
+
+    &:active {
+      transform: scale(0.985);
+    }
+  }
+}

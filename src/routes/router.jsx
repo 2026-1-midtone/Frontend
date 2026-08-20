@@ -5,6 +5,7 @@ import DailyRoutine from '../pages/DailyRoutine/DailyRoutine.jsx'
 import RoutineStreak from '../pages/DailyRoutine/RoutineStreak.jsx'
 import RoutineSummary from '../pages/RoutineSummary/RoutineSummary.jsx'
 import Assistant from '../pages/Assistant/Assistant.jsx'
+import AssistantIntro from '../pages/Assistant/AssistantIntro.jsx'
 import Home from '../pages/Home/Home.jsx'
 import NotFound from '../pages/NotFound/NotFound.jsx'
 import Onboarding from '../pages/Onboarding/Onboarding.jsx'
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
         element: <RequireSession />,
         children: [
           // AI 비서 대화 화면 — 하단 탭 없이 전체 화면으로 띄운다.
+          { path: PATH.ASSISTANT_INTRO, element: <AssistantIntro /> },
           { path: PATH.ASSISTANT, element: <Assistant /> },
           {
             element: <TabLayout />,
