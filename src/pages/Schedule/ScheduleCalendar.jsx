@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  addShift,
-  deleteShift,
-  getShifts,
-  updateShift,
-} from '@/api/scheduleApi.js'
+import { getShifts } from '@/api/scheduleApi.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import { PATH } from '../../routes/paths.js'
@@ -17,7 +12,6 @@ import {
 import ScheduleAgendaList from './components/ScheduleAgendaList.jsx'
 import ScheduleMonthGrid from './components/ScheduleMonthGrid.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
-import ShiftEditSheet from './components/ShiftEditSheet.jsx'
 import {
   getCurrentYearMonth,
   getRememberedCalendarMonth,
@@ -41,11 +35,6 @@ function ScheduleCalendar() {
   const [shifts, setShifts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
-  // 근무 편집 시트 상태. reloadToken 을 올리면 현재 월을 다시 조회한다.
-  const [editingDate, setEditingDate] = useState(null)
-  const [isSavingShift, setIsSavingShift] = useState(false)
-  const [sheetErrorMessage, setSheetErrorMessage] = useState('')
-  const [reloadToken, setReloadToken] = useState(0)
   const confirmedTargetMonth = location.state?.justConfirmed
     ? location.state.targetMonth
     : null
@@ -84,7 +73,7 @@ function ScheduleCalendar() {
       })
 
     return () => controller.abort()
-  }, [confirmedTargetMonth, month, year, reloadToken])
+  }, [confirmedTargetMonth, month, year])
 
   const shiftsByDate = useMemo(() => {
     return shifts.reduce((result, shift) => ({
@@ -120,65 +109,11 @@ function ScheduleCalendar() {
     })
   }
 
+  // 근무 수정은 '수정하러 가기' 화면 한 곳에서만 한다.
   const handleGoToEdit = () => {
     navigate(PATH.SCHEDULE_RESULT, {
       state: getMonthRange(year, month),
     })
-  }
-
-  const editingShift = shifts.find((shift) => shift.workDate === editingDate) ?? null
-
-  const openShiftEditor = (dateKey) => {
-    setEditingDate(dateKey)
-    setSheetErrorMessage('')
-  }
-
-  const closeShiftEditor = () => {
-    setEditingDate(null)
-    setSheetErrorMessage('')
-  }
-
-  const handleSaveShift = async ({ shiftType, startTime, endTime }) => {
-    setIsSavingShift(true)
-    setSheetErrorMessage('')
-
-    // 빈 시각은 요청에서 제외한다. 백엔드가 HH:mm 형식만 허용하고,
-    // 값이 없으면 기본 시각(생성) 또는 기존 시각(수정)을 그대로 쓴다.
-    const times = {
-      startTime: startTime || undefined,
-      endTime: endTime || undefined,
-    }
-
-    try {
-      if (editingShift) {
-        await updateShift(editingShift.shiftId, { shiftType, ...times })
-      } else {
-        await addShift({ workDate: editingDate, shiftType, ...times })
-      }
-      closeShiftEditor()
-      setReloadToken((token) => token + 1)
-    } catch (error) {
-      setSheetErrorMessage(error.message ?? '근무를 저장하지 못했습니다.')
-    } finally {
-      setIsSavingShift(false)
-    }
-  }
-
-  const handleDeleteShift = async () => {
-    if (!editingShift) return
-
-    setIsSavingShift(true)
-    setSheetErrorMessage('')
-
-    try {
-      await deleteShift(editingShift.shiftId)
-      closeShiftEditor()
-      setReloadToken((token) => token + 1)
-    } catch (error) {
-      setSheetErrorMessage(error.message ?? '근무를 삭제하지 못했습니다.')
-    } finally {
-      setIsSavingShift(false)
-    }
   }
 
   const total = agendaItems.length
@@ -226,34 +161,16 @@ function ScheduleCalendar() {
           수정하러 가기
         </button>
 
-        <p className="schedule-calendar__message">
-          날짜를 누르면 근무를 추가하거나 수정할 수 있어요.
-        </p>
-
         <ScheduleMonthGrid
           year={year}
           month={month}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
           shiftsByDate={shiftsByDate}
-          onSelectDate={openShiftEditor}
         />
       </div>
 
       <ScheduleAgendaList items={agendaItems} />
-
-      {editingDate && (
-        <ShiftEditSheet
-          key={editingDate}
-          date={editingDate}
-          shift={editingShift}
-          onSave={handleSaveShift}
-          onDelete={handleDeleteShift}
-          onClose={closeShiftEditor}
-          isSaving={isSavingShift}
-          errorMessage={sheetErrorMessage}
-        />
-      )}
     </div>
   )
 }

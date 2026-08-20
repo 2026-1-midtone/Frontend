@@ -55,20 +55,6 @@
     &.is-muted {
       opacity: 0.32;
     }
-
-    &.is-editable {
-      @include button-reset;
-      border-radius: $radius-md;
-      transition: background-color $duration-fast $easing-standard;
-
-      &:hover {
-        background-color: rgba($night-1000, 0.08);
-      }
-
-      &:focus-visible {
-        @include focus-ring;
-      }
-    }
   }
 
   &__date {

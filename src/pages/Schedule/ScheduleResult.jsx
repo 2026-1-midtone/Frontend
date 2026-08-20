@@ -4,6 +4,7 @@ import {
   confirmScheduleUpload,
   correctScheduleDrafts,
   createScheduleDraft,
+  deleteShift,
   getScheduleDrafts,
   getShifts,
   updateShift,
@@ -21,6 +22,7 @@ import {
 } from '../../lib/formatApiData.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
+import ShiftEditSheet from './components/ShiftEditSheet.jsx'
 import {
   clearOcrContext,
   getStoredOcrJobId,
@@ -46,6 +48,11 @@ function ScheduleResult() {
   const [newDraftDate, setNewDraftDate] = useState('')
   const [newDraftShiftType, setNewDraftShiftType] = useState('')
   const [isAddingDraft, setIsAddingDraft] = useState(false)
+  // 확정된 근무를 고치는 모드(jobId 없음)에서 쓰는 편집 시트 상태.
+  const [editingShiftId, setEditingShiftId] = useState(null)
+  const [isSavingShift, setIsSavingShift] = useState(false)
+  const [sheetErrorMessage, setSheetErrorMessage] = useState('')
+  const [reloadToken, setReloadToken] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -70,6 +77,9 @@ function ScheduleResult() {
               initiallyExcluded: false,
               excluded: false,
               resolved: true,
+              // 시트에서 시각까지 고칠 수 있도록 원본 값을 함께 들고 있는다.
+              startTime: shift.startTime,
+              endTime: shift.endTime,
             }
           }))
         })
@@ -109,7 +119,7 @@ function ScheduleResult() {
       })
 
     return () => controller.abort()
-  }, [jobId, location.state])
+  }, [jobId, location.state, reloadToken])
 
   // 인식 불확실 항목을 사용자가 직접 고치면 확인 완료로 전환하고,
   // 요약 통계(확인 완료 / 수정 필요)도 함께 갱신되도록 한다.
@@ -200,7 +210,7 @@ function ScheduleResult() {
     }
 
     const confirmed = window.confirm(
-      '근무표를 확정하면 더 이상 초안을 추가하거나 수정할 수 없습니다. 계속할까요?',
+      '근무표를 확정하면 인식 결과 검수가 끝납니다.\n확정 후에는 캘린더의 "수정하러 가기"에서 언제든지 수정하거나 삭제할 수 있습니다.\n계속할까요?',
     )
     if (!confirmed) return
 
@@ -249,6 +259,53 @@ function ScheduleResult() {
     navigate(PATH.SCHEDULE_CALENDAR)
   }
 
+  const editingItem = dates.find((item) => item.id === editingShiftId) ?? null
+
+  const closeShiftEditor = () => {
+    setEditingShiftId(null)
+    setSheetErrorMessage('')
+  }
+
+  // 시트에서 저장하면 즉시 반영한다. 빈 시각은 요청에서 제외해야
+  // 백엔드의 HH:mm 형식 검증을 통과하고 기존 시각이 유지된다.
+  const handleSaveShift = async ({ shiftType, startTime, endTime }) => {
+    if (!editingItem) return
+
+    setIsSavingShift(true)
+    setSheetErrorMessage('')
+
+    try {
+      await updateShift(editingItem.id, {
+        shiftType: toShiftType(shiftType),
+        startTime: startTime || undefined,
+        endTime: endTime || undefined,
+      })
+      closeShiftEditor()
+      setReloadToken((token) => token + 1)
+    } catch (error) {
+      setSheetErrorMessage(error.message ?? '근무를 저장하지 못했습니다.')
+    } finally {
+      setIsSavingShift(false)
+    }
+  }
+
+  const handleDeleteShift = async () => {
+    if (!editingItem) return
+
+    setIsSavingShift(true)
+    setSheetErrorMessage('')
+
+    try {
+      await deleteShift(editingItem.id)
+      closeShiftEditor()
+      setReloadToken((token) => token + 1)
+    } catch (error) {
+      setSheetErrorMessage(error.message ?? '근무를 삭제하지 못했습니다.')
+    } finally {
+      setIsSavingShift(false)
+    }
+  }
+
   const total = dates.length
   const confirmed = dates.filter((item) => item.resolved || item.userExcluded).length
   const needsReview = total - confirmed
@@ -265,10 +322,14 @@ function ScheduleResult() {
       />
 
       <div className="schedule-result__card">
-        <h2 className="schedule-result__title">근무표 인식결과 확인</h2>
+        <h2 className="schedule-result__title">
+          {jobId ? '근무표 인식결과 확인' : '근무표 수정'}
+        </h2>
 
         <p className="schedule-result__banner">
-          수정이 필요한 날짜만 선택해 근무 유형을 변경하세요.
+          {jobId
+            ? '수정이 필요한 날짜만 선택해 근무 유형을 변경하세요.'
+            : '날짜 옆 수정을 눌러 근무 유형과 시간을 바꾸거나 삭제할 수 있어요.'}
           <br />
           확인된 날짜는 그대로 유지됩니다.
         </p>
@@ -280,7 +341,8 @@ function ScheduleResult() {
           shiftTypeOptions={SHIFT_TYPE_OPTIONS}
           onChange={handleChangeShiftType}
           onToggleExclude={jobId ? handleToggleExclude : undefined}
-          title="날짜별 근무 유형 수정"
+          onEdit={jobId ? undefined : setEditingShiftId}
+          title={jobId ? '날짜별 근무 유형 수정' : '날짜별 근무'}
         />
 
         {jobId && (
@@ -325,19 +387,21 @@ function ScheduleResult() {
         <ScheduleResultSummary total={total} confirmed={confirmed} needsReview={needsReview} />
 
         <p className="schedule-result__caption">
-          언제든지 수정하거나 삭제할 수 있습니다.
+          확정 후에도 이 화면에서 언제든지 수정하거나 삭제할 수 있습니다.
           <br />
           시프트메이트는 저장된 일정을 참고용으로만 활용합니다.
         </p>
 
-        <button
-          type="button"
-          className="schedule-result__confirm"
-          onClick={handleConfirmSave}
-          disabled={dates.length === 0 || needsReview > 0 || isSaving}
-        >
-          {isSaving ? '저장 중' : '일정 저장 확정'}
-        </button>
+        {jobId && (
+          <button
+            type="button"
+            className="schedule-result__confirm"
+            onClick={handleConfirmSave}
+            disabled={dates.length === 0 || needsReview > 0 || isSaving}
+          >
+            {isSaving ? '저장 중' : '일정 저장 확정'}
+          </button>
+        )}
 
         <button
           type="button"
@@ -348,6 +412,23 @@ function ScheduleResult() {
         </button>
       </div>
 
+      {editingItem && (
+        <ShiftEditSheet
+          key={editingItem.id}
+          date={editingItem.workDate}
+          shift={{
+            shiftId: editingItem.id,
+            shiftType: toShiftType(editingItem.shiftType),
+            startTime: editingItem.startTime,
+            endTime: editingItem.endTime,
+          }}
+          onSave={handleSaveShift}
+          onDelete={handleDeleteShift}
+          onClose={closeShiftEditor}
+          isSaving={isSavingShift}
+          errorMessage={sheetErrorMessage}
+        />
+      )}
     </div>
   )
 }

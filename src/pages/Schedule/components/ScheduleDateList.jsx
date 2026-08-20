@@ -7,10 +7,11 @@ import './ScheduleDateList.scss'
  * @param {string[]} shiftTypeOptions
  * @param {(id: string, value: string) => void} onChange
  * @param {(id: string) => void} [onToggleExclude]
+ * @param {(id: string) => void} [onEdit] 넘기면 확인 완료된 항목에 "수정" 버튼이 붙는다.
  * @param {string} title
  */
 function ScheduleDateList({
-  items, shiftTypeOptions, onChange, onToggleExclude, title = '날짜별 인식 결과',
+  items, shiftTypeOptions, onChange, onToggleExclude, onEdit, title = '날짜별 인식 결과',
 }) {
   return (
     <section className="schedule-date-list">
@@ -23,6 +24,7 @@ function ScheduleDateList({
             shiftTypeOptions={shiftTypeOptions}
             onChange={onChange}
             onToggleExclude={onToggleExclude}
+            onEdit={onEdit}
           />
         ))}
       </ul>
