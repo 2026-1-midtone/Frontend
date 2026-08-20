@@ -56,6 +56,24 @@
     }
   }
 
+  &__edit {
+    @include button-reset;
+    padding: $space-1 $space-3;
+    border: 1px solid rgba($purple-500, 0.7);
+    border-radius: $radius-sm;
+    color: $color-text-brand;
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+
+    &:hover {
+      background-color: rgba($purple-700, 0.22);
+      color: $color-text;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
   &.is-excluded {
     opacity: 0.6;
 

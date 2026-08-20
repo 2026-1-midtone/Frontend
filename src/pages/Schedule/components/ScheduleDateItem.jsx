@@ -17,7 +17,9 @@ import './ScheduleDateItem.scss'
  * @param {(id: string, value: string) => void} onChange
  * @param {(id: string) => void} onToggleExclude
  */
-function ScheduleDateItem({ item, shiftTypeOptions, onChange, onToggleExclude }) {
+function ScheduleDateItem({
+  item, shiftTypeOptions, onChange, onToggleExclude, onEdit,
+}) {
   const {
     id, date, shiftType, resolved, userExcluded,
   } = item
@@ -53,6 +55,15 @@ function ScheduleDateItem({ item, shiftTypeOptions, onChange, onToggleExclude })
           <span className="schedule-date-item__date">{date}</span>
           <div className="schedule-date-item__actions">
             <span className="schedule-date-item__value">{shiftType}</span>
+            {onEdit && (
+              <button
+                type="button"
+                className="schedule-date-item__edit"
+                onClick={() => onEdit(id)}
+              >
+                수정
+              </button>
+            )}
             {excludeToggle}
           </div>
         </div>
