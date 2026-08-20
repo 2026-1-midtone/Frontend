@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getTransitionGuide } from '@/api/coachingApi.js'
+import { getTodayRoutines, updateRoutineTask } from '@/api/routineApi.js'
 import introDivider from '@/assets/rhythm-coaching/transition-intro-divider.svg'
 import caffeineIcon from '@/assets/rhythm-coaching/transition-caffeine.svg'
 import lightIcon from '@/assets/rhythm-coaching/transition-light.svg'
@@ -13,112 +14,82 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
+import { formatShiftType, toDateString } from '@/lib/formatApiData.js'
 import {
-  formatCoachingCategory,
-  formatDateTimeRange,
-  formatShiftType,
-  toDateString,
-} from '@/lib/formatApiData.js'
+  applyChecklistStatus,
+  nextChecklistStatus,
+  toChecklistItems,
+  toGuideSections,
+} from '@/lib/transitionGuide.js'
 import CoachingCard from './components/CoachingCard.jsx'
 import './RhythmCoaching.scss'
 
-const checklistItems = [
-  { id: 'caffeine', label: '오후 2시 이전 카페인 섭취 완료' },
-  { id: 'screen', label: '저녁 8시 이후 스크린 밝기 낮추기' },
-  { id: 'sleep', label: '22:30 이전 취침 준비 시작' },
-  { id: 'snack', label: '야식 대신 가벼운 간식으로 대체' },
-]
-
-const initialGuideSections = [
-  {
-    id: 'before',
-    title: '전날',
-    cards: [
-      { icon: sleepIcon, title: '수면', description: '평소보다 1~2 시간 일찍 취침 (22:00~23:00) 권장' },
-      { icon: caffeineIcon, title: '카페인', description: '오후 2시 이후 카페인 섭취 중단' },
-      { icon: lightIcon, title: '빛 노출', description: '저녁 8시 이후 밝은 빛·스크린 노출 최소화' },
-      { icon: mealIcon, title: '식사', description: '저녁 식사는 가볍게, 야식 자제' },
-    ],
-  },
-  {
-    id: 'transition',
-    title: '전날',
-    cards: [
-      { icon: wakeIcon, title: '기상', description: '평소보다 1~2 시간 일찍 취침 (22:00~23:00) 권장' },
-      { icon: lightIcon, title: '빛 노출', description: '오후 2시 이후 카페인 섭취 중단' },
-      { icon: napIcon, title: '낮잠', description: '저녁 8시 이후 밝은 빛·스크린 노출 최소화' },
-      { icon: mealIcon, title: '식사', description: '저녁 식사는 가볍게, 야식 자제' },
-    ],
-  },
-  {
-    id: 'after',
-    title: '전날',
-    cards: [
-      { icon: wakeIcon, title: '기상', description: '평소보다 1~2 시간 일찍 취침 (22:00~23:00) 권장' },
-      { icon: lightIcon, title: '빛 노출', description: '오후 2시 이후 카페인 섭취 중단' },
-      { icon: napIcon, title: '낮잠', description: '저녁 8시 이후 밝은 빛·스크린 노출 최소화' },
-      { icon: mealIcon, title: '식사', description: '저녁 식사는 가볍게, 야식 자제' },
-    ],
-  },
-]
+const ICON_BY_CATEGORY = {
+  SLEEP: sleepIcon,
+  CAFFEINE: caffeineIcon,
+  CAFFEINE_CUTOFF: caffeineIcon,
+  LIGHT: lightIcon,
+  LIGHT_EXPOSURE: lightIcon,
+  MEAL: mealIcon,
+  NAP: napIcon,
+  WAKE: wakeIcon,
+}
 
 function TransitionGuide() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [checkedItems, setCheckedItems] = useState({})
+  const [checklist, setChecklist] = useState([])
   const [guide, setGuide] = useState(null)
-  const [guideSections, setGuideSections] = useState(initialGuideSections)
+  const [guideSections, setGuideSections] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     const controller = new AbortController()
+    const options = { signal: controller.signal }
     const date = new URLSearchParams(location.search).get('date') ?? toDateString()
+    setIsLoading(true)
     setErrorMessage('')
-    const iconByCategory = {
-      SLEEP: sleepIcon,
-      CAFFEINE: caffeineIcon,
-      CAFFEINE_CUTOFF: caffeineIcon,
-      LIGHT: lightIcon,
-      LIGHT_EXPOSURE: lightIcon,
-      MEAL: mealIcon,
-      NAP: napIcon,
-      WAKE: wakeIcon,
-    }
 
-    getTransitionGuide(date, { signal: controller.signal })
+    getTransitionGuide(date, options)
       .then((data) => {
         setGuide(data)
-        setGuideSections(data.phases.map((phase) => ({
-          id: phase.phase,
-          title: phase.label,
-          cards: phase.steps.map((step) => ({
-            id: step.stepId,
-            icon: iconByCategory[step.category] ?? lightIcon,
-            title: step.title ?? formatCoachingCategory(step.category),
-            timing: formatDateTimeRange(step.windowStart, step.windowEnd),
-            description: step.actionText
-              ?? step.action
-              ?? step.description
-              ?? '권장 시간에 맞춰 실행해 주세요.',
-          })),
-        })))
+        setGuideSections(toGuideSections(data.phases, ICON_BY_CATEGORY, lightIcon))
+        setIsLoading(false)
       })
       .catch((error) => {
         if (error.name === 'AbortError') return
 
         setGuide(null)
         setGuideSections([])
+        setIsLoading(false)
         setErrorMessage(error.message ?? '전환일 가이드를 불러오지 못했습니다.')
+      })
+
+    // 체크리스트는 전환일 루틴 항목이다. 체크 상태를 서버에 남겨야 다시 들어와도 유지된다.
+    getTodayRoutines(date, options)
+      .then((data) => setChecklist(toChecklistItems(data.tasks)))
+      .catch((error) => {
+        if (error.name !== 'AbortError') setChecklist([])
       })
 
     return () => controller.abort()
   }, [location.search])
 
-  const toggleItem = (itemId) => {
-    setCheckedItems((current) => ({
-      ...current,
-      [itemId]: !current[itemId],
-    }))
+  const toggleItem = async (itemId) => {
+    const previous = checklist
+    const selected = checklist.find((item) => item.id === itemId)
+
+    if (!selected) return
+
+    const status = nextChecklistStatus(selected)
+    setChecklist((current) => applyChecklistStatus(current, itemId, status))
+
+    try {
+      await updateRoutineTask(itemId, status)
+    } catch {
+      setChecklist(previous)
+    }
   }
 
   return (
@@ -145,16 +116,21 @@ function TransitionGuide() {
         <div className="rhythm-coaching__body">
           <section className="transition-guide__checklist" aria-labelledby="transition-checklist-title">
             <h2 id="transition-checklist-title">오늘은 이렇게 어때요?</h2>
+            {checklist.length === 0 && (
+              <p className="rhythm-coaching__empty">
+                이 날짜에 실행할 전환 루틴이 아직 없어요.
+              </p>
+            )}
             <div>
-              {checklistItems.map((item) => (
+              {checklist.map((item) => (
                 <label key={item.id}>
                   <input
                     type="checkbox"
-                    checked={Boolean(checkedItems[item.id])}
+                    checked={item.checked}
                     onChange={() => toggleItem(item.id)}
                   />
                   <span aria-hidden="true" />
-                  <strong>{item.label}</strong>
+                  <strong>{item.label}{item.time && ` · ${item.time}`}</strong>
                 </label>
               ))}
             </div>
@@ -169,6 +145,14 @@ function TransitionGuide() {
               ? '전환일 날짜를 확인한 뒤 다시 시도해 주세요.'
               : '각 단계를 순서대로 따라 주세요.'}
           </p>
+
+          {guideSections.length === 0 && (
+            <p className="rhythm-coaching__empty">
+              {isLoading
+                ? '전환일 안내를 불러오는 중이에요.'
+                : '이 날짜는 근무 전환일이 아니에요.'}
+            </p>
+          )}
 
           <div className="transition-guide__sections">
             {guideSections.map((section, index) => (
