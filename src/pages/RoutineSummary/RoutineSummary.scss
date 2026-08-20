@@ -208,6 +208,13 @@
     }
   }
 
+  &__empty {
+    padding: $space-4 0;
+    color: $color-text-secondary;
+    text-align: center;
+    @include typo($font-size-sm, $font-weight-medium, $line-height-normal);
+  }
+
   &__routine {
     display: grid;
     grid-template-columns: 32px minmax(0, 1fr) 42px;

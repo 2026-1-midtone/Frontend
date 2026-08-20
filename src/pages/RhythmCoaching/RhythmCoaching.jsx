@@ -6,6 +6,7 @@ import {
   getTransitions,
 } from '@/api/coachingApi.js'
 import { getHomeDashboard } from '@/api/homeApi.js'
+import { getTodayRoutines } from '@/api/routineApi.js'
 import summaryCaffeineIcon from '@/assets/rhythm-coaching/summary-caffeine.svg'
 import summaryLightIcon from '@/assets/rhythm-coaching/summary-light.svg'
 import summaryNapIcon from '@/assets/rhythm-coaching/summary-nap.svg'
@@ -17,6 +18,7 @@ import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
 import { applyCardDetail, toCoachingCardView, toggleCardDetail } from '@/lib/coachingCards.js'
+import { toPercent } from '@/lib/routineReport.js'
 import {
   addDays,
   formatDateTimeRange,
@@ -56,6 +58,7 @@ function RhythmCoaching() {
   const [coachingCards, setCoachingCards] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [remainingTime, setRemainingTime] = useState('일정 확인 중')
+  const [routinePercent, setRoutinePercent] = useState(0)
   const [transitionDate, setTransitionDate] = useState(null)
   const [tomorrowCoaching, setTomorrowCoaching] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
@@ -132,6 +135,13 @@ function RhythmCoaching() {
 
     loadCoaching()
 
+    // 진행 막대는 이 날짜에 만들어진 루틴 중 완료한 만큼 채운다. 아무것도 안 했으면 0이다.
+    getTodayRoutines(requestedDate, { signal: controller.signal })
+      .then((data) => setRoutinePercent(toPercent(data.progress?.completionRate)))
+      .catch((error) => {
+        if (error.name !== 'AbortError') setRoutinePercent(0)
+      })
+
     return () => controller.abort()
   }, [requestedDate])
 
@@ -203,8 +213,14 @@ function RhythmCoaching() {
         <p>
           다음 근무까지 - <strong>{remainingTime}</strong>
         </p>
-        <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-          <span />
+        <div
+          role="progressbar"
+          aria-label="오늘 루틴 실행률"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow={routinePercent}
+        >
+          <span style={{ width: `${routinePercent}%` }} />
         </div>
       </section>
 

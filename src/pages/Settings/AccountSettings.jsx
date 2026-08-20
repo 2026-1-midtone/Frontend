@@ -9,12 +9,13 @@ import DangerZoneCard from './components/DangerZoneCard.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
 import './AccountSettings.scss'
 
-const MOCK_PROFILE = {
+// 프로필을 받아오기 전까지 보여줄 빈 값. 남의 정보처럼 보이는 예시를 두지 않는다.
+const EMPTY_PROFILE = {
   avatarSrc: avatarPlaceholder,
-  name: '근로자1',
-  nameSuffix: '(님)',
-  email: '2453082@hansung.ac.kr',
-  joinedAt: '25.12.12',
+  name: '',
+  nameSuffix: '',
+  email: '',
+  joinedAt: '',
 }
 
 const DELETE_ITEMS = [
@@ -30,7 +31,7 @@ const POLICY_LINKS = ['개인정보 처리방침', '서비스 이용약관']
 
 function AccountSettings() {
   const navigate = useNavigate()
-  const [profile, setProfile] = useState(MOCK_PROFILE)
+  const [profile, setProfile] = useState(EMPTY_PROFILE)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {

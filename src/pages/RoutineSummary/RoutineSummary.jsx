@@ -9,20 +9,26 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
+import { toPercent } from '@/lib/routineReport.js'
+import { formatDateTimeRange } from '@/lib/formatApiData.js'
 import './RoutineSummary.scss'
 
-const initialRoutines = [
-  { id: 1, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
-  { id: 2, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
-  { id: 3, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: true },
-  { id: 4, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
-  { id: 5, title: '카페인 컷오프 준수', detail: '14:00 이전 마지막 카페인 섭취 권장', completed: false },
-]
+const EMOJI_BY_CATEGORY = {
+  NAP: '😴',
+  SLEEP: '😴',
+  WAKE: '⏰',
+  LIGHT: '☀️',
+  LIGHT_EXPOSURE: '☀️',
+  CAFFEINE: '☕',
+  CAFFEINE_CUTOFF: '☕',
+  MEAL: '🍽️',
+}
 
 function RoutineSummary() {
   const navigate = useNavigate()
-  const [routines, setRoutines] = useState(initialRoutines)
+  const [routines, setRoutines] = useState([])
   const [summary, setSummary] = useState(null)
+  const [loadFailed, setLoadFailed] = useState(false)
   const routineListDrag = useRef({
     active: false,
     startY: 0,
@@ -40,11 +46,16 @@ function RoutineSummary() {
       if (routineResult.status === 'fulfilled') {
         setRoutines(routineResult.value.tasks.map((task) => ({
           id: task.taskId,
+          emoji: EMOJI_BY_CATEGORY[task.category] ?? '🌙',
           title: task.title,
-          detail: task.tip || '권장 시간에 맞춰 실행해 보세요.',
+          detail: formatDateTimeRange(task.windowStart, task.windowEnd)
+            || task.tip
+            || '권장 시간에 맞춰 실행해 보세요.',
           completed: task.status === 'DONE',
           skipped: task.status === 'SKIPPED',
         })))
+      } else if (routineResult.reason?.name !== 'AbortError') {
+        setLoadFailed(true)
       }
 
       if (summaryResult.status === 'fulfilled') setSummary(summaryResult.value)
@@ -53,7 +64,7 @@ function RoutineSummary() {
     return () => controller.abort()
   }, [])
 
-  const completionRate = Math.round((summary?.completionRate ?? 0.3) * 100)
+  const completionRate = toPercent(summary?.completionRate)
 
   const handleListPointerDown = (event) => {
     if (event.pointerType !== 'mouse') return
@@ -151,9 +162,16 @@ function RoutineSummary() {
           onPointerUp={stopListDragging}
           onPointerCancel={stopListDragging}
         >
+          {routines.length === 0 && (
+            <li className="routine-summary__empty">
+              {loadFailed
+                ? '루틴을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
+                : '오늘 실행한 루틴이 아직 없어요.'}
+            </li>
+          )}
           {routines.map((routine) => (
             <li className="routine-summary__routine" key={routine.id}>
-              <span className="routine-summary__emoji" aria-hidden="true">☕</span>
+              <span className="routine-summary__emoji" aria-hidden="true">{routine.emoji}</span>
               <div className="routine-summary__routine-copy">
                 <h3>{routine.title}</h3>
                 <p>{routine.detail}</p>

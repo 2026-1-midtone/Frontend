@@ -59,8 +59,9 @@ function PersonalizationSettings() {
   const [sleepMessage, setSleepMessage] = useState('')
   const [isSleepError, setIsSleepError] = useState(false)
 
+  // 설정을 받아오기 전에는 모두 꺼진 상태로 둔다. 켜져 있는 것처럼 보이면 안 된다.
   const [alerts, setAlerts] = useState({
-    napAlarm: true,
+    napAlarm: false,
     caffeineCutoffAlarm: false,
     lightExposureReminder: false,
   })

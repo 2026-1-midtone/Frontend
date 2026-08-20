@@ -105,7 +105,7 @@ function TransitionGuide() {
           </h1>
           <p>{guide
             ? `${formatShiftType(guide.fromShiftType)} → ${formatShiftType(guide.toShiftType)} 전환`
-            : '나이트 → 데이 전환'}</p>
+            : '전환 정보를 확인하고 있어요'}</p>
         </div>
         <button type="button" aria-label="설정" onClick={() => navigate(PATH.SETTINGS)}>
           <img src={settingsIcon} alt="" />

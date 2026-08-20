@@ -452,55 +452,32 @@
   }
 
   &__plot {
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: $space-2;
+    align-items: end;
     height: 125px;
     margin-top: $space-1;
   }
 
-  &__line {
-    position: absolute;
-    top: 35px;
-    left: -1px;
-    width: 305px;
-    height: 60px;
+  &__bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 100%;
+    border-radius: $radius-sm;
+    background: rgba($night-100, 0.35);
   }
 
-  &__start {
-    position: absolute;
-    top: 65px;
-    left: 61px;
-    width: 16px;
-    height: 16px;
-  }
+  &__bar-fill {
+    width: 100%;
+    min-height: 3px;
+    border-radius: $radius-sm;
+    background: rgba($purple-400, 0.55);
 
-  &__point {
-    position: absolute;
-    width: 45px;
-    height: 45px;
-
-    &--1 {
-      top: 49px;
-      left: 94px;
-    }
-
-    &--2 {
-      top: 22px;
-      left: 141px;
-    }
-
-    &--3 {
-      top: 22px;
-      left: 188px;
-    }
-
-    &--4 {
-      top: 22px;
-      left: 235px;
-    }
-
-    &--5 {
-      top: 22px;
-      left: 282px;
+    &--today {
+      background: $color-primary-hover;
+      box-shadow: 0 0 9px rgba($purple-400, 0.6);
     }
   }
 

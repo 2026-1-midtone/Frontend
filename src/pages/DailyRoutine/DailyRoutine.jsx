@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getHomeDashboard } from '@/api/homeApi.js'
 import { getTodayRoutines, updateRoutineTask } from '@/api/routineApi.js'
 import divider from '@/assets/daily-routine/divider.svg'
 import glowBottom from '@/assets/routine-summary/glow-bottom.svg'
@@ -9,6 +10,7 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
+import { formatShiftType } from '@/lib/formatApiData.js'
 import {
   applyTaskStatus,
   nextSkipStatus,
@@ -30,6 +32,7 @@ function DailyRoutine() {
   const [tasks, setTasks] = useState([])
   const [activeTip, setActiveTip] = useState(null)
   const [loadFailed, setLoadFailed] = useState(false)
+  const [todayShift, setTodayShift] = useState(undefined)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -38,6 +41,12 @@ function DailyRoutine() {
       .then((data) => setTasks(data.tasks.map(toRoutineTask)))
       .catch((error) => {
         if (error.name !== 'AbortError') setLoadFailed(true)
+      })
+
+    getHomeDashboard({ signal: controller.signal })
+      .then((data) => setTodayShift(data.todayShift))
+      .catch((error) => {
+        if (error.name !== 'AbortError') setTodayShift(null)
       })
 
     return () => controller.abort()
@@ -85,7 +94,7 @@ function DailyRoutine() {
             하루 루틴 실행
             <img src={sparkleIcon} alt="" aria-hidden="true" />
           </h1>
-          <p>나이트 근무 전입니다.</p>
+          <p>{shiftLabel(todayShift)}</p>
         </div>
         <button type="button" aria-label="설정" onClick={() => navigate(PATH.SETTINGS)}>
           <img src={settingsIcon} alt="" />
@@ -152,6 +161,14 @@ function DailyRoutine() {
       <RoutineTipModal tip={activeTip} onClose={() => setActiveTip(null)} />
     </main>
   )
+}
+
+/** 아직 확인 전(undefined)과 근무가 없는 날(null)을 구분해서 알려 준다. */
+function shiftLabel(todayShift) {
+  if (todayShift === undefined) return '오늘 근무를 확인하고 있어요.'
+  if (!todayShift) return '오늘은 근무 일정이 없어요.'
+
+  return `오늘은 ${formatShiftType(todayShift.shiftType)} 근무예요.`
 }
 
 export default DailyRoutine

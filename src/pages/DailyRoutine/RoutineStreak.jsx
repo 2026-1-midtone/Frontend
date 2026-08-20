@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getRoutineReport } from '@/api/routineApi.js'
-import streakLine from '@/assets/daily-routine/streak-line.svg'
-import streakPoint from '@/assets/daily-routine/streak-point.svg'
-import streakStart from '@/assets/daily-routine/streak-start.svg'
 import glowBottom from '@/assets/routine-summary/glow-bottom.svg'
 import glowLeft from '@/assets/routine-summary/glow-left.svg'
 import glowRight from '@/assets/routine-summary/glow-right.svg'
@@ -11,50 +8,39 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
+import { toCategoryRates, toPercent, toWeeklyPoints } from '@/lib/routineReport.js'
 import './DailyRoutine.scss'
 
-const initialCompletionRates = [
-  { id: 'nap', label: '낮잠', displayValue: 30, barValue: 30 },
-  { id: 'caffeine', label: '카페인 컷오프', displayValue: 30, barValue: 30 },
-  { id: 'light', label: '빛 노출', displayValue: 30, barValue: 80 },
-  { id: 'meal', label: '식사 타이밍', displayValue: 30, barValue: 30 },
-]
-
-const days = ['월', '화', '수', '목', '금', '토', '일']
+const LABEL_BY_CATEGORY = {
+  NAP: '낮잠',
+  CAFFEINE_CUTOFF: '카페인 컷오프',
+  LIGHT: '빛 노출',
+  LIGHT_EXPOSURE: '빛 노출',
+  MEAL: '식사 타이밍',
+  SLEEP: '수면',
+  WAKE: '기상',
+}
 
 function RoutineStreak() {
   const navigate = useNavigate()
   const [report, setReport] = useState(null)
-  const [completionRates, setCompletionRates] = useState(initialCompletionRates)
+  const [loadFailed, setLoadFailed] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
 
     getRoutineReport('7d', { signal: controller.signal })
-      .then((data) => {
-        const labelByCategory = {
-          NAP: '낮잠',
-          CAFFEINE_CUTOFF: '카페인 컷오프',
-          LIGHT: '빛 노출',
-          LIGHT_EXPOSURE: '빛 노출',
-          MEAL: '식사 타이밍',
-        }
-
-        setReport(data)
-        setCompletionRates(data.byCategory.map((rate) => {
-          const value = Math.round(rate.completionRate * 100)
-          return {
-            id: rate.category,
-            label: labelByCategory[rate.category] ?? rate.category,
-            displayValue: value,
-            barValue: value,
-          }
-        }))
+      .then(setReport)
+      .catch((error) => {
+        if (error.name !== 'AbortError') setLoadFailed(true)
       })
-      .catch(() => {})
 
     return () => controller.abort()
   }, [])
+
+  const completionRates = toCategoryRates(report?.byCategory, LABEL_BY_CATEGORY)
+  const weeklyPoints = toWeeklyPoints(report?.byDay)
+  const weakestLabel = completionRates.find((rate) => rate.id === report?.weakestCategory)?.label
 
   return (
     <main className="routine-streak" aria-labelledby="routine-streak-title">
@@ -67,7 +53,7 @@ function RoutineStreak() {
             연속 기록
             <img src={sparkleIcon} alt="" aria-hidden="true" />
           </h1>
-          <p>{report?.streak.currentStreak ?? 12}일째 함께하고 있어요🔥</p>
+          <p>{toDays(report?.streak.currentStreak)}째 함께하고 있어요🔥</p>
         </div>
         <button type="button" aria-label="설정" onClick={() => navigate(PATH.SETTINGS)}>
           <img src={settingsIcon} alt="" />
@@ -83,11 +69,11 @@ function RoutineStreak() {
           <section className="routine-streak__summary" aria-label="연속 기록 요약">
             <div>
               <span>현재 연속기록</span>
-              <strong>{report?.streak.currentStreak ?? 12}일 연속</strong>
+              <strong>{toDays(report?.streak.currentStreak)} 연속</strong>
             </div>
             <div>
               <span>최장 기록</span>
-              <strong>{report?.streak.longestStreak ?? 18}일</strong>
+              <strong>{toDays(report?.streak.longestStreak)}</strong>
             </div>
           </section>
 
@@ -96,23 +82,25 @@ function RoutineStreak() {
             <div className="routine-streak__chart">
               <div className="routine-streak__chart-heading">
                 <strong>전체 완료율</strong>
-                <span>{Math.round((report?.overallCompletionRate ?? 0.78) * 100)}%</span>
+                <span>{toPercent(report?.overallCompletionRate)}%</span>
               </div>
-              <div className="routine-streak__plot" aria-label="월요일부터 일요일까지의 완료율 변화">
-                <img className="routine-streak__line" src={streakLine} alt="" aria-hidden="true" />
-                <img className="routine-streak__start" src={streakStart} alt="" aria-hidden="true" />
-                {[0, 1, 2, 3, 4].map((point) => (
-                  <img
-                    className={`routine-streak__point routine-streak__point--${point + 1}`}
-                    src={streakPoint}
-                    alt=""
-                    aria-hidden="true"
-                    key={point}
-                  />
+              <div className="routine-streak__plot" aria-label="최근 7일 완료율 변화">
+                {weeklyPoints.map((point) => (
+                  <div
+                    className="routine-streak__bar"
+                    key={point.date}
+                    role="img"
+                    aria-label={`${point.label}요일 ${point.hasTasks ? `${point.percent}% 완료` : '루틴 없음'}`}
+                  >
+                    <span
+                      className={`routine-streak__bar-fill${point.isLast ? ' routine-streak__bar-fill--today' : ''}`}
+                      style={{ height: `${point.percent}%` }}
+                    />
+                  </div>
                 ))}
               </div>
               <div className="routine-streak__days" aria-hidden="true">
-                {days.map((day) => <span key={day}>{day}</span>)}
+                {weeklyPoints.map((point) => <span key={point.date}>{point.label}</span>)}
               </div>
             </div>
           </section>
@@ -122,25 +110,33 @@ function RoutineStreak() {
             <div className="routine-streak__rate-list">
               {completionRates.map((rate) => (
                 <article className="routine-streak__rate" key={rate.id}>
-                  <p>{rate.label} - <strong>{rate.displayValue}% 완료</strong></p>
+                  <p>{rate.label} - <strong>{rate.value}% 완료</strong></p>
                   <div
                     role="progressbar"
                     aria-label={`${rate.label} 완료율`}
                     aria-valuemin="0"
                     aria-valuemax="100"
-                    aria-valuenow={rate.barValue}
+                    aria-valuenow={rate.value}
                   >
-                    <span style={{ width: `${rate.barValue}%` }} />
+                    <span style={{ width: `${rate.value}%` }} />
                   </div>
                 </article>
               ))}
             </div>
           </section>
 
-          <p className="routine-streak__warning">
-            ⚠ {completionRates.find((rate) => rate.id === report?.weakestCategory)?.label
-              ?? '식사 타이밍'} 항목의 완료율이 낮습니다.
-          </p>
+          {weakestLabel && (
+            <p className="routine-streak__warning">
+              ⚠ {weakestLabel} 항목의 완료율이 낮습니다.
+            </p>
+          )}
+          {completionRates.length === 0 && (
+            <p className="routine-streak__warning">
+              {loadFailed
+                ? '⚠ 기록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
+                : '아직 쌓인 기록이 없어요. 루틴을 실행하면 여기에 모아 드려요.'}
+            </p>
+          )}
           <p className="routine-streak__disclaimer">
             이 리포트는 참고용이며 임상적 해석을 포함하지 않습니다.
           </p>
@@ -150,6 +146,10 @@ function RoutineStreak() {
       <span className="daily-routine__home-indicator" aria-hidden="true" />
     </main>
   )
+}
+
+function toDays(count) {
+  return `${count ?? 0}일`
 }
 
 export default RoutineStreak

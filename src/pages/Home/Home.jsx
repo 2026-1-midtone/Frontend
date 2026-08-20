@@ -17,6 +17,7 @@ import {
 } from '../../components/common/icons/index.jsx'
 import { PATH } from '../../routes/paths.js'
 import { isPastWindow } from '../../lib/coachingCards.js'
+import { toPercent } from '../../lib/routineReport.js'
 import {
   formatDateTimeRange,
   formatRemainingMinutes,
@@ -174,7 +175,7 @@ function Home() {
           />
           <NextShiftCard
             remainingLabel={formatRemainingMinutes(dashboard?.nextShift?.startsInMinutes)}
-            progress={dashboard?.nextShift ? 45 : 0}
+            progress={toPercent(dashboard?.routineProgress?.completionRate)}
           />
           <QuickMenuList items={QUICK_MENU_ITEMS} onSelect={handleSelectQuickMenu} />
         </div>
