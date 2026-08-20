@@ -110,6 +110,12 @@
     @include flex(row, stretch, flex-start, $space-2);
   }
 
+  &__hint {
+    margin-top: -$space-1;
+    color: $color-text-tertiary;
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+  }
+
   &__message {
     color: $color-success;
     @include typo($font-size-xs, $font-weight-medium, $line-height-relaxed);
