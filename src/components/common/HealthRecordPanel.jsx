@@ -1,18 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   createCaffeineIntake,
   createSleepLog,
 } from '@/api/healthRecordApi.js'
+import {
+  getPersonalizationSettings,
+  savePersonalizationSettings,
+} from '@/api/settingsApi.js'
 import Select from '@/components/common/Select.jsx'
+import { IconClose } from '@/components/common/icons/index.jsx'
 import { toLocalDateTimeInput, toOffsetDateTime } from '@/lib/formatApiData.js'
 import './HealthRecordPanel.scss'
 
-const CAFFEINE_OPTIONS = [
-  { label: '커피', value: 'COFFEE', amountMg: 100 },
-  { label: '에너지 음료', value: 'ENERGY_DRINK', amountMg: 80 },
-  { label: '차', value: 'TEA', amountMg: 40 },
-  { label: '기타', value: 'OTHER', amountMg: 50 },
+// 음료 종류(커피·에너지 음료 등)는 백엔드 로직에서 쓰지 않아 입력에서 제거했다.
+// 대신 개인화 설정에만 있던 카페인 민감도를 이 카드로 합쳐, 카페인 관련 입력을 한곳에서 받는다.
+const SENSITIVITY_OPTIONS = [
+  { value: 'LOW', label: '낮음' },
+  { value: 'MEDIUM', label: '보통' },
+  { value: 'HIGH', label: '높음' },
 ]
+
+// PUT /users/me/settings 는 전체 교체라 낮잠 설정을 함께 보내야 한다.
+// 두 값은 백엔드에서 필수(@NotNull)이므로, 설정을 못 불러왔을 때도 반드시 채워 보낸다.
+// 값은 백엔드 UserSettings 의 기본값과 동일하게 맞췄다.
+const DEFAULT_PREFERRED_NAP_MINUTES = 20
+const DEFAULT_MAX_NAPS_PER_DAY = 2
 
 function getInitialSleepTimes() {
   const wokeAt = new Date()
@@ -24,30 +36,44 @@ function getInitialSleepTimes() {
   }
 }
 
-function HealthRecordPanel() {
+/**
+ * 카페인·수면 기록 입력 패널.
+ *
+ * @param {object} props
+ * @param {() => void} [props.onClose] 넘기면 헤더에 닫기 버튼이 노출된다.
+ */
+function HealthRecordPanel({ onClose }) {
   const initialSleepTimes = getInitialSleepTimes()
   const [recordType, setRecordType] = useState(null)
   const [consumedAt, setConsumedAt] = useState(() => toLocalDateTimeInput(new Date()))
   const [amountMg, setAmountMg] = useState('100')
   const [servings, setServings] = useState('1')
-  const [beverageType, setBeverageType] = useState('COFFEE')
+  const [sensitivity, setSensitivity] = useState('')
+  // 민감도만 PUT 하면 나머지 설정이 지워질 수 있어, 저장할 때 합칠 원본 설정을 들고 있는다.
+  const [loadedSettings, setLoadedSettings] = useState(null)
   const [sleptAt, setSleptAt] = useState(initialSleepTimes.sleptAt)
   const [wokeAt, setWokeAt] = useState(initialSleepTimes.wokeAt)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [isError, setIsError] = useState(false)
 
+  useEffect(() => {
+    const controller = new AbortController()
+
+    getPersonalizationSettings({ signal: controller.signal })
+      .then((data) => {
+        setLoadedSettings(data)
+        setSensitivity(data.caffeineSensitivity ?? '')
+      })
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [])
+
   const selectRecordType = (nextType) => {
     setRecordType((current) => current === nextType ? null : nextType)
     setMessage('')
     setIsError(false)
-  }
-
-  const handleBeverageChange = (selectedValue) => {
-    const selectedOption = CAFFEINE_OPTIONS.find(({ value }) => value === selectedValue)
-
-    setBeverageType(selectedValue)
-    if (selectedOption) setAmountMg(String(selectedOption.amountMg))
   }
 
   const handleCaffeineSubmit = async (event) => {
@@ -72,20 +98,44 @@ function HealthRecordPanel() {
     setIsError(false)
 
     try {
+      // beverageType 은 선택값이고 백엔드 로직에서 쓰지 않아 보내지 않는다.
       await createCaffeineIntake({
         consumedAt: toOffsetDateTime(consumedAt),
         amountMg: parsedAmount,
         servings: parsedServings,
-        beverageType,
       })
-      setMessage('카페인 섭취를 기록했어요. 질문을 다시 보내면 답변에 반영됩니다.')
-      setRecordType(null)
     } catch (error) {
       setMessage(error.message ?? '카페인 기록을 저장하지 못했습니다.')
       setIsError(true)
-    } finally {
       setIsSaving(false)
+      return
     }
+
+    // 민감도는 기록이 아니라 개인화 설정이라 별도 API로 저장한다.
+    // 값이 바뀌지 않았으면 불필요한 요청을 보내지 않는다.
+    if (sensitivity && sensitivity !== loadedSettings?.caffeineSensitivity) {
+      try {
+        await savePersonalizationSettings({
+          caffeineDailyMg: loadedSettings?.caffeineDailyMg ?? undefined,
+          caffeineSensitivity: sensitivity,
+          preferredNapMinutes:
+            loadedSettings?.preferredNapMinutes ?? DEFAULT_PREFERRED_NAP_MINUTES,
+          maxNapsPerDay: loadedSettings?.maxNapsPerDay ?? DEFAULT_MAX_NAPS_PER_DAY,
+        })
+        setLoadedSettings((prev) => ({ ...prev, caffeineSensitivity: sensitivity }))
+      } catch (error) {
+        setMessage(
+          `카페인 섭취는 기록했지만 민감도를 저장하지 못했습니다. ${error.message ?? ''}`.trim(),
+        )
+        setIsError(true)
+        setIsSaving(false)
+        return
+      }
+    }
+
+    setMessage('카페인 섭취를 기록했어요. 질문을 다시 보내면 답변에 반영됩니다.')
+    setRecordType(null)
+    setIsSaving(false)
   }
 
   const handleSleepSubmit = async (event) => {
@@ -120,13 +170,28 @@ function HealthRecordPanel() {
   }
 
   return (
-    <section className="health-record-panel" aria-labelledby="health-record-title">
+    <section
+      id="assistant-health-record"
+      className="health-record-panel"
+      aria-labelledby="health-record-title"
+    >
       <div className="health-record-panel__heading">
         <div>
           <h2 id="health-record-title">오늘 기록 입력</h2>
           <p>기록할수록 AI 답변이 더 정확해져요.</p>
         </div>
-        <span aria-hidden="true">✦</span>
+        {onClose
+          ? (
+            <button
+              type="button"
+              className="health-record-panel__close"
+              onClick={onClose}
+              aria-label="기록 입력 닫기"
+            >
+              <IconClose size={16} />
+            </button>
+          )
+          : <span aria-hidden="true">✦</span>}
       </div>
 
       <div className="health-record-panel__tabs">
@@ -151,13 +216,17 @@ function HealthRecordPanel() {
       {recordType === 'caffeine' && (
         <form className="health-record-panel__form" onSubmit={handleCaffeineSubmit}>
           <label>
-            <span>종류</span>
+            <span>카페인 민감도</span>
             <Select
-              value={beverageType}
-              onChange={handleBeverageChange}
-              options={CAFFEINE_OPTIONS}
+              value={sensitivity}
+              onChange={setSensitivity}
+              options={SENSITIVITY_OPTIONS}
+              placeholder="민감도 수준"
             />
           </label>
+          <p className="health-record-panel__hint">
+            민감도가 높을수록 더 일찍 카페인 섭취를 중단합니다.
+          </p>
           <label>
             <span>섭취 시각</span>
             <input

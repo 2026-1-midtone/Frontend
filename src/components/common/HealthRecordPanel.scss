@@ -25,6 +25,25 @@
     }
   }
 
+  &__close {
+    @include button-reset;
+    @include flex-center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: $radius-full;
+    color: $color-text-secondary;
+
+    &:hover {
+      color: $color-text;
+      background-color: rgba($night-1000, 0.08);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
   &__tabs {
     @include flex(row, stretch, center, $space-2);
   }
@@ -89,6 +108,12 @@
 
   &__field-row {
     @include flex(row, stretch, flex-start, $space-2);
+  }
+
+  &__hint {
+    margin-top: -$space-1;
+    color: $color-text-tertiary;
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
   }
 
   &__message {

@@ -4,6 +4,7 @@ import { getCoachings } from '@/api/coachingApi.js'
 import { getHomeDashboard } from '@/api/homeApi.js'
 import { getRoutineReport, getTodayRoutines, updateRoutineTask } from '@/api/routineApi.js'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
+import HealthRecordPanel from '../../components/common/HealthRecordPanel.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import {
@@ -40,7 +41,7 @@ const QUICK_MENU_ITEMS = [
 ]
 
 const QUICK_MENU_PATHS = {
-  schedule: PATH.SCHEDULE,
+  schedule: PATH.SCHEDULE_CALENDAR,
   'rhythm-coaching': PATH.COACHING,
   'weekly-status': PATH.ROUTINE_SUMMARY,
 }
@@ -188,6 +189,7 @@ function Home() {
             onToggle={handleToggleRoutine}
             onViewAll={handleViewAllRoutines}
           />
+          <HealthRecordPanel />
           <RhythmCoachList items={coachItems} />
           <WeeklyProgressArc
             percent={weeklyPercent}
