@@ -115,10 +115,6 @@ function ScheduleCalendar() {
     })
   }
 
-  const handleGoToUpload = () => {
-    navigate(PATH.SCHEDULE)
-  }
-
   const total = agendaItems.length
   const confirmed = agendaItems.filter((item) => item.resolved).length
   const needsReview = total - confirmed
@@ -162,15 +158,6 @@ function ScheduleCalendar() {
           onClick={handleGoToEdit}
         >
           수정하러 가기
-        </button>
-
-        <button
-          type="button"
-          className="schedule-calendar__upload-link"
-          onClick={handleGoToUpload}
-        >
-          <span>사진으로 근무표 등록하기</span>
-          <span aria-hidden="true">→</span>
         </button>
 
         <ScheduleMonthGrid

@@ -90,22 +90,4 @@
       background-color: $night-500;
     }
   }
-
-  // 근무표 탭이 캘린더로 바뀐 뒤 사진 업로드 화면으로 가는 유일한 진입점.
-  &__upload-link {
-    @include button-reset;
-    @include flex(row, center, center, $space-2);
-    margin-top: -$space-3;
-    padding-block: $space-2;
-    color: $color-primary;
-    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    &:focus-visible {
-      @include focus-ring;
-    }
-  }
 }
