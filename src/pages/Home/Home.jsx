@@ -16,9 +16,9 @@ import {
 } from '../../components/common/icons/index.jsx'
 import { PATH } from '../../routes/paths.js'
 import {
+  formatDateTimeRange,
   formatRemainingMinutes,
   formatShiftType,
-  formatTimeRange,
 } from '../../lib/formatApiData.js'
 import HomeGreeting from './components/HomeGreeting.jsx'
 import NextShiftCard from './components/NextShiftCard.jsx'
@@ -121,7 +121,7 @@ function Home() {
           icon: iconByType[card.cardType] ?? IconSun,
           tone: card.cardType === 'CAFFEINE_CUTOFF' ? 'danger' : 'default',
           label: card.title,
-          detail: formatTimeRange(card.windowStart, card.windowEnd),
+          detail: formatDateTimeRange(card.windowStart, card.windowEnd),
         })))
 
         if ((dashboardData.routineProgress?.total ?? 0) > 0) {
@@ -130,7 +130,7 @@ function Home() {
             setRoutines(routineData.tasks.slice(0, 4).map((task) => ({
               id: task.taskId,
               title: task.title,
-              detail: formatTimeRange(task.windowStart, task.windowEnd) || task.tip || '',
+              detail: formatDateTimeRange(task.windowStart, task.windowEnd) || task.tip || '',
               done: task.status === 'DONE',
             })))
           } catch (error) {

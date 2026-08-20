@@ -122,7 +122,9 @@ function ScheduleCalendar() {
   }
 
   const handleGoToEdit = () => {
-    navigate(PATH.SCHEDULE_RESULT)
+    navigate(PATH.SCHEDULE_RESULT, {
+      state: getMonthRange(year, month),
+    })
   }
 
   const total = agendaItems.length

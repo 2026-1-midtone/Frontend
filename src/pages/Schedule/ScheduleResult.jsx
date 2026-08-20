@@ -4,12 +4,19 @@ import {
   confirmScheduleUpload,
   correctScheduleDrafts,
   getScheduleDrafts,
+  getShifts,
+  updateShift,
 } from '@/api/scheduleApi.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import sparkleIcon from '../../assets/sparkle.svg'
 import { PATH } from '../../routes/paths.js'
-import { formatDate, formatShiftType, toShiftType } from '../../lib/formatApiData.js'
+import {
+  formatDate,
+  formatShiftType,
+  getMonthRange,
+  toShiftType,
+} from '../../lib/formatApiData.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
 import './ScheduleResult.scss'
@@ -18,34 +25,46 @@ import './ScheduleResult.scss'
 const SHIFT_TYPE_OPTIONS = ['데이', '이브닝', '나이트', '오프']
 const OCR_JOB_STORAGE_KEY = 'shiftmate.ocrJobId'
 
-// 실제 OCR 연동 전까지 사용하는 목업 데이터.
-// 전체 스케줄(예: 28일)의 일부만 대표로 담았다 — 통계 수치는 이 목록 길이를 기준으로 계산된다.
-// 캘린더 화면(ScheduleCalendar)의 목업과는 별도 상태라, 여기서 수정해도
-// 캘린더 쪽에는 즉시 반영되지 않는다 (공유 스토어 도입 전까지의 한계).
-const INITIAL_DATES = [
-  { id: 'd1', date: '6월 1일 (월)', shiftType: '데이', resolved: true },
-  { id: 'd2', date: '6월 2일 (화)', shiftType: '데이', resolved: true },
-  { id: 'd3', date: '6월 3일 (수)', shiftType: '나이트', resolved: false },
-  { id: 'd4', date: '6월 4일 (목)', shiftType: '나이트', resolved: true },
-  { id: 'd5', date: '6월 5일 (금)', shiftType: '오프', resolved: true },
-  { id: 'd6', date: '6월 6일 (토)', shiftType: '오프', resolved: false },
-  { id: 'd7', date: '6월 7일 (일)', shiftType: '이브닝', resolved: true },
-  { id: 'd8', date: '6월 8일 (월)', shiftType: '데이', resolved: false },
-]
-
 function ScheduleResult() {
   const navigate = useNavigate()
   const location = useLocation()
   const jobId = location.state?.jobId
     ?? sessionStorage.getItem(OCR_JOB_STORAGE_KEY)
-  const [dates, setDates] = useState(() => jobId ? [] : INITIAL_DATES)
+  const [dates, setDates] = useState([])
   const [errorMessage, setErrorMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
-    if (!jobId) return undefined
-
     const controller = new AbortController()
+
+    if (!jobId) {
+      const now = new Date()
+      const fallbackRange = getMonthRange(now.getFullYear(), now.getMonth())
+      const from = location.state?.from ?? fallbackRange.from
+      const to = location.state?.to ?? fallbackRange.to
+
+      getShifts(from, to, { signal: controller.signal })
+        .then((data) => {
+          setDates((data.shifts ?? []).map((shift) => {
+            const shiftType = formatShiftType(shift.shiftType)
+
+            return {
+              id: shift.shiftId,
+              date: formatDate(shift.workDate),
+              shiftType,
+              originalShiftType: shiftType,
+              initiallyExcluded: false,
+              excluded: false,
+              resolved: true,
+            }
+          }))
+        })
+        .catch((error) => {
+          if (error.name !== 'AbortError') setErrorMessage(error.message)
+        })
+
+      return () => controller.abort()
+    }
 
     getScheduleDrafts(jobId, { signal: controller.signal })
       .then((data) => {
@@ -55,15 +74,16 @@ function ScheduleResult() {
 
         setDates(data.drafts.map((draft) => {
           const originalShiftType = formatShiftType(draft.shiftType)
-          const resolved = !draft.excluded
+          const excluded = Boolean(draft.excluded ?? draft.isUncertain ?? false)
+          const resolved = !excluded
 
           return {
             id: draft.draftId,
             date: formatDate(draft.workDate),
             shiftType: resolved ? originalShiftType : '',
             originalShiftType,
-            initiallyExcluded: Boolean(draft.excluded),
-            excluded: Boolean(draft.excluded),
+            initiallyExcluded: excluded,
+            excluded,
             resolved,
           }
         }))
@@ -73,7 +93,7 @@ function ScheduleResult() {
       })
 
     return () => controller.abort()
-  }, [jobId])
+  }, [jobId, location.state])
 
   // 인식 불확실 항목을 사용자가 직접 고치면 확인 완료로 전환하고,
   // 요약 통계(확인 완료 / 수정 필요)도 함께 갱신되도록 한다.
@@ -91,7 +111,22 @@ function ScheduleResult() {
     if (dates.some((item) => !item.resolved) || isSaving) return
 
     if (!jobId) {
-      navigate(PATH.SCHEDULE_CALENDAR)
+      setErrorMessage('')
+      setIsSaving(true)
+
+      try {
+        const changedDates = dates.filter(
+          (item) => item.shiftType !== item.originalShiftType,
+        )
+
+        await Promise.all(changedDates.map((item) => (
+          updateShift(item.id, { shiftType: toShiftType(item.shiftType) })
+        )))
+        navigate(PATH.SCHEDULE_CALENDAR)
+      } catch (error) {
+        setErrorMessage(error.message)
+        setIsSaving(false)
+      }
       return
     }
 

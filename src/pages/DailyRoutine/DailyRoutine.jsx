@@ -9,7 +9,7 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
-import { formatTimeRange } from '@/lib/formatApiData.js'
+import { formatDateTimeRange } from '@/lib/formatApiData.js'
 import RoutineTaskCard from './components/RoutineTaskCard.jsx'
 import RoutineTipModal from './components/RoutineTipModal.jsx'
 import './DailyRoutine.scss'
@@ -116,7 +116,7 @@ function DailyRoutine() {
               ? 'suggested'
               : 'remaining',
           title: task.title,
-          time: formatTimeRange(task.windowStart, task.windowEnd) || '권장 시간 확인',
+          time: formatDateTimeRange(task.windowStart, task.windowEnd) || '권장 시간 확인',
           tip: tipByCategory[task.category],
           skippable: task.status !== 'DONE',
           completed: task.status === 'DONE',

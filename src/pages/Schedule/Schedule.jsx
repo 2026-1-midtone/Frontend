@@ -23,7 +23,9 @@ function getCurrentMonth() {
 }
 
 function getDraftStats(drafts = []) {
-  const needsReview = drafts.filter((draft) => draft.excluded).length
+  const needsReview = drafts.filter((draft) => (
+    draft.excluded ?? draft.isUncertain ?? false
+  )).length
 
   return {
     confirmed: drafts.length - needsReview,
@@ -81,7 +83,11 @@ function Schedule() {
         if (cancelled) return
 
         if (job.status === 'FAILED') {
-          setErrorMessage(job.errorMessage ?? '근무표를 인식하지 못했습니다.')
+          setErrorMessage(
+            job.errorMessage
+              ?? job.failReason
+              ?? '근무표를 인식하지 못했습니다.',
+          )
           setIsUploading(false)
           return
         }

@@ -123,15 +123,15 @@ export async function apiRequest(path, options = {}) {
   }
 
   const data = await parseResponse(response)
-
-  if (
-    response.ok
-    && typeof data === 'string'
+  const isHtmlResponse = typeof data === 'string'
     && /^\s*<!doctype html/i.test(data)
-  ) {
+
+  if (isHtmlResponse) {
     throw new ApiError(
-      'API 요청이 앱 화면으로 연결되었습니다. 배포 프록시 설정을 확인해 주세요.',
-      502,
+      response.ok
+        ? 'API 요청이 앱 화면으로 연결되었습니다. 배포 프록시 설정을 확인해 주세요.'
+        : '백엔드 API 서버에 연결할 수 없습니다. 서버 배포와 프록시 주소를 확인해 주세요.',
+      response.ok ? 502 : response.status,
     )
   }
 

@@ -92,18 +92,14 @@ function RhythmCoaching() {
       try {
         if (requestedDate === toDateString()) {
           const dashboard = await getHomeDashboard({ signal: controller.signal })
-          const scheduleAlertType = dashboard.scheduleAlert?.type
           const hasNoSchedule = dashboard.scheduleAlert?.type === 'NO_SCHEDULE'
-            || (!dashboard.todayShift && !dashboard.nextShift)
-          const hasInsufficientSchedule = scheduleAlertType === 'INSUFFICIENT_SCHEDULE'
+            || !dashboard.todayShift
 
-          if (hasNoSchedule || hasInsufficientSchedule) {
+          if (hasNoSchedule) {
             setCoaching(null)
             setCoachingCards([])
             setRemainingTime('일정 미정')
-            setErrorMessage(hasInsufficientSchedule
-              ? `근무 일정이 ${dashboard.scheduleAlert?.remainingDays ?? 1}일 더 필요해요.`
-              : '근무 일정을 먼저 등록해 주세요.')
+            setErrorMessage('근무 일정을 먼저 등록해 주세요.')
             return
           }
         }
