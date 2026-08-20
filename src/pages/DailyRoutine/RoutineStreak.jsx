@@ -53,7 +53,7 @@ function RoutineStreak() {
             연속 기록
             <img src={sparkleIcon} alt="" aria-hidden="true" />
           </h1>
-          <p>{toDays(report?.streak.currentStreak)}째 함께하고 있어요🔥</p>
+          <p>{toDays(report?.streak?.currentStreak)}째 함께하고 있어요🔥</p>
         </div>
         <button type="button" aria-label="설정" onClick={() => navigate(PATH.SETTINGS)}>
           <img src={settingsIcon} alt="" />
@@ -69,11 +69,11 @@ function RoutineStreak() {
           <section className="routine-streak__summary" aria-label="연속 기록 요약">
             <div>
               <span>현재 연속기록</span>
-              <strong>{toDays(report?.streak.currentStreak)} 연속</strong>
+              <strong>{toDays(report?.streak?.currentStreak)} 연속</strong>
             </div>
             <div>
               <span>최장 기록</span>
-              <strong>{toDays(report?.streak.longestStreak)}</strong>
+              <strong>{toDays(report?.streak?.longestStreak)}</strong>
             </div>
           </section>
 

@@ -33,6 +33,7 @@ import TodayRoutineList from './components/TodayRoutineList.jsx'
 import WeeklyProgressArc from './components/WeeklyProgressArc.jsx'
 import './Home.scss'
 
+// 연결할 화면이 없는 항목은 두지 않는다. 눌러도 아무 일도 일어나지 않기 때문이다.
 const QUICK_MENU_ITEMS = [
   { id: 'schedule', label: '근무표', icon: IconSchedule },
   { id: 'rhythm-coaching', label: '리듬 코칭', icon: IconEdit },
@@ -46,7 +47,9 @@ const QUICK_MENU_PATHS = {
   'rhythm-coaching': PATH.COACHING,
   'nutrition-coaching': PATH.NUTRITION,
   nap: PATH.NAP,
-  'weekly-status': PATH.ROUTINE_SUMMARY,
+  // 주간 실행 현황은 최근 7일 완료율을 보여주는 화면으로 보낸다.
+  // ROUTINE_SUMMARY 는 오늘 하루 요약이라 라벨과 맞지 않았다.
+  'weekly-status': PATH.ROUTINE_STREAK,
 }
 
 function Home() {
@@ -197,7 +200,7 @@ function Home() {
           <WeeklyProgressArc
             percent={weeklyPercent}
             label="주간 실행 현황"
-            to={PATH.ROUTINE_SUMMARY}
+            to={PATH.ROUTINE_STREAK}
           />
         </BottomSheet>
       </div>

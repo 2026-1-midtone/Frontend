@@ -109,6 +109,7 @@ function ScheduleCalendar() {
     })
   }
 
+  // 근무 수정은 '수정하러 가기' 화면 한 곳에서만 한다.
   const handleGoToEdit = () => {
     navigate(PATH.SCHEDULE_RESULT, {
       state: getMonthRange(year, month),
@@ -170,7 +171,6 @@ function ScheduleCalendar() {
       </div>
 
       <ScheduleAgendaList items={agendaItems} />
-
     </div>
   )
 }
