@@ -9,7 +9,7 @@ import ChatMessageBubble from './components/ChatMessageBubble.jsx'
 import ChatRow from './components/ChatRow.jsx'
 import ChatTypingIndicator from './components/ChatTypingIndicator.jsx'
 import PersonalizationGuideModal from './components/PersonalizationGuideModal.jsx'
-import HealthRecordPanel from './components/HealthRecordPanel.jsx'
+import HealthRecordPanel from '@/components/common/HealthRecordPanel.jsx'
 import './Assistant.scss'
 
 function isPersonalizationMissing(settings) {

@@ -4,6 +4,7 @@ import { getCoachings } from '@/api/coachingApi.js'
 import { getHomeDashboard } from '@/api/homeApi.js'
 import { getRoutineReport, getTodayRoutines, updateRoutineTask } from '@/api/routineApi.js'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
+import HealthRecordPanel from '../../components/common/HealthRecordPanel.jsx'
 import SettingsButton from '../../components/common/SettingsButton.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import {
@@ -225,6 +226,7 @@ function Home() {
             onToggle={handleToggleRoutine}
             onViewAll={handleViewAllRoutines}
           />
+          <HealthRecordPanel />
           <RhythmCoachList items={coachItems} />
           <WeeklyProgressArc
             percent={weeklyPercent}
