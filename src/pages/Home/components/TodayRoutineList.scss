@@ -20,6 +20,12 @@
     @include flex-column($space-4);
   }
 
+  &__empty {
+    margin: $space-2 0 0;
+    color: $color-text-secondary;
+    @include typo($font-size-sm, $font-weight-medium, 22px);
+  }
+
   &__button {
     @include button-reset;
     @include flex-column($space-1);

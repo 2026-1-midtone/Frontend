@@ -197,6 +197,13 @@
     @include flex-column($space-3);
   }
 
+  &__empty {
+    margin: $space-8 auto;
+    color: $color-text-secondary;
+    text-align: center;
+    @include typo($font-size-sm, $font-weight-medium, 22px);
+  }
+
   &__disclaimer {
     margin: $space-8 auto 0;
     color: $color-text-disabled;

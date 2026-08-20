@@ -9,82 +9,15 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
-import { formatDateTimeRange } from '@/lib/formatApiData.js'
+import {
+  applyTaskStatus,
+  nextSkipStatus,
+  nextToggleStatus,
+  toRoutineTask,
+} from '@/lib/routineTasks.js'
 import RoutineTaskCard from './components/RoutineTaskCard.jsx'
 import RoutineTipModal from './components/RoutineTipModal.jsx'
 import './DailyRoutine.scss'
-
-const initialTasks = [
-  {
-    id: 'morning-light',
-    group: 'suggested',
-    title: '기상 직후 햇빛 노출',
-    time: '07:00 – 07:15',
-    tip: 'light',
-    completed: false,
-  },
-  {
-    id: 'caffeine-cutoff',
-    group: 'suggested',
-    title: '카페인 섭취 마감',
-    time: '14:00 이전 권장',
-    tip: 'caffeine',
-    completed: false,
-  },
-  {
-    id: 'power-nap',
-    group: 'suggested',
-    title: '20분 낮잠',
-    time: '13:00 – 14:00 권장',
-    tip: 'nap',
-    completed: true,
-  },
-  {
-    id: 'light-dinner',
-    group: 'remaining',
-    title: '저녁 식사 가볍게 마치기',
-    time: '18:00 - 19:00 권장',
-    skippable: true,
-    completed: false,
-  },
-  {
-    id: 'bedtime-stretch',
-    group: 'remaining',
-    title: '취침 전 스트레칭',
-    time: '야간 근무 출발 2시간전',
-    skippable: true,
-    completed: false,
-  },
-  {
-    id: 'hydration',
-    group: 'remaining',
-    title: '수분 섭취 확인',
-    time: '근무 전 500ml 권장',
-    skippable: true,
-    completed: false,
-  },
-  {
-    id: 'wake-stretch',
-    group: 'completed',
-    title: '일어나자마자 스트레칭',
-    time: '07:00 – 07:15',
-    completed: true,
-  },
-  {
-    id: 'morning-protein',
-    group: 'completed',
-    title: '아침 단백질 섭취',
-    time: '14:00 이전 권장',
-    completed: true,
-  },
-  {
-    id: 'blue-light-glasses',
-    group: 'completed',
-    title: '블루라이트 차단 안경 착용',
-    time: '13:00 – 14:00 권장',
-    completed: true,
-  },
-]
 
 const sections = [
   { id: 'suggested', title: '오늘은 이렇게 어때요?' },
@@ -94,36 +27,18 @@ const sections = [
 
 function DailyRoutine() {
   const navigate = useNavigate()
-  const [tasks, setTasks] = useState(initialTasks)
+  const [tasks, setTasks] = useState([])
   const [activeTip, setActiveTip] = useState(null)
+  const [loadFailed, setLoadFailed] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
 
     getTodayRoutines(undefined, { signal: controller.signal })
-      .then((data) => {
-        const tipByCategory = {
-          LIGHT: 'light',
-          CAFFEINE_CUTOFF: 'caffeine',
-          NAP: 'nap',
-        }
-
-        setTasks(data.tasks.map((task) => ({
-          id: task.taskId,
-          group: task.status === 'DONE'
-            ? 'completed'
-            : task.sourceType === 'COACHING'
-              ? 'suggested'
-              : 'remaining',
-          title: task.title,
-          time: formatDateTimeRange(task.windowStart, task.windowEnd) || '권장 시간 확인',
-          tip: tipByCategory[task.category],
-          skippable: task.status !== 'DONE',
-          completed: task.status === 'DONE',
-          status: task.status === 'SKIPPED' ? 'skipped' : undefined,
-        })))
+      .then((data) => setTasks(data.tasks.map(toRoutineTask)))
+      .catch((error) => {
+        if (error.name !== 'AbortError') setLoadFailed(true)
       })
-      .catch(() => {})
 
     return () => controller.abort()
   }, [])
@@ -135,39 +50,28 @@ function DailyRoutine() {
     return Math.round((completedCount / tasks.length) * 100)
   }, [tasks])
 
-  const toggleTask = async (taskId) => {
+  const changeStatus = async (taskId, status) => {
     const previous = tasks
-    const selected = tasks.find((task) => task.id === taskId)
 
-    setTasks((current) => current.map((task) => (
-      task.id === taskId
-        ? { ...task, completed: !task.completed, status: undefined }
-        : task
-    )))
+    setTasks((current) => applyTaskStatus(current, taskId, status))
 
     try {
-      await updateRoutineTask(taskId, selected?.completed ? 'PENDING' : 'DONE')
+      await updateRoutineTask(taskId, status)
     } catch {
       setTasks(previous)
     }
   }
 
-  const toggleSkip = async (taskId) => {
-    const previous = tasks
+  const toggleTask = (taskId) => {
     const selected = tasks.find((task) => task.id === taskId)
-    const nextStatus = selected?.status === 'skipped' ? 'PENDING' : 'SKIPPED'
 
-    setTasks((current) => current.map((task) => (
-      task.id === taskId
-        ? { ...task, completed: false, status: task.status === 'skipped' ? undefined : 'skipped' }
-        : task
-    )))
+    if (selected) changeStatus(taskId, nextToggleStatus(selected))
+  }
 
-    try {
-      await updateRoutineTask(taskId, nextStatus)
-    } catch {
-      setTasks(previous)
-    }
+  const toggleSkip = (taskId) => {
+    const selected = tasks.find((task) => task.id === taskId)
+
+    if (selected) changeStatus(taskId, nextSkipStatus(selected))
   }
 
   return (
@@ -206,7 +110,15 @@ function DailyRoutine() {
         <img className="daily-routine__glow daily-routine__glow--right" src={glowRight} alt="" />
 
         <div className="daily-routine__body">
-          {sections.map((section, index) => (
+          {tasks.length === 0 && (
+            <p className="daily-routine__empty">
+              {loadFailed
+                ? '루틴을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'
+                : '오늘 실행할 루틴이 아직 없어요. 근무표를 등록하면 코칭에 맞춰 만들어 드려요.'}
+            </p>
+          )}
+
+          {tasks.length > 0 && sections.map((section, index) => (
             <section className="daily-routine__section" key={section.id}>
               {index > 0 && <img className="daily-routine__divider" src={divider} alt="" aria-hidden="true" />}
               <h2>{section.title}</h2>

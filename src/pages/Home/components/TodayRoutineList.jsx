@@ -19,6 +19,12 @@ function TodayRoutineList({ routines, onToggle, onViewAll }) {
         <IconClover size={16} className="today-routine__title-icon" />
       </h2>
 
+      {routines.length === 0 && (
+        <p className="today-routine__empty">
+          오늘 실행할 루틴이 아직 없어요. 근무표를 등록하면 만들어 드려요.
+        </p>
+      )}
+
       <ul className="today-routine__list">
         {routines.map(({ id, title, detail, done }) => (
           <li key={id} className="today-routine__item">

@@ -18,6 +18,12 @@
     gap: $space-3;
   }
 
+  &__empty {
+    margin: $space-2 0 0;
+    color: $color-text-secondary;
+    @include typo($font-size-sm, $font-weight-medium, 22px);
+  }
+
   &__item {
     @include flex-column($space-2);
     align-items: flex-start;

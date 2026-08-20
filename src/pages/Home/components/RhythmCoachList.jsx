@@ -13,6 +13,10 @@ function RhythmCoachList({ items }) {
         <IconClover size={16} className="rhythm-coach__title-icon" />
       </h2>
 
+      {items.length === 0 && (
+        <p className="rhythm-coach__empty">오늘 남은 코칭 시간대가 없어요.</p>
+      )}
+
       <ul className="rhythm-coach__list">
         {items.map(({ id, icon: Icon, tone = 'default', label, detail }) => (
           <li key={id} className="rhythm-coach__item">
