@@ -20,8 +20,11 @@ const SENSITIVITY_OPTIONS = [
   { value: 'HIGH', label: '높음' },
 ]
 
-// 종류 입력을 없앤 뒤에도 기존 API 스펙(beverageType)을 만족시키기 위한 고정값.
-const DEFAULT_BEVERAGE_TYPE = 'OTHER'
+// PUT /users/me/settings 는 전체 교체라 낮잠 설정을 함께 보내야 한다.
+// 두 값은 백엔드에서 필수(@NotNull)이므로, 설정을 못 불러왔을 때도 반드시 채워 보낸다.
+// 값은 백엔드 UserSettings 의 기본값과 동일하게 맞췄다.
+const DEFAULT_PREFERRED_NAP_MINUTES = 20
+const DEFAULT_MAX_NAPS_PER_DAY = 2
 
 function getInitialSleepTimes() {
   const wokeAt = new Date()
@@ -95,11 +98,11 @@ function HealthRecordPanel({ onClose }) {
     setIsError(false)
 
     try {
+      // beverageType 은 선택값이고 백엔드 로직에서 쓰지 않아 보내지 않는다.
       await createCaffeineIntake({
         consumedAt: toOffsetDateTime(consumedAt),
         amountMg: parsedAmount,
         servings: parsedServings,
-        beverageType: DEFAULT_BEVERAGE_TYPE,
       })
     } catch (error) {
       setMessage(error.message ?? '카페인 기록을 저장하지 못했습니다.')
@@ -115,8 +118,9 @@ function HealthRecordPanel({ onClose }) {
         await savePersonalizationSettings({
           caffeineDailyMg: loadedSettings?.caffeineDailyMg ?? undefined,
           caffeineSensitivity: sensitivity,
-          preferredNapMinutes: loadedSettings?.preferredNapMinutes ?? undefined,
-          maxNapsPerDay: loadedSettings?.maxNapsPerDay ?? undefined,
+          preferredNapMinutes:
+            loadedSettings?.preferredNapMinutes ?? DEFAULT_PREFERRED_NAP_MINUTES,
+          maxNapsPerDay: loadedSettings?.maxNapsPerDay ?? DEFAULT_MAX_NAPS_PER_DAY,
         })
         setLoadedSettings((prev) => ({ ...prev, caffeineSensitivity: sensitivity }))
       } catch (error) {
