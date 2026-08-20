@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getChatMessages, sendChatMessage } from '@/api/chatApi.js'
 import { getPersonalizationSettings } from '@/api/settingsApi.js'
-import { IconChevronLeft } from '../../components/common/icons/index.jsx'
+import { PATH } from '@/routes/paths.js'
+import {
+  IconChevronLeft,
+  IconCoffee,
+  IconSchedule,
+} from '../../components/common/icons/index.jsx'
 import ChatBanner from './components/ChatBanner.jsx'
 import ChatInputBar from './components/ChatInputBar.jsx'
 import ChatMessageBubble from './components/ChatMessageBubble.jsx'
@@ -30,6 +35,8 @@ function Assistant() {
   const [isTyping, setIsTyping] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [showPersonalizationGuide, setShowPersonalizationGuide] = useState(false)
+  // 기록 입력 패널은 채팅 영역을 좁히지 않도록 버튼으로 펼친다.
+  const [isRecordPanelOpen, setIsRecordPanelOpen] = useState(false)
 
   const nextId = useRef(0)
   const isMounted = useRef(true)
@@ -105,6 +112,14 @@ function Assistant() {
     navigate(-1)
   }
 
+  const handleOpenScheduleCalendar = () => {
+    navigate(PATH.SCHEDULE_CALENDAR)
+  }
+
+  const toggleRecordPanel = () => {
+    setIsRecordPanelOpen((prev) => !prev)
+  }
+
   const handleSend = async () => {
     const question = inputValue.trim()
     if (!question || isTyping) return
@@ -177,7 +192,31 @@ function Assistant() {
           title="근무 일정을 바탕으로 즉시 답변해드려요"
           description="지금 궁금한 점을 물어보세요!"
         />
-        <HealthRecordPanel />
+
+        <div className="assistant__actions">
+          <button
+            type="button"
+            className="assistant__action"
+            onClick={handleOpenScheduleCalendar}
+          >
+            <IconSchedule size={18} />
+            근무표 달력
+          </button>
+          <button
+            type="button"
+            className={`assistant__action${isRecordPanelOpen ? ' assistant__action--active' : ''}`}
+            onClick={toggleRecordPanel}
+            aria-expanded={isRecordPanelOpen}
+            aria-controls="assistant-health-record"
+          >
+            <IconCoffee size={18} />
+            커피·수면 기록
+          </button>
+        </div>
+
+        {isRecordPanelOpen && (
+          <HealthRecordPanel onClose={() => setIsRecordPanelOpen(false)} />
+        )}
       </div>
 
       <div className="assistant__messages">

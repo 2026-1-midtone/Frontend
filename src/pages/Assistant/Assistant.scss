@@ -37,6 +37,37 @@
     }
   }
 
+  &__actions {
+    @include flex(row, stretch, center, $space-2);
+  }
+
+  &__action {
+    @include button-reset;
+    @include flex(row, center, center, $space-2);
+    flex: 1;
+    min-width: 0;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    color: $color-text-secondary;
+    background-color: rgba($night-1000, 0.04);
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    &--active {
+      border-color: rgba($purple-500, 0.7);
+      color: $color-text;
+      background-color: rgba($purple-700, 0.22);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
   &__messages {
     @include flex-column($space-3);
     @include hide-scrollbar;

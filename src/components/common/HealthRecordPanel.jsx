@@ -4,6 +4,7 @@ import {
   createSleepLog,
 } from '@/api/healthRecordApi.js'
 import Select from '@/components/common/Select.jsx'
+import { IconClose } from '@/components/common/icons/index.jsx'
 import { toLocalDateTimeInput, toOffsetDateTime } from '@/lib/formatApiData.js'
 import './HealthRecordPanel.scss'
 
@@ -24,7 +25,13 @@ function getInitialSleepTimes() {
   }
 }
 
-function HealthRecordPanel() {
+/**
+ * 카페인·수면 기록 입력 패널.
+ *
+ * @param {object} props
+ * @param {() => void} [props.onClose] 넘기면 헤더에 닫기 버튼이 노출된다.
+ */
+function HealthRecordPanel({ onClose }) {
   const initialSleepTimes = getInitialSleepTimes()
   const [recordType, setRecordType] = useState(null)
   const [consumedAt, setConsumedAt] = useState(() => toLocalDateTimeInput(new Date()))
@@ -120,13 +127,28 @@ function HealthRecordPanel() {
   }
 
   return (
-    <section className="health-record-panel" aria-labelledby="health-record-title">
+    <section
+      id="assistant-health-record"
+      className="health-record-panel"
+      aria-labelledby="health-record-title"
+    >
       <div className="health-record-panel__heading">
         <div>
           <h2 id="health-record-title">오늘 기록 입력</h2>
           <p>기록할수록 AI 답변이 더 정확해져요.</p>
         </div>
-        <span aria-hidden="true">✦</span>
+        {onClose
+          ? (
+            <button
+              type="button"
+              className="health-record-panel__close"
+              onClick={onClose}
+              aria-label="기록 입력 닫기"
+            >
+              <IconClose size={16} />
+            </button>
+          )
+          : <span aria-hidden="true">✦</span>}
       </div>
 
       <div className="health-record-panel__tabs">
