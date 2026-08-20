@@ -17,7 +17,6 @@ import './ScheduleResult.scss'
 // 근무유형 선택지. 실제 값은 근무표 정책이 확정되면 상수로 분리해 공유한다.
 const SHIFT_TYPE_OPTIONS = ['데이', '이브닝', '나이트', '오프']
 const OCR_JOB_STORAGE_KEY = 'shiftmate.ocrJobId'
-const OCR_REVIEW_CONFIDENCE = 0.8
 
 // 실제 OCR 연동 전까지 사용하는 목업 데이터.
 // 전체 스케줄(예: 28일)의 일부만 대표로 담았다 — 통계 수치는 이 목록 길이를 기준으로 계산된다.
@@ -57,8 +56,6 @@ function ScheduleResult() {
         setDates(data.drafts.map((draft) => {
           const originalShiftType = formatShiftType(draft.shiftType)
           const resolved = !draft.excluded
-            && draft.confidence !== null
-            && Number(draft.confidence) >= OCR_REVIEW_CONFIDENCE
 
           return {
             id: draft.draftId,
