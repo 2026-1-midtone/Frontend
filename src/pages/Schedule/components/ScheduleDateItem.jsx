@@ -1,6 +1,6 @@
+import Select from '../../../components/common/Select.jsx'
 import {
   IconCheck,
-  IconChevronDown,
   IconWarningTriangle,
 } from '../../../components/common/icons/index.jsx'
 import './ScheduleDateItem.scss'
@@ -70,24 +70,14 @@ function ScheduleDateItem({ item, shiftTypeOptions, onChange, onToggleExclude })
         <span className="schedule-date-item__date">{date}</span>
 
         <div className="schedule-date-item__actions">
-          <label className="schedule-date-item__select-wrap">
-            <span className="visually-hidden">{date} 근무유형 선택</span>
-            <select
-              className="schedule-date-item__select"
-              value={shiftType}
-              onChange={(event) => onChange(id, event.target.value)}
-            >
-              <option value="" disabled>
-                선택...
-              </option>
-              {shiftTypeOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <IconChevronDown size={16} className="schedule-date-item__select-icon" />
-          </label>
+          <Select
+            className="schedule-date-item__select"
+            value={shiftType}
+            onChange={(value) => onChange(id, value)}
+            options={shiftTypeOptions.map((option) => ({ value: option, label: option }))}
+            placeholder="선택..."
+            ariaLabel={`${date} 근무유형 선택`}
+          />
           {excludeToggle}
         </div>
       </div>

@@ -8,6 +8,7 @@ import {
   getShifts,
   updateShift,
 } from '@/api/scheduleApi.js'
+import Select from '../../components/common/Select.jsx'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import routineHero from '../../assets/routine-summary/routine-hero.png'
 import sparkleIcon from '../../assets/sparkle.svg'
@@ -296,18 +297,14 @@ function ScheduleResult() {
                 disabled={isAddingDraft}
                 required
               />
-              <select
+              <Select
                 className="schedule-result__add-form-select"
                 value={newDraftShiftType}
-                onChange={(event) => setNewDraftShiftType(event.target.value)}
+                onChange={setNewDraftShiftType}
+                options={SHIFT_TYPE_OPTIONS.map((option) => ({ value: option, label: option }))}
+                placeholder="근무유형"
                 disabled={isAddingDraft}
-                required
-              >
-                <option value="" disabled>근무유형</option>
-                {SHIFT_TYPE_OPTIONS.map((option) => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
+              />
               <button
                 type="submit"
                 className="schedule-result__add-form-submit"

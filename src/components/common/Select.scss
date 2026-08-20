@@ -1,0 +1,86 @@
+.select {
+  position: relative;
+  width: 100%;
+
+  &__trigger {
+    @include button-reset;
+    @include flex-between;
+    width: 100%;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    background-color: $night-300;
+    color: $color-text;
+    text-align: left;
+    @include typo($font-size-sm, $font-weight-medium, $line-height-tight);
+    transition: border-color $duration-fast $easing-standard;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &.is-open > &__trigger {
+    border-color: $color-primary;
+  }
+
+  &__value {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &.is-placeholder {
+      color: $night-600;
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: $night-700;
+    transition: transform $duration-fast $easing-standard;
+  }
+
+  &.is-open &__icon {
+    transform: rotate(180deg);
+  }
+
+  &__list {
+    position: absolute;
+    z-index: $z-dropdown;
+    top: calc(100% + #{$space-1});
+    left: 0;
+    right: 0;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: $space-1;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    background-color: $night-200;
+    box-shadow: $shadow-lg;
+  }
+
+  &__option {
+    @include flex-between;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    border-radius: $radius-sm;
+    color: $color-text;
+    @include typo($font-size-sm, $font-weight-medium, $line-height-tight);
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba($night-1000, 0.08);
+    }
+
+    &.is-selected {
+      color: $color-primary-hover;
+      background-color: rgba($color-primary, 0.14);
+    }
+  }
+}

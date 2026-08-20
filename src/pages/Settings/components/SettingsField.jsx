@@ -1,4 +1,4 @@
-import { IconChevronDown } from '../../../components/common/icons/index.jsx'
+import Select from '../../../components/common/Select.jsx'
 import './SettingsField.scss'
 
 /**
@@ -7,7 +7,7 @@ import './SettingsField.scss'
  *
  * @param {string} rowLabel 왼쪽의 굵은 항목명 (예: "카페인 민감도")
  * @param {string} fieldLabel 컨트롤 위의 작은 설명 (예: "민감도 수준")
- * @param {'text'|'number'|'datetime-local'|'select'} type
+ * @param {'text'|'number'|'time'|'datetime-local'|'select'} type
  * @param {string} value
  * @param {(value: string) => void} onChange
  * @param {string} placeholder
@@ -32,7 +32,7 @@ function SettingsField({
         <div className="settings-field__control">
           {fieldLabel && <span className="settings-field__field-label">{fieldLabel}</span>}
 
-          {type === 'text' || type === 'number' || type === 'datetime-local' ? (
+          {type !== 'select' ? (
             <input
               type={type}
               className="settings-field__input"
@@ -43,23 +43,12 @@ function SettingsField({
               onChange={(event) => onChange?.(event.target.value)}
             />
           ) : (
-            <div className="settings-field__select-wrap">
-              <select
-                className="settings-field__select"
-                value={value ?? ''}
-                onChange={(event) => onChange?.(event.target.value)}
-              >
-                <option value="" disabled>
-                  {placeholder}
-                </option>
-                {options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <IconChevronDown size={16} className="settings-field__select-icon" />
-            </div>
+            <Select
+              value={value ?? ''}
+              onChange={onChange}
+              options={options}
+              placeholder={placeholder}
+            />
           )}
         </div>
       </div>

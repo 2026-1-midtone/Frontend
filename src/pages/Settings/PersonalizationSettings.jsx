@@ -21,13 +21,26 @@ const SENSITIVITY_OPTIONS = [
   { value: 'HIGH', label: '높음' },
 ]
 
+// input[type=time] 값("HH:mm")만 받아서, 오늘 날짜를 기준으로 실제 Date를 만든다.
+// 기상 시각이 취침 시각보다 이르거나 같으면 자정을 넘긴 것으로 보고 다음날로 넘긴다.
+function toTimeInput(date) {
+  return toLocalDateTimeInput(date).slice(11, 16)
+}
+
+function combineTodayWithTime(timeString, baseDate) {
+  const [hours, minutes] = timeString.split(':').map(Number)
+  const date = new Date(baseDate)
+  date.setHours(hours, minutes, 0, 0)
+  return date
+}
+
 function getInitialSleepTimes() {
   const wokeAt = new Date()
   const sleptAt = new Date(wokeAt.getTime() - 8 * 60 * 60 * 1000)
 
   return {
-    sleptAt: toLocalDateTimeInput(sleptAt),
-    wokeAt: toLocalDateTimeInput(wokeAt),
+    sleptAt: toTimeInput(sleptAt),
+    wokeAt: toTimeInput(wokeAt),
   }
 }
 
@@ -124,13 +137,20 @@ function PersonalizationSettings() {
 
   const handleSleepSubmit = async (event) => {
     event.preventDefault()
-    const sleptDate = new Date(sleptAt)
-    const wokeDate = new Date(wokeAt)
 
-    if (!sleptAt || !wokeAt || wokeDate <= sleptDate) {
-      setSleepMessage('기상 시각은 취침 시각보다 늦게 입력해 주세요.')
+    if (!sleptAt || !wokeAt) {
+      setSleepMessage('취침 시각과 기상 시각을 입력해 주세요.')
       setIsSleepError(true)
       return
+    }
+
+    const today = new Date()
+    const sleptDate = combineTodayWithTime(sleptAt, today)
+    let wokeDate = combineTodayWithTime(wokeAt, today)
+
+    // 기상 시각이 취침 시각보다 빠르면(예: 23:00 취침 → 07:00 기상) 자정을 넘긴 것으로 본다.
+    if (wokeDate <= sleptDate) {
+      wokeDate = new Date(wokeDate.getTime() + 24 * 60 * 60 * 1000)
     }
 
     setIsSleepSaving(true)
@@ -139,8 +159,8 @@ function PersonalizationSettings() {
 
     try {
       await createSleepLog({
-        sleptAt: toOffsetDateTime(sleptAt),
-        wokeAt: toOffsetDateTime(wokeAt),
+        sleptAt: toOffsetDateTime(toLocalDateTimeInput(sleptDate)),
+        wokeAt: toOffsetDateTime(toLocalDateTimeInput(wokeDate)),
         source: 'MANUAL',
       })
       setSleepMessage('수면 시간을 기록했어요.')
@@ -186,17 +206,17 @@ function PersonalizationSettings() {
           <form className="personalization-settings__sleep-form" onSubmit={handleSleepSubmit}>
             <SettingsField
               rowLabel="취침 시각"
-              type="datetime-local"
+              type="time"
               value={sleptAt}
               onChange={setSleptAt}
             />
 
             <SettingsField
               rowLabel="기상 시각"
-              type="datetime-local"
+              type="time"
               value={wokeAt}
               onChange={setWokeAt}
-              caption="몇 시부터 몇 시까지 잤는지 기록하면 코칭에 반영됩니다."
+              caption="몇 시부터 몇 시까지 잤는지만 기록하면 됩니다."
             />
 
             {sleepMessage && (

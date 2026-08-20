@@ -3,6 +3,7 @@ import {
   createCaffeineIntake,
   createSleepLog,
 } from '@/api/healthRecordApi.js'
+import Select from '@/components/common/Select.jsx'
 import { toLocalDateTimeInput, toOffsetDateTime } from '@/lib/formatApiData.js'
 import './HealthRecordPanel.scss'
 
@@ -42,8 +43,7 @@ function HealthRecordPanel() {
     setIsError(false)
   }
 
-  const handleBeverageChange = (event) => {
-    const selectedValue = event.target.value
+  const handleBeverageChange = (selectedValue) => {
     const selectedOption = CAFFEINE_OPTIONS.find(({ value }) => value === selectedValue)
 
     setBeverageType(selectedValue)
@@ -152,11 +152,11 @@ function HealthRecordPanel() {
         <form className="health-record-panel__form" onSubmit={handleCaffeineSubmit}>
           <label>
             <span>종류</span>
-            <select value={beverageType} onChange={handleBeverageChange}>
-              {CAFFEINE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
+            <Select
+              value={beverageType}
+              onChange={handleBeverageChange}
+              options={CAFFEINE_OPTIONS}
+            />
           </label>
           <label>
             <span>섭취 시각</span>

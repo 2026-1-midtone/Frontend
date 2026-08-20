@@ -23,26 +23,9 @@
     color: $night-800;
   }
 
-  &__select-wrap {
-    position: relative;
-    @include flex-center;
-  }
-
-  &__select {
-    appearance: none;
-    padding: $space-2 $space-8 $space-2 $space-3;
-    border: 1px solid $color-border-strong;
-    border-radius: $radius-md;
-    background-color: $night-300;
-    color: $color-text;
-    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
-  }
-
-  &__select-icon {
-    position: absolute;
-    right: $space-2;
-    color: $night-700;
-    pointer-events: none;
+  &__select.select {
+    width: auto;
+    min-width: 104px;
   }
 
   &__status {
