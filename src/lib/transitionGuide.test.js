@@ -46,11 +46,11 @@ describe('toGuideSections', () => {
   })
 
   it('모르는 분류는 기본 아이콘으로 보여준다', () => {
-    const unknown = [{ phase: 'D_DAY', label: '당일', steps: [{ stepId: 2, category: 'HYDRATION' }] }]
+    const unknown = [{ phase: 'D_DAY', label: '당일', steps: [{ stepId: 2, category: 'MYSTERY' }] }]
     const [{ cards }] = toGuideSections(unknown, ICONS, FALLBACK)
 
     assert.equal(cards[0].icon, FALLBACK)
-    assert.equal(cards[0].title, 'HYDRATION')
+    assert.equal(cards[0].title, 'MYSTERY')
   })
 
   it('단계가 없어도 빈 배열을 돌려준다', () => {

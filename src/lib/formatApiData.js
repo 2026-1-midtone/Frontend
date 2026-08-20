@@ -14,6 +14,7 @@ const COACHING_CATEGORY_LABELS = {
   CAFFEINE_CUTOFF: '카페인 컷오프',
   NAP: '낮잠',
   MEAL: '식사',
+  HYDRATION: '수분 보충',
 }
 
 export const SHIFT_VALUES = Object.keys(SHIFT_LABELS)

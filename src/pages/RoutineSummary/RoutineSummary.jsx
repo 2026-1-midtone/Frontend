@@ -22,6 +22,7 @@ const EMOJI_BY_CATEGORY = {
   CAFFEINE: '☕',
   CAFFEINE_CUTOFF: '☕',
   MEAL: '🍽️',
+  HYDRATION: '💧',
 }
 
 function RoutineSummary() {
