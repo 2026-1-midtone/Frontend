@@ -62,6 +62,7 @@ function ScheduleResult() {
             date: formatDate(draft.workDate),
             shiftType: resolved ? originalShiftType : '',
             originalShiftType,
+            initiallyExcluded: Boolean(draft.excluded),
             excluded: Boolean(draft.excluded),
             resolved,
           }
@@ -99,11 +100,10 @@ function ScheduleResult() {
 
     try {
       const corrections = dates
-        .filter((item) => item.excluded || item.shiftType !== item.originalShiftType)
+        .filter((item) => item.initiallyExcluded || item.shiftType !== item.originalShiftType)
         .map((item) => ({
           draftId: item.id,
           shiftType: toShiftType(item.shiftType),
-          excluded: false,
         }))
 
       if (corrections.length > 0) {
