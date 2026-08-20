@@ -7,11 +7,12 @@
 
   &__image {
     flex: 0 0 auto;
-    width: 56px;
-    height: 56px;
+    // 제품 사진이 가로형(약 4:3)이라 정사각형으로 자르면 제품명과 용기가 잘린다.
+    width: 72px;
+    height: 54px;
     border-radius: $radius-md;
     background-color: $night-100;
-    object-fit: cover;
+    object-fit: contain;
   }
 
   &__body {
