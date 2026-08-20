@@ -25,7 +25,15 @@ const NAV_ITEMS = [
       PATH.SETTINGS_ACCOUNT,
     ],
   },
-  { to: PATH.SCHEDULE, label: '근무표', iconSrc: calendarIcon },
+  {
+    // 근무표 탭은 업로드 화면보다 등록된 근무표를 먼저 보여준다.
+    // 사진 업로드는 캘린더 안의 '사진으로 근무표 등록하기'로 들어간다.
+    to: PATH.SCHEDULE_CALENDAR,
+    label: '근무표',
+    iconSrc: calendarIcon,
+    // PATH.SCHEDULE 하위 경로 전체에서 탭이 활성으로 남는다.
+    activePaths: [PATH.SCHEDULE],
+  },
   { to: PATH.COACHING, label: '코칭', iconSrc: draftsIcon },
   {
     to: PATH.ROUTINE,

@@ -38,7 +38,7 @@ const QUICK_MENU_ITEMS = [
 ]
 
 const QUICK_MENU_PATHS = {
-  schedule: PATH.SCHEDULE,
+  schedule: PATH.SCHEDULE_CALENDAR,
   'rhythm-coaching': PATH.COACHING,
   'weekly-status': PATH.ROUTINE_SUMMARY,
 }
