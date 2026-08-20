@@ -15,8 +15,16 @@ const WEEKDAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
  * @param {() => void} onPrevMonth
  * @param {() => void} onNextMonth
  * @param {Record<string, string[]>} shiftsByDate "YYYY-MM-DD" -> 근무유형 배열
+ * @param {(dateKey: string) => void} [onSelectDate] 넘기면 이번 달 날짜를 눌러 근무를 편집할 수 있다.
  */
-function ScheduleMonthGrid({ year, month, onPrevMonth, onNextMonth, shiftsByDate }) {
+function ScheduleMonthGrid({
+  year,
+  month,
+  onPrevMonth,
+  onNextMonth,
+  shiftsByDate,
+  onSelectDate,
+}) {
   const weeks = buildMonthGrid(year, month)
 
   return (
@@ -54,6 +62,34 @@ function ScheduleMonthGrid({ year, month, onPrevMonth, onNextMonth, shiftsByDate
           <div className="schedule-month-grid__week" key={week[0].key}>
             {week.map((cell) => {
               const tags = shiftsByDate[cell.key] ?? []
+              const isEditable = Boolean(onSelectDate) && cell.inCurrentMonth
+              const content = (
+                <>
+                  <span className="schedule-month-grid__date">{cell.day}</span>
+                  {tags.length > 0 && (
+                    <span className="schedule-month-grid__tags">
+                      {tags.map((shiftType, index) => (
+                        <ShiftTag key={`${shiftType}-${index}`} shiftType={shiftType} compact />
+                      ))}
+                    </span>
+                  )}
+                </>
+              )
+
+              if (isEditable) {
+                return (
+                  <button
+                    key={cell.key}
+                    type="button"
+                    className="schedule-month-grid__cell is-editable"
+                    onClick={() => onSelectDate(cell.key)}
+                    aria-label={`${cell.day}일 근무 편집`}
+                  >
+                    {content}
+                  </button>
+                )
+              }
+
               return (
                 <div
                   key={cell.key}
@@ -63,14 +99,7 @@ function ScheduleMonthGrid({ year, month, onPrevMonth, onNextMonth, shiftsByDate
                       : 'schedule-month-grid__cell is-muted'
                   }
                 >
-                  <span className="schedule-month-grid__date">{cell.day}</span>
-                  {tags.length > 0 && (
-                    <span className="schedule-month-grid__tags">
-                      {tags.map((shiftType, index) => (
-                        <ShiftTag key={`${shiftType}-${index}`} shiftType={shiftType} compact />
-                      ))}
-                    </span>
-                  )}
+                  {content}
                 </div>
               )
             })}

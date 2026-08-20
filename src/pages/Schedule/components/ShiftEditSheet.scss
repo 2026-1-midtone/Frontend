@@ -1,0 +1,133 @@
+.shift-edit-sheet {
+  position: fixed;
+  z-index: $z-modal;
+  inset: 0;
+  @include flex(column, flex-end, stretch);
+
+  &__backdrop {
+    @include button-reset;
+    position: absolute;
+    inset: 0;
+    background-color: rgba($night-0, 0.72);
+    backdrop-filter: blur(2px);
+    cursor: default;
+  }
+
+  &__panel {
+    @include flex-column($space-4);
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: $layout-app-width;
+    margin-inline: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: $space-5 $layout-gutter calc($space-6 + env(safe-area-inset-bottom));
+    border-top: 1px solid $color-border;
+    border-radius: $radius-2xl $radius-2xl 0 0;
+    background-color: rgba($night-100, 0.98);
+    box-shadow: 0 -8px 32px rgba(#000000, 0.45);
+  }
+
+  &__heading {
+    @include flex(row, space-between, flex-start, $space-3);
+
+    h2 {
+      color: $color-text;
+      @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    }
+
+    p {
+      margin-top: $space-1;
+      color: $color-text-secondary;
+      @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    }
+  }
+
+  &__close {
+    @include button-reset;
+    @include flex-center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-full;
+    color: $color-text-secondary;
+
+    &:hover {
+      color: $color-text;
+      background-color: rgba($night-1000, 0.08);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__field {
+    @include flex-column($space-1);
+    flex: 1;
+    min-width: 0;
+
+    > span {
+      color: $color-text-secondary;
+      @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      padding: $space-2 $space-3;
+      border: 1px solid $color-border;
+      border-radius: $radius-md;
+      color: $color-text;
+      background-color: $night-300;
+      color-scheme: dark;
+      @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    }
+  }
+
+  &__field-row {
+    @include flex(row, stretch, flex-start, $space-2);
+  }
+
+  &__hint {
+    color: $color-text-tertiary;
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+  }
+
+  &__message {
+    color: $color-danger;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-relaxed);
+  }
+
+  &__actions {
+    @include flex-column($space-2);
+  }
+
+  &__submit {
+    @include button-reset;
+    padding-block: $space-3;
+    border-radius: $radius-xl;
+    color: $night-0;
+    background-color: $color-primary;
+    text-align: center;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+  }
+
+  &__delete {
+    @include button-reset;
+    padding-block: $space-2;
+    color: $color-danger;
+    text-align: center;
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+
+    &:disabled {
+      opacity: 0.55;
+    }
+  }
+}
