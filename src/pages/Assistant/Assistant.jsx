@@ -1,13 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getChatMessages, sendChatMessage } from '@/api/chatApi.js'
+import { getPersonalizationSettings } from '@/api/settingsApi.js'
 import { IconChevronLeft } from '../../components/common/icons/index.jsx'
 import ChatBanner from './components/ChatBanner.jsx'
 import ChatInputBar from './components/ChatInputBar.jsx'
 import ChatMessageBubble from './components/ChatMessageBubble.jsx'
 import ChatRow from './components/ChatRow.jsx'
 import ChatTypingIndicator from './components/ChatTypingIndicator.jsx'
+import PersonalizationGuideModal from './components/PersonalizationGuideModal.jsx'
 import './Assistant.scss'
+
+function isPersonalizationMissing(settings) {
+  return (
+    !settings.caffeineDailyMg
+    && !settings.caffeineSensitivity
+    && !settings.preferredNapMinutes
+    && !settings.maxNapsPerDay
+  )
+}
 
 const DISCLAIMER =
   '의료적 진단은 제공하지 않으며, 응급 상황에는 전문기관 연락처를 안내합니다.\n위급한 경우 즉시 119 또는 안내된 기관에 연락해 주세요.'
@@ -17,6 +28,7 @@ function Assistant() {
   const [messages, setMessages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
   const [inputValue, setInputValue] = useState('')
+  const [showPersonalizationGuide, setShowPersonalizationGuide] = useState(false)
 
   const nextId = useRef(0)
   const isMounted = useRef(true)
@@ -73,6 +85,20 @@ function Assistant() {
   useEffect(() => {
     scrollAnchorRef.current?.scrollIntoView({ block: 'end' })
   }, [messages, isTyping])
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    getPersonalizationSettings({ signal: controller.signal })
+      .then((data) => {
+        if (isMounted.current && isPersonalizationMissing(data)) {
+          setShowPersonalizationGuide(true)
+        }
+      })
+      .catch(() => {})
+
+    return () => controller.abort()
+  }, [])
 
   const handleBack = () => {
     navigate(-1)
@@ -187,6 +213,10 @@ function Assistant() {
         disclaimer={DISCLAIMER}
         maxLength={500}
       />
+
+      {showPersonalizationGuide && (
+        <PersonalizationGuideModal onClose={() => setShowPersonalizationGuide(false)} />
+      )}
     </div>
   )
 }
