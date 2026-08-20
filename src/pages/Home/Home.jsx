@@ -37,12 +37,15 @@ const QUICK_MENU_ITEMS = [
   { id: 'schedule', label: '근무표', icon: IconSchedule },
   { id: 'rhythm-coaching', label: '리듬 코칭', icon: IconEdit },
   { id: 'nutrition-coaching', label: 'AI 영양코칭', icon: IconPill },
+  { id: 'nap', label: '낮잠 타이머', icon: IconSun },
   { id: 'weekly-status', label: '주간 실행 현황', icon: IconGrid },
 ]
 
 const QUICK_MENU_PATHS = {
   schedule: PATH.SCHEDULE_CALENDAR,
   'rhythm-coaching': PATH.COACHING,
+  'nutrition-coaching': PATH.NUTRITION,
+  nap: PATH.NAP,
   'weekly-status': PATH.ROUTINE_SUMMARY,
 }
 

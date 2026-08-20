@@ -8,10 +8,14 @@ import Assistant from '../pages/Assistant/Assistant.jsx'
 import AssistantIntro from '../pages/Assistant/AssistantIntro.jsx'
 import Home from '../pages/Home/Home.jsx'
 import NotFound from '../pages/NotFound/NotFound.jsx'
+import NutritionGuide from '../pages/Nutrition/NutritionGuide.jsx'
+import NapTimer from '../pages/Nap/NapTimer.jsx'
+import HealthRecords from '../pages/Records/HealthRecords.jsx'
 import Onboarding from '../pages/Onboarding/Onboarding.jsx'
 import Schedule from '../pages/Schedule/Schedule.jsx'
 import ScheduleCalendar from '../pages/Schedule/ScheduleCalendar.jsx'
 import ScheduleResult from '../pages/Schedule/ScheduleResult.jsx'
+import ShiftPattern from '../pages/Schedule/ShiftPattern.jsx'
 import AccountSettings from '../pages/Settings/AccountSettings.jsx'
 import CoachingAlertSettings from '../pages/Settings/CoachingAlertSettings.jsx'
 import PersonalizationSettings from '../pages/Settings/PersonalizationSettings.jsx'
@@ -41,6 +45,7 @@ export const router = createBrowserRouter([
               { path: PATH.SCHEDULE, element: <Schedule /> },
               { path: PATH.SCHEDULE_CALENDAR, element: <ScheduleCalendar /> },
               { path: PATH.SCHEDULE_RESULT, element: <ScheduleResult /> },
+              { path: PATH.SCHEDULE_PATTERN, element: <ShiftPattern /> },
 
               { path: PATH.ROUTINE_SUMMARY, element: <RoutineSummary /> },
               { path: PATH.DAILY_ROUTINE, element: <DailyRoutine /> },
@@ -48,6 +53,9 @@ export const router = createBrowserRouter([
               { path: PATH.ROUTINE_STREAK, element: <RoutineStreak /> },
               { path: PATH.COACHING, element: <RhythmCoaching /> },
               { path: PATH.TRANSITION_GUIDE, element: <TransitionGuide /> },
+              { path: PATH.NUTRITION, element: <NutritionGuide /> },
+              { path: PATH.NAP, element: <NapTimer /> },
+              { path: PATH.RECORDS, element: <HealthRecords /> },
 
               { path: PATH.SETTINGS, element: <Settings /> },
               { path: PATH.SETTINGS_PERSONALIZATION, element: <PersonalizationSettings /> },

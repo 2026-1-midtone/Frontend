@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   createCaffeineIntake,
   createSleepLog,
@@ -10,6 +11,7 @@ import {
 import Select from '@/components/common/Select.jsx'
 import { IconClose } from '@/components/common/icons/index.jsx'
 import { toLocalDateTimeInput, toOffsetDateTime } from '@/lib/formatApiData.js'
+import { PATH } from '@/routes/paths.js'
 import './HealthRecordPanel.scss'
 
 // 음료 종류(커피·에너지 음료 등)는 백엔드 로직에서 쓰지 않아 입력에서 제거했다.
@@ -301,6 +303,10 @@ function HealthRecordPanel({ onClose }) {
           {message}
         </p>
       )}
+
+      <Link className="health-record-panel__history" to={PATH.RECORDS}>
+        지난 기록 보기 →
+      </Link>
     </section>
   )
 }

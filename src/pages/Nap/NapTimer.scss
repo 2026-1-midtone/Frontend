@@ -1,0 +1,127 @@
+.nap-timer {
+  @include page-shell(url('../../assets/routine-summary/routine-hero.png'));
+
+  &__card {
+    @include flex-column($space-6);
+    padding: $space-5;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-100, 0.85);
+    backdrop-filter: blur(16px);
+  }
+
+  &__intro {
+    @include flex-column($space-1);
+  }
+
+  &__title {
+    @include flex(row, flex-start, center, $space-1);
+    @include typo($font-size-lg, $font-weight-bold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__subtitle {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-normal);
+    color: $color-text-secondary;
+  }
+
+  &__loading,
+  &__notice-line {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-normal);
+    color: $color-text-secondary;
+    text-align: center;
+  }
+
+  &__done {
+    padding: $space-3;
+    border-radius: $radius-lg;
+    background-color: rgba($color-warning, 0.14);
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-normal);
+    color: $color-warning;
+    text-align: center;
+  }
+
+  &__section {
+    @include flex-column($space-3);
+  }
+
+  &__section-title {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__durations {
+    @include flex(row, flex-start, center, $space-2);
+    flex-wrap: wrap;
+    list-style: none;
+  }
+
+  &__duration {
+    @include button-reset;
+    padding: $space-2 $space-4;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-full;
+    background-color: transparent;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    color: $color-text-secondary;
+    transition: background-color $duration-fast $easing-standard;
+
+    &--active {
+      border-color: rgba($purple-300, 0.6);
+      background-color: $color-primary-subtle;
+      color: $color-text;
+    }
+  }
+
+  &__actions {
+    @include flex-column($space-2);
+  }
+
+  &__button {
+    @include button-reset;
+    padding: $space-4;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-lg;
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text-secondary;
+    text-align: center;
+
+    &--primary {
+      border-color: transparent;
+      background-color: $color-primary;
+      color: $night-0;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__error {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-normal);
+    color: $color-danger;
+    text-align: center;
+  }
+
+  &__notice {
+    @include flex-column($space-2);
+    padding: $space-4;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background-color: rgba($night-200, 0.6);
+
+    h3 {
+      @include flex(row, flex-start, center, $space-1);
+      @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+      color: $color-warning;
+    }
+
+    ul {
+      @include flex-column($space-1);
+      padding-left: $space-4;
+      @include typo($font-size-2xs, $font-weight-regular, $line-height-relaxed);
+      color: $color-text-secondary;
+    }
+  }
+}

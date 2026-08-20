@@ -1,0 +1,21 @@
+.sub-page-header {
+  @include flex(row, flex-start, center, $space-2);
+
+  &__back {
+    @include button-reset;
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
+    color: $color-text;
+
+    &:hover {
+      background-color: rgba($night-1000, 0.08);
+    }
+  }
+
+  &__title {
+    @include typo($font-size-md, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+}

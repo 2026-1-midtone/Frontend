@@ -1,0 +1,60 @@
+.product-card {
+  @include flex(row, flex-start, flex-start, $space-3);
+  padding: $space-4;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: rgba($night-0, 0.7);
+
+  &__image {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-md;
+    background-color: $night-100;
+    object-fit: cover;
+  }
+
+  &__body {
+    @include flex-column($space-1);
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__name {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__english {
+    @include ellipsis;
+    @include typo($font-size-2xs, $font-weight-regular, $line-height-tight);
+    color: $color-text-tertiary;
+  }
+
+  &__matches {
+    @include flex(row, flex-start, center, $space-1);
+    flex-wrap: wrap;
+    margin-top: $space-1;
+    list-style: none;
+
+    li {
+      padding: 2px $space-2;
+      border-radius: $radius-full;
+      background-color: $color-primary-subtle;
+      @include typo($font-size-2xs, $font-weight-medium, $line-height-tight);
+      color: $color-text-brand;
+    }
+  }
+
+  &__function {
+    @include ellipsis-multiline(2);
+    @include typo($font-size-2xs, $font-weight-regular, $line-height-relaxed);
+    color: $color-text-secondary;
+  }
+
+  &__link {
+    @include typo($font-size-2xs, $font-weight-semibold, $line-height-tight);
+    color: $color-text-brand;
+    text-decoration: none;
+  }
+}

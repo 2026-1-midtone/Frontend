@@ -1,0 +1,52 @@
+.nap-dial {
+  position: relative;
+  align-self: center;
+  width: 220px;
+  height: 220px;
+
+  &__chart {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__track {
+    stroke: rgba($night-1000, 0.1);
+  }
+
+  &__fill {
+    stroke: $color-primary;
+    transition: stroke-dasharray $duration-base $easing-standard;
+  }
+
+  &__center {
+    @include flex-column($space-1);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__value {
+    @include typo($font-size-2xl, $font-weight-bold, $line-height-tight);
+    color: $color-text;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__caption {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-normal);
+    color: $color-text-secondary;
+  }
+
+  &--done {
+    .nap-dial__fill {
+      stroke: $color-warning;
+    }
+
+    .nap-dial__value {
+      color: $color-warning;
+    }
+  }
+}

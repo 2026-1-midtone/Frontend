@@ -1,0 +1,79 @@
+.nutrition-card {
+  @include flex-column($space-2);
+  padding: $space-4;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: rgba($night-200, 0.5);
+
+  &__head {
+    @include flex(row, space-between, flex-start, $space-3);
+  }
+
+  &__title {
+    @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    color: $color-text;
+  }
+
+  &__favorite {
+    @include button-reset;
+    flex-shrink: 0;
+    padding: $space-1 $space-2;
+    border: 1px solid $color-border;
+    border-radius: $radius-full;
+    @include typo($font-size-2xs, $font-weight-medium, $line-height-tight);
+    color: $color-text-secondary;
+    transition:
+      background-color $duration-fast $easing-standard,
+      color $duration-fast $easing-standard;
+
+    &:hover {
+      background-color: rgba($night-1000, 0.08);
+    }
+
+    &--active {
+      border-color: rgba($purple-300, 0.6);
+      color: $color-text-brand;
+      background-color: $color-primary-subtle;
+    }
+  }
+
+  &__tags {
+    @include flex(row, flex-start, center, $space-1);
+    flex-wrap: wrap;
+    list-style: none;
+
+    li {
+      padding: 2px $space-2;
+      border-radius: $radius-full;
+      background-color: rgba($night-1000, 0.06);
+      @include typo($font-size-2xs, $font-weight-medium, $line-height-tight);
+      color: $color-text-secondary;
+    }
+  }
+
+  &__summary {
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $color-text-secondary;
+  }
+
+  &__more {
+    @include button-reset;
+    align-self: flex-start;
+    @include typo($font-size-2xs, $font-weight-semibold, $line-height-tight);
+    color: $color-text-brand;
+  }
+
+  &__body {
+    @include flex-column($space-2);
+    padding: $space-3;
+    border-radius: $radius-md;
+    background-color: rgba($night-1000, 0.04);
+    @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    color: $night-800;
+  }
+
+  &__disclaimer {
+    @include typo($font-size-2xs, $font-weight-regular, $line-height-normal);
+    color: $color-text-tertiary;
+  }
+}

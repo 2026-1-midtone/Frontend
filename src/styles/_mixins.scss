@@ -139,6 +139,48 @@
   min-height: 100dvh;
 }
 
+// 히어로 이미지 위에 반투명 시트를 얹는 하위 페이지 공통 배경.
+// 시트(::before)가 배경 레이어라서 내용은 반드시 z-index 위로 올려야 한다.
+// $hero 는 호출부에서 url(...) 로 넘긴다. 믹스인 안에 상대경로를 두면
+// 호출하는 파일의 깊이에 따라 조용히 깨진다.
+@mixin page-shell($hero, $gap: $space-5) {
+  @include flex-column($gap);
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  flex: 0 0 auto;
+  min-height: 100%;
+  padding: $layout-settings-header-top-space $layout-gutter $layout-content-bottom-space;
+  background-color: $night-200;
+  background-image:
+    linear-gradient(180deg, rgba($night-200, 0) 0%, $night-0 100%),
+    $hero;
+  background-repeat: no-repeat;
+  background-position: center $layout-page-hero-top;
+  background-size:
+    100% $layout-page-hero-short-fade-height,
+    $layout-page-hero-width $layout-page-hero-height;
+
+  &::before {
+    position: absolute;
+    z-index: 0;
+    top: $layout-page-sheet-top;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: $radius-navigation $radius-navigation 0 0;
+    background: $gradient-page-sheet-glow, rgba($night-200, 0.96);
+    backdrop-filter: blur(24px);
+    content: '';
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 // 스크롤 기능은 유지하되 스크롤바만 시각적으로 숨긴다.
 @mixin hide-scrollbar {
   scrollbar-width: none;

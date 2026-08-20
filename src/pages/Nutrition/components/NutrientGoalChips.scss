@@ -1,0 +1,34 @@
+.nutrient-goals {
+  @include flex(row, flex-start, center, $space-2);
+  flex-wrap: wrap;
+  list-style: none;
+
+  &__chip {
+    @include button-reset;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-full;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    color: $color-text-secondary;
+    background-color: rgba($night-1000, 0.04);
+    transition:
+      background-color $duration-fast $easing-standard,
+      border-color $duration-fast $easing-standard,
+      color $duration-fast $easing-standard;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($night-1000, 0.1);
+    }
+
+    &--active {
+      border-color: rgba($purple-300, 0.6);
+      color: $color-text;
+      background-color: $color-primary-subtle;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}

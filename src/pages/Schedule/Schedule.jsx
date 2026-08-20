@@ -218,6 +218,16 @@ function Schedule() {
         <span>월별 캘린더에서 확인하기 →</span>
       </button>
 
+      {/* 사진 인식이 실패해도 근무표를 넣을 수 있어야 해서 직접 입력 경로를 함께 둔다. */}
+      <button
+        type="button"
+        className="schedule__calendar-link"
+        onClick={() => navigate(PATH.SCHEDULE_PATTERN)}
+      >
+        <span>근무 패턴 직접 입력</span>
+        <span>반복되는 근무 순서로 한 번에 채우기 →</span>
+      </button>
+
       <div className="schedule__card">
         <ScheduleUploadCard
           previewSrc={previewSrc}

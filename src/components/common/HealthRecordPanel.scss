@@ -124,4 +124,11 @@
       color: $color-danger;
     }
   }
+
+  &__history {
+    align-self: flex-start;
+    color: $color-text-brand;
+    text-decoration: none;
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+  }
 }
