@@ -71,6 +71,10 @@ export function correctScheduleDrafts(jobId, corrections, options) {
   ))
 }
 
+export function createScheduleDraft(jobId, draft, options) {
+  return apiPost(`/api/v1/ocr/jobs/${jobId}/drafts`, draft, options)
+}
+
 export function confirmScheduleUpload(jobId, options) {
   return apiPost(`/api/v1/ocr/jobs/${jobId}:confirm`, undefined, options)
 }

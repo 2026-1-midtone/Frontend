@@ -49,5 +49,35 @@
     @include flex(row, flex-start, center, $space-1);
     @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
     color: $night-700;
+
+    &.is-excluded {
+      color: $color-text-disabled;
+    }
+  }
+
+  &__actions {
+    @include flex(row, flex-end, center, $space-2);
+  }
+
+  &__exclude-toggle {
+    @include button-reset;
+    padding: $space-1 $space-2;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-tertiary;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+
+    &:hover {
+      border-color: $color-border-strong;
+      color: $color-text;
+    }
+  }
+
+  &.is-excluded {
+    opacity: 0.6;
+
+    .schedule-date-item__date {
+      text-decoration: line-through;
+    }
   }
 }

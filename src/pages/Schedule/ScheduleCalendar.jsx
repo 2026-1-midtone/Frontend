@@ -38,6 +38,9 @@ function ScheduleCalendar() {
   const confirmedTargetMonth = location.state?.justConfirmed
     ? location.state.targetMonth
     : null
+  const skippedDates = location.state?.justConfirmed
+    ? (location.state.skippedDates ?? [])
+    : []
 
   useEffect(() => {
     const controller = new AbortController()
@@ -131,6 +134,14 @@ function ScheduleCalendar() {
         {errorMessage && (
           <p className="schedule-calendar__message schedule-calendar__message--error" role="alert">
             {errorMessage}
+          </p>
+        )}
+        {skippedDates.length > 0 && (
+          <p className="schedule-calendar__message schedule-calendar__message--warning" role="status">
+            같은 날짜에 근무가 여러 건 인식돼 신뢰도가 가장 높은 일정 하나만 저장됐어요.
+            아래 날짜는 직접 확인해 주세요.
+            <br />
+            {skippedDates.map((date) => formatDate(date)).join(', ')}
           </p>
         )}
         {!isLoading && !errorMessage && shifts.length === 0 && (

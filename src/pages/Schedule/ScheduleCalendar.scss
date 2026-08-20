@@ -70,6 +70,10 @@
     &--error {
       color: $color-danger;
     }
+
+    &--warning {
+      color: $color-warning;
+    }
   }
 
   &__edit-button {

@@ -161,8 +161,6 @@ function Home() {
       ),
     )
 
-    if (typeof id !== 'number') return
-
     try {
       await updateRoutineTask(id, selected?.done ? 'PENDING' : 'DONE')
     } catch {

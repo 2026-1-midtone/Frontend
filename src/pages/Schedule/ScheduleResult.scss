@@ -69,6 +69,48 @@
     color: $night-700;
   }
 
+  &__add-form {
+    @include flex-column($space-2);
+    padding: $space-3;
+    border: 1px dashed $color-border-strong;
+    border-radius: $radius-md;
+  }
+
+  &__add-form-title {
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    color: $color-text-tertiary;
+  }
+
+  &__add-form-row {
+    @include flex(row, flex-start, center, $space-2);
+  }
+
+  &__add-form-date,
+  &__add-form-select {
+    flex: 1;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    background-color: $night-300;
+    color: $color-text;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+  }
+
+  &__add-form-submit {
+    @include button-reset;
+    flex-shrink: 0;
+    padding: $space-2 $space-3;
+    border-radius: $radius-md;
+    background-color: $color-primary;
+    color: $night-0;
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
   &__divider {
     @include flex(row, center, center, $space-3);
   }

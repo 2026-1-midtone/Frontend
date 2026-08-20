@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   confirmScheduleUpload,
   correctScheduleDrafts,
+  createScheduleDraft,
   getScheduleDrafts,
   getShifts,
   updateShift,
@@ -41,6 +42,9 @@ function ScheduleResult() {
   const [dates, setDates] = useState([])
   const [errorMessage, setErrorMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [newDraftDate, setNewDraftDate] = useState('')
+  const [newDraftShiftType, setNewDraftShiftType] = useState('')
+  const [isAddingDraft, setIsAddingDraft] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -94,6 +98,7 @@ function ScheduleResult() {
             originalShiftType,
             initiallyExcluded: excluded,
             excluded,
+            userExcluded: false,
             resolved,
           }
         }))
@@ -117,8 +122,56 @@ function ScheduleResult() {
     )
   }
 
+  // 사용자가 직접 "제외"를 누른 날짜는 근무유형을 안 골라도 확정을 막지 않는다.
+  const handleToggleExclude = (id) => {
+    setDates((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, userExcluded: !item.userExcluded } : item,
+      ),
+    )
+  }
+
+  // OCR이 아예 초안을 만들지 못한 날짜(예: "교육" 같은 근무 외 배지)를 사용자가 직접 추가한다.
+  const handleAddDraft = async (event) => {
+    event.preventDefault()
+    if (!jobId || !newDraftDate || !newDraftShiftType || isAddingDraft) return
+
+    setErrorMessage('')
+    setIsAddingDraft(true)
+
+    try {
+      const draft = await createScheduleDraft(jobId, {
+        workDate: newDraftDate,
+        shiftType: toShiftType(newDraftShiftType),
+      })
+      const originalShiftType = formatShiftType(draft.shiftType)
+
+      setDates((prev) => [
+        // 같은 날짜에 이미 초안이 있으면 방금 직접 넣은 값이 우선한다(백엔드 규칙과 동일).
+        ...prev.filter((item) => item.workDate !== draft.workDate),
+        {
+          id: draft.draftId,
+          workDate: draft.workDate,
+          date: formatDate(draft.workDate),
+          shiftType: originalShiftType,
+          originalShiftType,
+          initiallyExcluded: false,
+          excluded: false,
+          userExcluded: false,
+          resolved: true,
+        },
+      ].sort((a, b) => a.workDate.localeCompare(b.workDate)))
+      setNewDraftDate('')
+      setNewDraftShiftType('')
+    } catch (error) {
+      setErrorMessage(error.message)
+    } finally {
+      setIsAddingDraft(false)
+    }
+  }
+
   const handleConfirmSave = async () => {
-    if (dates.some((item) => !item.resolved) || isSaving) return
+    if (dates.some((item) => !item.resolved && !item.userExcluded) || isSaving) return
 
     if (!jobId) {
       setErrorMessage('')
@@ -145,28 +198,45 @@ function ScheduleResult() {
       return
     }
 
+    const confirmed = window.confirm(
+      '근무표를 확정하면 더 이상 초안을 추가하거나 수정할 수 없습니다. 계속할까요?',
+    )
+    if (!confirmed) return
+
     setErrorMessage('')
     setIsSaving(true)
 
     try {
-      const corrections = dates
-        .filter((item) => item.initiallyExcluded || item.shiftType !== item.originalShiftType)
-        .map((item) => ({
-          draftId: item.id,
-          shiftType: toShiftType(item.shiftType),
-        }))
+      const corrections = [
+        ...dates
+          .filter((item) => item.userExcluded)
+          .map((item) => ({ draftId: item.id, excluded: true })),
+        ...dates
+          .filter((item) => (
+            !item.userExcluded
+            && (item.initiallyExcluded || item.shiftType !== item.originalShiftType)
+          ))
+          .map((item) => ({
+            draftId: item.id,
+            shiftType: toShiftType(item.shiftType),
+          })),
+      ]
 
       if (corrections.length > 0) {
         await correctScheduleDrafts(jobId, corrections)
       }
 
-      await confirmScheduleUpload(jobId)
+      const result = await confirmScheduleUpload(jobId)
       const scheduleMonth = resolveScheduleMonth(dates, targetMonth)
 
       clearOcrContext()
       rememberCalendarMonth(scheduleMonth)
       navigate(PATH.SCHEDULE_CALENDAR, {
-        state: { targetMonth: scheduleMonth, justConfirmed: true },
+        state: {
+          targetMonth: scheduleMonth,
+          justConfirmed: true,
+          skippedDates: result?.skippedDates ?? [],
+        },
       })
     } catch (error) {
       setErrorMessage(error.message)
@@ -179,7 +249,7 @@ function ScheduleResult() {
   }
 
   const total = dates.length
-  const confirmed = dates.filter((item) => item.resolved).length
+  const confirmed = dates.filter((item) => item.resolved || item.userExcluded).length
   const needsReview = total - confirmed
 
   return (
@@ -208,8 +278,46 @@ function ScheduleResult() {
           items={dates}
           shiftTypeOptions={SHIFT_TYPE_OPTIONS}
           onChange={handleChangeShiftType}
+          onToggleExclude={jobId ? handleToggleExclude : undefined}
           title="날짜별 근무 유형 수정"
         />
+
+        {jobId && (
+          <form className="schedule-result__add-form" onSubmit={handleAddDraft}>
+            <p className="schedule-result__add-form-title">
+              인식되지 않은 날짜가 있나요?
+            </p>
+            <div className="schedule-result__add-form-row">
+              <input
+                className="schedule-result__add-form-date"
+                type="date"
+                value={newDraftDate}
+                onChange={(event) => setNewDraftDate(event.target.value)}
+                disabled={isAddingDraft}
+                required
+              />
+              <select
+                className="schedule-result__add-form-select"
+                value={newDraftShiftType}
+                onChange={(event) => setNewDraftShiftType(event.target.value)}
+                disabled={isAddingDraft}
+                required
+              >
+                <option value="" disabled>근무유형</option>
+                {SHIFT_TYPE_OPTIONS.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="schedule-result__add-form-submit"
+                disabled={isAddingDraft || !newDraftDate || !newDraftShiftType}
+              >
+                {isAddingDraft ? '추가 중' : '날짜 추가'}
+              </button>
+            </div>
+          </form>
+        )}
 
         <div className="schedule-result__divider" aria-hidden="true">
           <span className="schedule-result__divider-line" />

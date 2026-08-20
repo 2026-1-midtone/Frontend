@@ -6,9 +6,12 @@ import './ScheduleDateList.scss'
  * @param {{ id: string, date: string, shiftType: string, resolved: boolean }[]} items
  * @param {string[]} shiftTypeOptions
  * @param {(id: string, value: string) => void} onChange
+ * @param {(id: string) => void} [onToggleExclude]
  * @param {string} title
  */
-function ScheduleDateList({ items, shiftTypeOptions, onChange, title = '날짜별 인식 결과' }) {
+function ScheduleDateList({
+  items, shiftTypeOptions, onChange, onToggleExclude, title = '날짜별 인식 결과',
+}) {
   return (
     <section className="schedule-date-list">
       <h2 className="schedule-date-list__title">{title}</h2>
@@ -19,6 +22,7 @@ function ScheduleDateList({ items, shiftTypeOptions, onChange, title = '날짜�
             item={item}
             shiftTypeOptions={shiftTypeOptions}
             onChange={onChange}
+            onToggleExclude={onToggleExclude}
           />
         ))}
       </ul>
