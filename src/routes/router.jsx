@@ -18,6 +18,7 @@ import Settings from '../pages/Settings/Settings.jsx'
 import RhythmCoaching from '../pages/RhythmCoaching/RhythmCoaching.jsx'
 import TransitionGuide from '../pages/RhythmCoaching/TransitionGuide.jsx'
 import { PATH } from './paths.js'
+import RequireSession from './RequireSession.jsx'
 
 export const router = createBrowserRouter([
   {
@@ -26,27 +27,32 @@ export const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, element: <Onboarding /> },
-      // AI 비서 대화 화면 — 하단 탭 없이 전체 화면으로 띄운다.
-      { path: PATH.ASSISTANT, element: <Assistant /> },
       {
-        element: <TabLayout />,
+        element: <RequireSession />,
         children: [
-          { path: PATH.HOME, element: <Home /> },
-          { path: PATH.SCHEDULE, element: <Schedule /> },
-          { path: PATH.SCHEDULE_CALENDAR, element: <ScheduleCalendar /> },
-          { path: PATH.SCHEDULE_RESULT, element: <ScheduleResult /> },
-          
-          { path: PATH.ROUTINE_SUMMARY, element: <RoutineSummary /> },
-          { path: PATH.DAILY_ROUTINE, element: <DailyRoutine /> },
-          { path: PATH.ROUTINE, element: <DailyRoutine /> },
-          { path: PATH.ROUTINE_STREAK, element: <RoutineStreak /> },
-          { path: PATH.COACHING, element: <RhythmCoaching /> },
-          { path: PATH.TRANSITION_GUIDE, element: <TransitionGuide /> },
-          
-          { path: PATH.SETTINGS, element: <Settings /> },
-          { path: PATH.SETTINGS_PERSONALIZATION, element: <PersonalizationSettings /> },
-          { path: PATH.SETTINGS_COACHING_ALERTS, element: <CoachingAlertSettings /> },
-          { path: PATH.SETTINGS_ACCOUNT, element: <AccountSettings /> },
+          // AI 비서 대화 화면 — 하단 탭 없이 전체 화면으로 띄운다.
+          { path: PATH.ASSISTANT, element: <Assistant /> },
+          {
+            element: <TabLayout />,
+            children: [
+              { path: PATH.HOME, element: <Home /> },
+              { path: PATH.SCHEDULE, element: <Schedule /> },
+              { path: PATH.SCHEDULE_CALENDAR, element: <ScheduleCalendar /> },
+              { path: PATH.SCHEDULE_RESULT, element: <ScheduleResult /> },
+
+              { path: PATH.ROUTINE_SUMMARY, element: <RoutineSummary /> },
+              { path: PATH.DAILY_ROUTINE, element: <DailyRoutine /> },
+              { path: PATH.ROUTINE, element: <DailyRoutine /> },
+              { path: PATH.ROUTINE_STREAK, element: <RoutineStreak /> },
+              { path: PATH.COACHING, element: <RhythmCoaching /> },
+              { path: PATH.TRANSITION_GUIDE, element: <TransitionGuide /> },
+
+              { path: PATH.SETTINGS, element: <Settings /> },
+              { path: PATH.SETTINGS_PERSONALIZATION, element: <PersonalizationSettings /> },
+              { path: PATH.SETTINGS_COACHING_ALERTS, element: <CoachingAlertSettings /> },
+              { path: PATH.SETTINGS_ACCOUNT, element: <AccountSettings /> },
+            ],
+          },
         ],
       },
       { path: '*', element: <NotFound /> },

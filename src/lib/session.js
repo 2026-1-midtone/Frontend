@@ -1,6 +1,11 @@
 const ACCESS_TOKEN_KEY = 'shiftmate.accessToken'
 const REFRESH_TOKEN_KEY = 'shiftmate.refreshToken'
 const USER_KEY = 'shiftmate.user'
+const SESSION_CHANGE_EVENT = 'shiftmate:session-change'
+
+function notifySessionChange() {
+  window.dispatchEvent(new Event(SESSION_CHANGE_EVENT))
+}
 
 function migrateLegacyToken(key) {
   const legacyToken = localStorage.getItem(key)
@@ -29,6 +34,16 @@ export function getRefreshToken() {
   return sessionStorage.getItem(REFRESH_TOKEN_KEY)
 }
 
+export function hasSession() {
+  return Boolean(getAccessToken() || getRefreshToken())
+}
+
+export function subscribeSession(listener) {
+  window.addEventListener(SESSION_CHANGE_EVENT, listener)
+
+  return () => window.removeEventListener(SESSION_CHANGE_EVENT, listener)
+}
+
 export function getSessionUser() {
   const storedUser = localStorage.getItem(USER_KEY)
 
@@ -48,6 +63,7 @@ export function saveTokens({ accessToken, refreshToken }) {
 
   localStorage.removeItem(ACCESS_TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
+  notifySessionChange()
 }
 
 export function saveSessionUser(user) {
@@ -60,4 +76,5 @@ export function clearSession() {
   localStorage.removeItem(ACCESS_TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
   localStorage.removeItem(USER_KEY)
+  notifySessionChange()
 }

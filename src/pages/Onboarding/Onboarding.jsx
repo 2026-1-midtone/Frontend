@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import AssistantMascot from '@/components/common/AssistantMascot'
 import { loginWithGoogle } from '../../lib/authApi.js'
 import { requestGoogleIdToken } from '../../lib/googleAuth.js'
@@ -9,6 +9,7 @@ import sparkleIcon from '../../assets/sparkle.svg'
 import './Onboarding.scss'
 
 function Onboarding() {
+  const location = useLocation()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -23,7 +24,12 @@ function Onboarding() {
       const { accessToken, refreshToken, user } = await loginWithGoogle(idToken, timezone)
 
       saveSession({ accessToken, refreshToken, user })
-      navigate(PATH.HOME)
+      const redirectPath = typeof location.state?.from === 'string'
+        && location.state.from.startsWith('/')
+        ? location.state.from
+        : PATH.HOME
+
+      navigate(redirectPath, { replace: true })
     } catch (error) {
       setErrorMessage(error.message || '로그인에 실패했습니다. 다시 시도해 주세요.')
       setIsLoading(false)

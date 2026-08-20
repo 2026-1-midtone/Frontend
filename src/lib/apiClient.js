@@ -146,6 +146,8 @@ export async function apiRequest(path, options = {}) {
     if (renewedToken) {
       return apiRequest(path, { ...options, retryOnUnauthorized: false })
     }
+
+    clearSession()
   }
 
   if (!response.ok) {

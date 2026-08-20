@@ -7,7 +7,7 @@ import './SettingsField.scss'
  *
  * @param {string} rowLabel 왼쪽의 굵은 항목명 (예: "카페인 민감도")
  * @param {string} fieldLabel 컨트롤 위의 작은 설명 (예: "민감도 수준")
- * @param {'text'|'select'} type
+ * @param {'text'|'number'|'select'} type
  * @param {string} value
  * @param {(value: string) => void} onChange
  * @param {string} placeholder
@@ -32,12 +32,14 @@ function SettingsField({
         <div className="settings-field__control">
           {fieldLabel && <span className="settings-field__field-label">{fieldLabel}</span>}
 
-          {type === 'text' ? (
+          {type === 'text' || type === 'number' ? (
             <input
-              type="text"
+              type={type}
               className="settings-field__input"
               value={value}
               placeholder={placeholder}
+              min={type === 'number' ? 0 : undefined}
+              inputMode={type === 'number' ? 'numeric' : undefined}
               onChange={(event) => onChange?.(event.target.value)}
             />
           ) : (

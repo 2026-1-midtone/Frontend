@@ -83,12 +83,22 @@ function PersonalizationSettings() {
 
   const handleSave = async () => {
     setErrorMessage('')
+
+    const caffeineDailyMg = caffeineIntake === '' ? undefined : Number(caffeineIntake)
+    if (
+      caffeineDailyMg !== undefined
+      && (!Number.isInteger(caffeineDailyMg) || caffeineDailyMg < 0)
+    ) {
+      setErrorMessage('일일 카페인 섭취량은 0 이상의 정수로 입력해 주세요.')
+      return
+    }
+
     setIsSaving(true)
 
     try {
       await Promise.all([
         savePersonalizationSettings({
-          caffeineDailyMg: caffeineIntake ? Number(caffeineIntake) : undefined,
+          caffeineDailyMg,
           caffeineSensitivity: sensitivity || undefined,
           preferredNapMinutes: Number(napLength),
           maxNapsPerDay: Number(napCount),
@@ -121,7 +131,7 @@ function PersonalizationSettings() {
           <SettingsField
             rowLabel="일일 카페인 섭취량"
             fieldLabel="섭취량 ( mg )"
-            type="text"
+            type="number"
             value={caffeineIntake}
             onChange={setCaffeineIntake}
             placeholder="권장 입력 예시 200~400"
