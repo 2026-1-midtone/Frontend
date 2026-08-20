@@ -45,6 +45,11 @@
     &::placeholder {
       color: $night-600;
     }
+
+    // 시간 입력의 브라우저 기본 시계 아이콘을 숨기고 순수 입력란처럼 보이게 한다.
+    &::-webkit-calendar-picker-indicator {
+      display: none;
+    }
   }
 
   &__caption {

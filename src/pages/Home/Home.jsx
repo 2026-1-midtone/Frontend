@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getCoachings } from '@/api/coachingApi.js'
 import { getHomeDashboard } from '@/api/homeApi.js'
 import { getRoutineReport, getTodayRoutines, updateRoutineTask } from '@/api/routineApi.js'
 import BottomSheet from '../../components/common/BottomSheet.jsx'
@@ -19,6 +20,7 @@ import {
   formatDateTimeRange,
   formatRemainingMinutes,
   formatShiftType,
+  toDateString,
 } from '../../lib/formatApiData.js'
 import HomeGreeting from './components/HomeGreeting.jsx'
 import NextShiftCard from './components/NextShiftCard.jsx'
@@ -102,9 +104,11 @@ function Home() {
     const options = { signal: controller.signal }
 
     const loadHome = async () => {
-      const [dashboardResult, reportResult] = await Promise.allSettled([
+      const [dashboardResult, reportResult, coachingsResult] = await Promise.allSettled([
         getHomeDashboard(options),
         getRoutineReport('7d', options),
+        // /home/dashboard의 topCoachingCards에는 windowEnd가 없어서 별도로 받아 보강한다.
+        getCoachings(toDateString(), options),
       ])
 
       if (dashboardResult.status === 'fulfilled') {
@@ -114,6 +118,11 @@ function Home() {
           LIGHT_EXPOSURE: IconEyeOff,
           NAP: IconSun,
         }
+        const windowEndByCardId = coachingsResult.status === 'fulfilled'
+          ? Object.fromEntries(
+            (coachingsResult.value.cards ?? []).map((card) => [card.cardId, card.windowEnd]),
+          )
+          : {}
 
         setDashboard(dashboardData)
         setCoachItems((dashboardData.topCoachingCards ?? []).slice(0, 3).map((card) => ({
@@ -121,7 +130,10 @@ function Home() {
           icon: iconByType[card.cardType] ?? IconSun,
           tone: card.cardType === 'CAFFEINE_CUTOFF' ? 'danger' : 'default',
           label: card.title,
-          detail: formatDateTimeRange(card.windowStart, card.windowEnd),
+          detail: formatDateTimeRange(
+            card.windowStart,
+            card.windowEnd ?? windowEndByCardId[card.cardId],
+          ),
         })))
 
         if ((dashboardData.routineProgress?.total ?? 0) > 0) {
@@ -199,7 +211,7 @@ function Home() {
               : '오늘 근무 일정이 없어요'}
           />
           <NextShiftCard
-            remainingLabel={formatRemainingMinutes(dashboard?.nextShift?.startInMinutes)}
+            remainingLabel={formatRemainingMinutes(dashboard?.nextShift?.startsInMinutes)}
             progress={dashboard?.nextShift ? 45 : 0}
           />
           <QuickMenuList items={QUICK_MENU_ITEMS} onSelect={handleSelectQuickMenu} />
