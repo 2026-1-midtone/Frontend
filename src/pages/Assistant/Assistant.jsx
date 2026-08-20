@@ -13,6 +13,7 @@ import ChatInputBar from './components/ChatInputBar.jsx'
 import ChatMessageBubble from './components/ChatMessageBubble.jsx'
 import ChatRow from './components/ChatRow.jsx'
 import ChatTypingIndicator from './components/ChatTypingIndicator.jsx'
+import ChatProductCarousel from './components/ChatProductCarousel.jsx'
 import PersonalizationGuideModal from './components/PersonalizationGuideModal.jsx'
 import HealthRecordPanel from '@/components/common/HealthRecordPanel.jsx'
 import './Assistant.scss'
@@ -28,6 +29,33 @@ function isPersonalizationMissing(settings) {
 
 const DISCLAIMER =
   '의료적 진단은 제공하지 않으며, 응급 상황에는 전문기관 연락처를 안내합니다.\n위급한 경우 즉시 119 또는 안내된 기관에 연락해 주세요.'
+
+// 카페인 중단 창의 시작 시각을 컷오프 시각으로 쓴다.
+// context.caffeineCutoffAt 은 응답에 없는 필드라 코칭 카드에서 찾고, 혹시 추가되면 그 값을 쓴다.
+function findCaffeineCutoffAt(context) {
+  const cutoffCard = context?.coachingCards
+    ?.find((card) => card.type === 'CAFFEINE_CUTOFF')
+
+  return context?.caffeineCutoffAt ?? cutoffCard?.windowStart ?? null
+}
+
+function toHourMinute(dateTime) {
+  return dateTime ? dateTime.slice(11, 16) : null
+}
+
+// 추천 제품은 채팅 응답의 context 에 함께 담겨 온다.
+// 영양 needs 가 등록되지 않은 사용자는 빈 배열이라 카드 영역을 아예 그리지 않는다.
+function toProductItems(context) {
+  return (context?.nutritionRecommendations?.recommendations ?? [])
+    .filter((item) => item.imageUrl)
+    .map((item) => ({
+      id: String(item.productId),
+      image: item.imageUrl,
+      name: item.productName,
+      ctaLabel: '스토어 바로가기',
+      url: item.productUrl,
+    }))
+}
 
 function Assistant() {
   const navigate = useNavigate()
@@ -120,6 +148,12 @@ function Assistant() {
     setIsRecordPanelOpen((prev) => !prev)
   }
 
+  const handleSelectProduct = (products, id) => {
+    const selected = products.find((item) => item.id === id)
+
+    if (selected?.url) window.open(selected.url, '_blank', 'noopener,noreferrer')
+  }
+
   const handleSend = async () => {
     const question = inputValue.trim()
     if (!question || isTyping) return
@@ -140,7 +174,9 @@ function Assistant() {
         ...(data.reasons ?? []),
         ...(data.alternatives?.length ? [`대안: ${data.alternatives.join(', ')}`] : []),
       ]
-      const cutoff = data.context?.caffeineCutoffAt
+      const cutoffAt = toHourMinute(findCaffeineCutoffAt(data.context))
+      const products = toProductItems(data.context)
+      const topProduct = data.context?.nutritionRecommendations?.recommendations?.[0]
 
       setMessages((prev) => [
         ...prev.map((message) => message.id === temporaryId
@@ -153,13 +189,37 @@ function Assistant() {
           segments: [{
             text: [data.answer, ...additionalText].filter(Boolean).join('\n\n'),
           }],
-          infoRow: cutoff
-            ? { icon: '☕', label: '카페인 컷오프', value: cutoff.slice(11, 16) }
+          infoRow: cutoffAt
+            ? { icon: '☕', label: '카페인 컷오프', value: cutoffAt }
             : undefined,
           footnote: data.disclaimer,
           emergencyContacts: data.emergencyContacts ?? [],
           safetyFlag: data.safetyFlag,
         },
+        ...(products.length > 0
+          ? [{
+            id: `${data.assistantMessageId}-products`,
+            sender: 'ai',
+            kind: 'products',
+            products,
+          }]
+          : []),
+        ...(topProduct
+          ? [{
+            id: `${data.assistantMessageId}-suggestion`,
+            sender: 'ai',
+            kind: 'text',
+            segments: [
+              { text: '카페인이 부담된다면\n' },
+              { text: `${topProduct.productName} 추천드려요!`, highlight: true },
+              { text: '\n근무 전 가볍게 컨디션을 관리해 보세요.' },
+            ],
+            infoRow: cutoffAt
+              ? { icon: '☕', label: '추천 시간', value: cutoffAt }
+              : undefined,
+            footnote: topProduct.disclaimer,
+          }]
+          : []),
       ])
     } catch (error) {
       if (!isMounted.current) return
@@ -223,6 +283,17 @@ function Assistant() {
         {messages.map((message, index) => {
           const prevSender = index > 0 ? messages[index - 1].sender : null
           const showAvatar = message.sender === 'ai' && prevSender !== 'ai'
+
+          if (message.kind === 'products') {
+            return (
+              <ChatRow key={message.id} sender="ai" showAvatar={showAvatar}>
+                <ChatProductCarousel
+                  items={message.products}
+                  onSelect={(id) => handleSelectProduct(message.products, id)}
+                />
+              </ChatRow>
+            )
+          }
 
           return (
             <ChatRow key={message.id} sender={message.sender} showAvatar={showAvatar}>
