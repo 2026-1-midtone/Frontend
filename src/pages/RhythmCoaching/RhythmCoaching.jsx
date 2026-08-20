@@ -6,6 +6,7 @@ import {
   getTransitions,
 } from '@/api/coachingApi.js'
 import { getHomeDashboard } from '@/api/homeApi.js'
+import { getTodayRoutines } from '@/api/routineApi.js'
 import summaryCaffeineIcon from '@/assets/rhythm-coaching/summary-caffeine.svg'
 import summaryLightIcon from '@/assets/rhythm-coaching/summary-light.svg'
 import summaryNapIcon from '@/assets/rhythm-coaching/summary-nap.svg'
@@ -16,6 +17,8 @@ import routineHero from '@/assets/routine-summary/routine-hero.png'
 import settingsIcon from '@/assets/routine-summary/settings.svg'
 import sparkleIcon from '@/assets/routine-summary/sparkle.svg'
 import { PATH } from '@/routes/paths.js'
+import { applyCardDetail, toCoachingCardView, toggleCardDetail } from '@/lib/coachingCards.js'
+import { toPercent } from '@/lib/routineReport.js'
 import {
   addDays,
   formatDateTimeRange,
@@ -26,30 +29,6 @@ import {
 } from '@/lib/formatApiData.js'
 import CoachingCard from './components/CoachingCard.jsx'
 import './RhythmCoaching.scss'
-
-const initialCoachingCards = [
-  {
-    id: 'light',
-    icon: summaryLightIcon,
-    title: '빛 노출',
-    timing: '06:00 – 08:00',
-    description: '일어나자마자 햇빛이나 밝은 조명을 쬐면 수면 리듬을 맞추는 데 도움이 돼요.',
-  },
-  {
-    id: 'caffeine',
-    icon: summaryCaffeineIcon,
-    title: '카페인 컷오프',
-    timing: '14:00 이후 중단',
-    description: '다음 나이트 근무 8시간 전부터는 카페인을 줄여보세요. 카페인에 따라 효과는 다를 수 있어요.',
-  },
-  {
-    id: 'nap',
-    icon: summaryNapIcon,
-    title: '권장 낮잠',
-    timing: '13:00 – 14:30',
-    description: '20–30분 짧은 낮잠이 피로 회복에 도움이 될 수 있습니다. 너무 길면 수면 관성이 생길 수 있으니 주의하세요.',
-  },
-]
 
 function getClosestTransitionDate(transitions, requestedDate) {
   const requestedTime = new Date(`${requestedDate}T00:00:00`).getTime()
@@ -76,14 +55,17 @@ function RhythmCoaching() {
     [location.search],
   )
   const [coaching, setCoaching] = useState(null)
-  const [coachingCards, setCoachingCards] = useState(initialCoachingCards)
+  const [coachingCards, setCoachingCards] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [remainingTime, setRemainingTime] = useState('일정 확인 중')
+  const [routinePercent, setRoutinePercent] = useState(0)
   const [transitionDate, setTransitionDate] = useState(null)
   const [tomorrowCoaching, setTomorrowCoaching] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     const controller = new AbortController()
+    setIsLoading(true)
     setErrorMessage('')
     setTomorrowCoaching(null)
     setTransitionDate(null)
@@ -100,6 +82,7 @@ function RhythmCoaching() {
             setCoachingCards([])
             setRemainingTime('일정 미정')
             setErrorMessage('근무 일정을 먼저 등록해 주세요.')
+            setIsLoading(false)
             return
           }
         }
@@ -112,17 +95,11 @@ function RhythmCoaching() {
         }
 
         setCoaching(data)
-        setCoachingCards((data.cards ?? []).map((card) => ({
-          id: card.cardId,
-          icon: iconByType[card.cardType] ?? summaryLightIcon,
-          title: card.title,
-          timing: formatDateTimeRange(card.windowStart, card.windowEnd),
-          description: card.description,
-          summaryDescription: card.description,
-          detailDescription: null,
-          isDetailVisible: false,
-        })))
+        setCoachingCards((data.cards ?? []).map(
+          (card) => toCoachingCardView(card, iconByType[card.cardType] ?? summaryLightIcon),
+        ))
         setRemainingTime(formatRemainingMinutes(getMinutesUntil(data.nextShiftStartAt)))
+        setIsLoading(false)
 
         const [tomorrowResult, transitionsResult] = await Promise.allSettled([
           getCoachings(addDays(requestedDate, 1), { signal: controller.signal }),
@@ -152,10 +129,18 @@ function RhythmCoaching() {
         setCoachingCards([])
         setRemainingTime('일정 미정')
         setErrorMessage(error.message ?? '코칭 정보를 불러오지 못했습니다.')
+        setIsLoading(false)
       }
     }
 
     loadCoaching()
+
+    // 진행 막대는 이 날짜에 만들어진 루틴 중 완료한 만큼 채운다. 아무것도 안 했으면 0이다.
+    getTodayRoutines(requestedDate, { signal: controller.signal })
+      .then((data) => setRoutinePercent(toPercent(data.progress?.completionRate)))
+      .catch((error) => {
+        if (error.name !== 'AbortError') setRoutinePercent(0)
+      })
 
     return () => controller.abort()
   }, [requestedDate])
@@ -180,28 +165,13 @@ function RhythmCoaching() {
     if (!selectedCard) return
 
     if (selectedCard.detailDescription) {
-      setCoachingCards((cards) => cards.map((card) => card.id === cardId
-        ? {
-            ...card,
-            description: card.isDetailVisible
-              ? card.summaryDescription
-              : card.detailDescription,
-            isDetailVisible: !card.isDetailVisible,
-          }
-        : card))
+      setCoachingCards((cards) => toggleCardDetail(cards, cardId))
       return
     }
 
     try {
       const detail = await getCoachingCard(cardId)
-      setCoachingCards((cards) => cards.map((card) => card.id === cardId
-        ? {
-            ...card,
-            description: detail.rationale ?? card.description,
-            detailDescription: detail.rationale ?? card.description,
-            isDetailVisible: true,
-          }
-        : card))
+      setCoachingCards((cards) => applyCardDetail(cards, cardId, detail.rationale))
     } catch (error) {
       setErrorMessage(error.message ?? '코칭 카드 상세 정보를 불러오지 못했습니다.')
     }
@@ -243,8 +213,14 @@ function RhythmCoaching() {
         <p>
           다음 근무까지 - <strong>{remainingTime}</strong>
         </p>
-        <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-          <span />
+        <div
+          role="progressbar"
+          aria-label="오늘 루틴 실행률"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow={routinePercent}
+        >
+          <span style={{ width: `${routinePercent}%` }} />
         </div>
       </section>
 
@@ -274,6 +250,13 @@ function RhythmCoaching() {
 
           <section className="rhythm-coaching__section" aria-labelledby="coaching-card-title">
             <h2 id="coaching-card-title">코칭카드</h2>
+            {coachingCards.length === 0 && (
+              <p className="rhythm-coaching__empty">
+                {isLoading
+                  ? '오늘의 코칭을 불러오는 중이에요.'
+                  : '보여드릴 코칭이 아직 없어요. 근무표를 등록하면 만들어 드려요.'}
+              </p>
+            )}
             <div className="rhythm-coaching__cards">
               {coachingCards.map((card) => (
                 <CoachingCard

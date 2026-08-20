@@ -17,6 +17,8 @@ import {
   IconSun,
 } from '../../components/common/icons/index.jsx'
 import { PATH } from '../../routes/paths.js'
+import { isPastWindow } from '../../lib/coachingCards.js'
+import { toPercent } from '../../lib/routineReport.js'
 import {
   formatDateTimeRange,
   formatRemainingMinutes,
@@ -44,70 +46,29 @@ const QUICK_MENU_PATHS = {
   'weekly-status': PATH.ROUTINE_SUMMARY,
 }
 
-const INITIAL_ROUTINES = [
-  {
-    id: 'morning-light',
-    title: '기상 후 밝은 빛 노출',
-    detail: '06:00 - 07:00 커튼을 열거나 외출 10분',
-    done: true,
-  },
-  {
-    id: 'caffeine-cutoff',
-    title: '카페인 컷오프',
-    detail: '14:00 이전 마지막 카페인 섭취 권장',
-    done: false,
-  },
-  {
-    id: 'power-nap',
-    title: '파워냅',
-    detail: '15:00 - 15:20 20분 이내 짧은 낮잠',
-    done: false,
-  },
-  {
-    id: 'light-block',
-    title: '취침 전 빛 차단',
-    detail: '22:00 이후 조명을 낮추고 화면 밝기 최소화',
-    done: false,
-  },
-]
-
-const RHYTHM_COACH_ITEMS = [
-  {
-    id: 'caffeine-stop',
-    icon: IconCoffee,
-    tone: 'danger',
-    label: '카페인 중단',
-    detail: '~2:00',
-  },
-  {
-    id: 'recommended-nap',
-    icon: IconSun,
-    label: '권장 낮잠',
-    detail: '13:00~14:30',
-  },
-  {
-    id: 'light-block',
-    icon: IconEyeOff,
-    label: '빛 차단',
-    detail: '06:00 이후',
-  },
-]
-
 function Home() {
   const navigate = useNavigate()
-  const [routines, setRoutines] = useState(INITIAL_ROUTINES)
+  const [routines, setRoutines] = useState([])
   const [dashboard, setDashboard] = useState(null)
-  const [coachItems, setCoachItems] = useState(RHYTHM_COACH_ITEMS)
-  const [weeklyPercent, setWeeklyPercent] = useState(60)
+  const [coachItems, setCoachItems] = useState([])
+  const [weeklyPercent, setWeeklyPercent] = useState(0)
+
+  const refreshWeeklyPercent = async (options) => {
+    try {
+      const report = await getRoutineReport('7d', options)
+      setWeeklyPercent(Math.round(report.overallCompletionRate * 100))
+    } catch (error) {
+      if (error.name !== 'AbortError') setWeeklyPercent(0)
+    }
+  }
 
   useEffect(() => {
     const controller = new AbortController()
     const options = { signal: controller.signal }
 
     const loadHome = async () => {
-      const [dashboardResult, reportResult, coachingsResult] = await Promise.allSettled([
+      const [dashboardResult, coachingsResult] = await Promise.allSettled([
         getHomeDashboard(options),
-        getRoutineReport('7d', options),
         // /home/dashboard의 topCoachingCards에는 windowEnd가 없어서 별도로 받아 보강한다.
         getCoachings(toDateString(), options),
       ])
@@ -126,16 +87,18 @@ function Home() {
           : {}
 
         setDashboard(dashboardData)
-        setCoachItems((dashboardData.topCoachingCards ?? []).slice(0, 3).map((card) => ({
-          id: card.cardId,
-          icon: iconByType[card.cardType] ?? IconSun,
-          tone: card.cardType === 'CAFFEINE_CUTOFF' ? 'danger' : 'default',
-          label: card.title,
-          detail: formatDateTimeRange(
-            card.windowStart,
-            card.windowEnd ?? windowEndByCardId[card.cardId],
-          ),
-        })))
+        setCoachItems((dashboardData.topCoachingCards ?? []).slice(0, 3).map((card) => {
+          const windowEnd = card.windowEnd ?? windowEndByCardId[card.cardId]
+
+          return {
+            id: card.cardId,
+            icon: iconByType[card.cardType] ?? IconSun,
+            tone: card.cardType === 'CAFFEINE_CUTOFF' ? 'danger' : 'default',
+            label: card.title,
+            detail: formatDateTimeRange(card.windowStart, windowEnd),
+            past: isPastWindow(windowEnd),
+          }
+        }))
 
         if ((dashboardData.routineProgress?.total ?? 0) > 0) {
           try {
@@ -154,9 +117,7 @@ function Home() {
         }
       }
 
-      if (reportResult.status === 'fulfilled') {
-        setWeeklyPercent(Math.round(reportResult.value.overallCompletionRate * 100))
-      }
+      await refreshWeeklyPercent(options)
     }
 
     loadHome()
@@ -176,6 +137,8 @@ function Home() {
 
     try {
       await updateRoutineTask(id, selected?.done ? 'PENDING' : 'DONE')
+      // 주간 실행률은 오늘 완료한 항목까지 반영해야 하므로 다시 읽는다.
+      await refreshWeeklyPercent()
     } catch {
       setRoutines(previous)
     }
@@ -213,7 +176,7 @@ function Home() {
           />
           <NextShiftCard
             remainingLabel={formatRemainingMinutes(dashboard?.nextShift?.startsInMinutes)}
-            progress={dashboard?.nextShift ? 45 : 0}
+            progress={toPercent(dashboard?.routineProgress?.completionRate)}
           />
           <QuickMenuList items={QUICK_MENU_ITEMS} onSelect={handleSelectQuickMenu} />
         </div>
