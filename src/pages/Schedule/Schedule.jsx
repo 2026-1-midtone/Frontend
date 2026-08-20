@@ -16,7 +16,6 @@ import './Schedule.scss'
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png'])
 const OCR_JOB_STORAGE_KEY = 'shiftmate.ocrJobId'
 const OCR_PENDING_STATUSES = new Set(['PENDING', 'PROCESSING'])
-const OCR_REVIEW_CONFIDENCE = 0.8
 
 function getCurrentMonth() {
   const now = new Date()
@@ -24,11 +23,7 @@ function getCurrentMonth() {
 }
 
 function getDraftStats(drafts = []) {
-  const needsReview = drafts.filter((draft) =>
-    draft.excluded
-    || draft.confidence === null
-    || Number(draft.confidence) < OCR_REVIEW_CONFIDENCE,
-  ).length
+  const needsReview = drafts.filter((draft) => draft.excluded).length
 
   return {
     confirmed: drafts.length - needsReview,
