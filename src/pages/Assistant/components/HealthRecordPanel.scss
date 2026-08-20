@@ -1,0 +1,103 @@
+.health-record-panel {
+  @include flex-column($space-3);
+  padding: $space-4;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background-color: rgba($night-200, 0.92);
+
+  &__heading {
+    @include flex(row, space-between, flex-start, $space-3);
+
+    h2 {
+      color: $color-text;
+      @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    }
+
+    p {
+      margin-top: $space-1;
+      color: $color-text-secondary;
+      @include typo($font-size-xs, $font-weight-regular, $line-height-relaxed);
+    }
+
+    > span {
+      color: $color-primary;
+      @include typo($font-size-lg, $font-weight-regular, $line-height-tight);
+    }
+  }
+
+  &__tabs {
+    @include flex(row, stretch, center, $space-2);
+  }
+
+  &__tab {
+    @include button-reset;
+    flex: 1;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    color: $color-text-secondary;
+    background-color: rgba($night-1000, 0.04);
+    @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+
+    &--active {
+      border-color: rgba($purple-500, 0.7);
+      color: $color-text;
+      background-color: rgba($purple-700, 0.22);
+    }
+  }
+
+  &__form {
+    @include flex-column($space-3);
+    padding-top: $space-1;
+
+    label {
+      @include flex-column($space-1);
+      flex: 1;
+
+      > span {
+        color: $color-text-secondary;
+        @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+      }
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-width: 0;
+      padding: $space-2 $space-3;
+      border: 1px solid $color-border;
+      border-radius: $radius-md;
+      color: $color-text;
+      background-color: $night-300;
+      color-scheme: dark;
+      @include typo($font-size-xs, $font-weight-regular, $line-height-tight);
+    }
+
+    > button {
+      @include button-reset;
+      padding: $space-3;
+      border-radius: $radius-md;
+      color: $night-0;
+      background-color: $color-primary;
+      @include typo($font-size-xs, $font-weight-semibold, $line-height-tight);
+
+      &:disabled {
+        opacity: 0.55;
+        cursor: wait;
+      }
+    }
+  }
+
+  &__field-row {
+    @include flex(row, stretch, flex-start, $space-2);
+  }
+
+  &__message {
+    color: $color-success;
+    @include typo($font-size-xs, $font-weight-medium, $line-height-relaxed);
+
+    &--error {
+      color: $color-danger;
+    }
+  }
+}

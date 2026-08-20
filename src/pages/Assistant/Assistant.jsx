@@ -9,6 +9,7 @@ import ChatMessageBubble from './components/ChatMessageBubble.jsx'
 import ChatRow from './components/ChatRow.jsx'
 import ChatTypingIndicator from './components/ChatTypingIndicator.jsx'
 import PersonalizationGuideModal from './components/PersonalizationGuideModal.jsx'
+import HealthRecordPanel from './components/HealthRecordPanel.jsx'
 import './Assistant.scss'
 
 function isPersonalizationMissing(settings) {
@@ -176,6 +177,7 @@ function Assistant() {
           title="근무 일정을 바탕으로 즉시 답변해드려요"
           description="지금 궁금한 점을 물어보세요!"
         />
+        <HealthRecordPanel />
       </div>
 
       <div className="assistant__messages">

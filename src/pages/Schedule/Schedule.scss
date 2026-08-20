@@ -24,6 +24,7 @@
   }
 
   > .page-header,
+  > .schedule__calendar-link,
   > .schedule__card {
     position: relative;
     z-index: 2;
@@ -56,6 +57,26 @@
     border-radius: $radius-lg;
     overflow: hidden;
     background-color: rgba($night-100, 0.46);
+  }
+
+  &__calendar-link {
+    @include button-reset;
+    @include flex(row, space-between, center, $space-3);
+    padding: $space-3 $space-4;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    color: $color-text;
+    background-color: rgba($night-200, 0.8);
+    backdrop-filter: blur(16px);
+
+    span:first-child {
+      @include typo($font-size-sm, $font-weight-semibold, $line-height-tight);
+    }
+
+    span:last-child {
+      color: $color-primary;
+      @include typo($font-size-xs, $font-weight-medium, $line-height-tight);
+    }
   }
 
   &__actions {

@@ -209,6 +209,15 @@ function Schedule() {
         onSettingsClick={() => navigate(PATH.SETTINGS)}
       />
 
+      <button
+        type="button"
+        className="schedule__calendar-link"
+        onClick={() => navigate(PATH.SCHEDULE_CALENDAR)}
+      >
+        <span>등록된 근무표 보기</span>
+        <span>월별 캘린더에서 확인하기 →</span>
+      </button>
+
       <div className="schedule__card">
         <ScheduleUploadCard
           previewSrc={previewSrc}
