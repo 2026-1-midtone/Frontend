@@ -12,7 +12,7 @@ const NO_WINDOW_LABEL = '권장 시간 확인'
 /**
  * 항목이 속할 섹션. 완료하면 완료된 항목으로, 되돌리면 원래 출처에 맞는 섹션으로 돌아간다.
  * @param {'PENDING'|'DONE'|'SKIPPED'} status
- * @param {'COACHING'|'TRANSITION'} sourceType
+ * @param {'COACHING'|'TRANSITION'|'BASELINE'} sourceType
  */
 export function toTaskGroup(status, sourceType) {
   if (status === 'DONE') return 'completed'

@@ -59,6 +59,15 @@ function DailyRoutine() {
     return Math.round((completedCount / tasks.length) * 100)
   }, [tasks])
 
+  // 항목이 없는 섹션은 제목과 구분선만 남아 화면이 비어 보인다.
+  const visibleSections = useMemo(
+    () =>
+      sections
+        .map((section) => ({ ...section, tasks: tasks.filter((task) => task.group === section.id) }))
+        .filter((section) => section.tasks.length > 0),
+    [tasks],
+  )
+
   const changeStatus = async (taskId, status) => {
     const previous = tasks
 
@@ -127,22 +136,20 @@ function DailyRoutine() {
             </p>
           )}
 
-          {tasks.length > 0 && sections.map((section, index) => (
+          {visibleSections.map((section, index) => (
             <section className="daily-routine__section" key={section.id}>
               {index > 0 && <img className="daily-routine__divider" src={divider} alt="" aria-hidden="true" />}
               <h2>{section.title}</h2>
               <ul className="daily-routine__list">
-                {tasks
-                  .filter((task) => task.group === section.id)
-                  .map((task) => (
-                    <RoutineTaskCard
-                      key={task.id}
-                      task={task}
-                      onToggle={toggleTask}
-                      onTip={setActiveTip}
-                      onSkip={toggleSkip}
-                    />
-                  ))}
+                {section.tasks.map((task) => (
+                  <RoutineTaskCard
+                    key={task.id}
+                    task={task}
+                    onToggle={toggleTask}
+                    onTip={setActiveTip}
+                    onSkip={toggleSkip}
+                  />
+                ))}
               </ul>
             </section>
           ))}
