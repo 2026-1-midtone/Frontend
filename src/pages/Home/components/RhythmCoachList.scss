@@ -33,6 +33,10 @@
     background-color: rgba($night-200, 0.4);
   }
 
+  &__item--past {
+    opacity: 0.45;
+  }
+
   &__icon {
     @include flex-center;
     width: 44px;

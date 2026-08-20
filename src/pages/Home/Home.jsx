@@ -16,6 +16,7 @@ import {
   IconSun,
 } from '../../components/common/icons/index.jsx'
 import { PATH } from '../../routes/paths.js'
+import { isPastWindow } from '../../lib/coachingCards.js'
 import {
   formatDateTimeRange,
   formatRemainingMinutes,
@@ -84,16 +85,18 @@ function Home() {
           : {}
 
         setDashboard(dashboardData)
-        setCoachItems((dashboardData.topCoachingCards ?? []).slice(0, 3).map((card) => ({
-          id: card.cardId,
-          icon: iconByType[card.cardType] ?? IconSun,
-          tone: card.cardType === 'CAFFEINE_CUTOFF' ? 'danger' : 'default',
-          label: card.title,
-          detail: formatDateTimeRange(
-            card.windowStart,
-            card.windowEnd ?? windowEndByCardId[card.cardId],
-          ),
-        })))
+        setCoachItems((dashboardData.topCoachingCards ?? []).slice(0, 3).map((card) => {
+          const windowEnd = card.windowEnd ?? windowEndByCardId[card.cardId]
+
+          return {
+            id: card.cardId,
+            icon: iconByType[card.cardType] ?? IconSun,
+            tone: card.cardType === 'CAFFEINE_CUTOFF' ? 'danger' : 'default',
+            label: card.title,
+            detail: formatDateTimeRange(card.windowStart, windowEnd),
+            past: isPastWindow(windowEnd),
+          }
+        }))
 
         if ((dashboardData.routineProgress?.total ?? 0) > 0) {
           try {
