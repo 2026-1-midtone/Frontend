@@ -60,6 +60,18 @@
     backdrop-filter: blur(16px);
   }
 
+  &__message {
+    padding: $space-3;
+    border-radius: $radius-md;
+    color: $color-text-secondary;
+    background-color: rgba($night-300, 0.7);
+    @include typo($font-size-xs, $font-weight-medium, $line-height-relaxed);
+
+    &--error {
+      color: $color-danger;
+    }
+  }
+
   &__edit-button {
     @include button-reset;
     padding-block: $space-3;

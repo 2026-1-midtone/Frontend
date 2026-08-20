@@ -19,17 +19,25 @@ import {
 } from '../../lib/formatApiData.js'
 import ScheduleDateList from './components/ScheduleDateList.jsx'
 import ScheduleResultSummary from './components/ScheduleResultSummary.jsx'
+import {
+  clearOcrContext,
+  getStoredOcrJobId,
+  getStoredOcrMonth,
+  rememberCalendarMonth,
+  resolveScheduleMonth,
+} from './utils/scheduleFlow.js'
 import './ScheduleResult.scss'
 
 // 근무유형 선택지. 실제 값은 근무표 정책이 확정되면 상수로 분리해 공유한다.
 const SHIFT_TYPE_OPTIONS = ['데이', '이브닝', '나이트', '오프']
-const OCR_JOB_STORAGE_KEY = 'shiftmate.ocrJobId'
 
 function ScheduleResult() {
   const navigate = useNavigate()
   const location = useLocation()
   const jobId = location.state?.jobId
-    ?? sessionStorage.getItem(OCR_JOB_STORAGE_KEY)
+    ?? getStoredOcrJobId()
+  const targetMonth = location.state?.targetMonth
+    ?? getStoredOcrMonth()
   const [dates, setDates] = useState([])
   const [errorMessage, setErrorMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
@@ -50,6 +58,7 @@ function ScheduleResult() {
 
             return {
               id: shift.shiftId,
+              workDate: shift.workDate,
               date: formatDate(shift.workDate),
               shiftType,
               originalShiftType: shiftType,
@@ -79,6 +88,7 @@ function ScheduleResult() {
 
           return {
             id: draft.draftId,
+            workDate: draft.workDate,
             date: formatDate(draft.workDate),
             shiftType: resolved ? originalShiftType : '',
             originalShiftType,
@@ -122,7 +132,12 @@ function ScheduleResult() {
         await Promise.all(changedDates.map((item) => (
           updateShift(item.id, { shiftType: toShiftType(item.shiftType) })
         )))
-        navigate(PATH.SCHEDULE_CALENDAR)
+        const scheduleMonth = resolveScheduleMonth(dates, targetMonth)
+
+        rememberCalendarMonth(scheduleMonth)
+        navigate(PATH.SCHEDULE_CALENDAR, {
+          state: { targetMonth: scheduleMonth },
+        })
       } catch (error) {
         setErrorMessage(error.message)
         setIsSaving(false)
@@ -146,8 +161,13 @@ function ScheduleResult() {
       }
 
       await confirmScheduleUpload(jobId)
-      sessionStorage.removeItem(OCR_JOB_STORAGE_KEY)
-      navigate(PATH.SCHEDULE_CALENDAR)
+      const scheduleMonth = resolveScheduleMonth(dates, targetMonth)
+
+      clearOcrContext()
+      rememberCalendarMonth(scheduleMonth)
+      navigate(PATH.SCHEDULE_CALENDAR, {
+        state: { targetMonth: scheduleMonth, justConfirmed: true },
+      })
     } catch (error) {
       setErrorMessage(error.message)
       setIsSaving(false)
@@ -209,7 +229,7 @@ function ScheduleResult() {
           type="button"
           className="schedule-result__confirm"
           onClick={handleConfirmSave}
-          disabled={needsReview > 0 || isSaving}
+          disabled={dates.length === 0 || needsReview > 0 || isSaving}
         >
           {isSaving ? '저장 중' : '일정 저장 확정'}
         </button>

@@ -11,16 +11,19 @@ import { PATH } from '../../routes/paths.js'
 import ScheduleStats from './components/ScheduleStats.jsx'
 import ScheduleUploadCard from './components/ScheduleUploadCard.jsx'
 import ScheduleWarningBanner from './components/ScheduleWarningBanner.jsx'
+import {
+  clearOcrContext,
+  getCurrentYearMonth,
+  getStoredOcrJobId,
+  getStoredOcrMonth,
+  rememberCalendarMonth,
+  resolveScheduleMonth,
+  saveOcrContext,
+} from './utils/scheduleFlow.js'
 import './Schedule.scss'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png'])
-const OCR_JOB_STORAGE_KEY = 'shiftmate.ocrJobId'
 const OCR_PENDING_STATUSES = new Set(['PENDING', 'PROCESSING'])
-
-function getCurrentMonth() {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-}
 
 function getDraftStats(drafts = []) {
   const needsReview = drafts.filter((draft) => (
@@ -57,10 +60,14 @@ function getUploadErrorMessage(error) {
 function Schedule() {
   const navigate = useNavigate()
   const [previewSrc, setPreviewSrc] = useState(null)
-  const [targetMonth, setTargetMonth] = useState(getCurrentMonth)
-  const [jobId, setJobId] = useState(null)
+  const storedJobId = getStoredOcrJobId()
+  const [targetMonth, setTargetMonth] = useState(
+    () => getStoredOcrMonth() ?? getCurrentYearMonth(),
+  )
+  const [jobId, setJobId] = useState(storedJobId)
+  const [drafts, setDrafts] = useState([])
   const [stats, setStats] = useState(null)
-  const [isUploading, setIsUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(Boolean(storedJobId))
   const [isConfirming, setIsConfirming] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -88,6 +95,7 @@ function Schedule() {
               ?? job.failReason
               ?? '근무표를 인식하지 못했습니다.',
           )
+          clearOcrContext()
           setIsUploading(false)
           return
         }
@@ -95,10 +103,12 @@ function Schedule() {
         if (job.status === 'COMPLETED') {
           if (!job.drafts?.length) {
             setErrorMessage('인식된 근무 일정이 없습니다. 다른 이미지를 사용해 주세요.')
+            clearOcrContext()
             setIsUploading(false)
             return
           }
 
+          setDrafts(job.drafts)
           setStats(getDraftStats(job.drafts))
           setIsUploading(false)
           return
@@ -142,24 +152,26 @@ function Schedule() {
 
     setPreviewSrc(URL.createObjectURL(file))
     setErrorMessage('')
+    setDrafts([])
     setStats(null)
     setIsUploading(true)
-    sessionStorage.removeItem('shiftmate.scheduleUploadId')
-    sessionStorage.removeItem(OCR_JOB_STORAGE_KEY)
+    setJobId(null)
+    clearOcrContext()
 
     try {
       const upload = await uploadScheduleImage(file, targetMonth)
-      sessionStorage.setItem(OCR_JOB_STORAGE_KEY, String(upload.jobId))
+      saveOcrContext(upload.jobId, targetMonth)
       setJobId(upload.jobId)
     } catch (error) {
       setErrorMessage(getUploadErrorMessage(error))
+      setJobId(null)
       setIsUploading(false)
     }
   }
 
   const handleGoToResult = () => {
     navigate(PATH.SCHEDULE_RESULT, {
-      state: { jobId },
+      state: { jobId, targetMonth },
     })
   }
 
@@ -171,15 +183,20 @@ function Schedule() {
 
     try {
       await confirmScheduleUpload(jobId)
-      sessionStorage.removeItem(OCR_JOB_STORAGE_KEY)
-      navigate(PATH.SCHEDULE_CALENDAR)
+      const scheduleMonth = resolveScheduleMonth(drafts, targetMonth)
+
+      clearOcrContext()
+      rememberCalendarMonth(scheduleMonth)
+      navigate(PATH.SCHEDULE_CALENDAR, {
+        state: { targetMonth: scheduleMonth, justConfirmed: true },
+      })
     } catch (error) {
       setErrorMessage(getUploadErrorMessage(error))
       setIsConfirming(false)
     }
   }
 
-  const isUploaded = Boolean(previewSrc && stats)
+  const isUploaded = Boolean(stats)
 
   return (
     <div className="schedule">
