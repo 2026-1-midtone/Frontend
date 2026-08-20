@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { createSleepLog } from '@/api/healthRecordApi.js'
 import {
   getNotificationSettings,
   getPersonalizationSettings,
   saveNotificationSettings,
   savePersonalizationSettings,
 } from '@/api/settingsApi.js'
+import { toLocalDateTimeInput, toOffsetDateTime } from '@/lib/formatApiData.js'
 import PageHeader from '../../components/common/PageHeader.jsx'
 import { PATH } from '../../routes/paths.js'
 import SettingsField from './components/SettingsField.jsx'
@@ -18,27 +20,31 @@ const SENSITIVITY_OPTIONS = [
   { value: 'MEDIUM', label: '보통' },
   { value: 'HIGH', label: '높음' },
 ]
-const NAP_LENGTH_OPTIONS = [
-  { value: '10', label: '10분' },
-  { value: '15', label: '15분' },
-  { value: '20', label: '20분' },
-  { value: '30', label: '30분' },
-]
-const NAP_COUNT_OPTIONS = [
-  { value: '1', label: '1회' },
-  { value: '2', label: '2회' },
-  { value: '3', label: '3회' },
-]
+
+function getInitialSleepTimes() {
+  const wokeAt = new Date()
+  const sleptAt = new Date(wokeAt.getTime() - 8 * 60 * 60 * 1000)
+
+  return {
+    sleptAt: toLocalDateTimeInput(sleptAt),
+    wokeAt: toLocalDateTimeInput(wokeAt),
+  }
+}
 
 function PersonalizationSettings() {
   const navigate = useNavigate()
 
   const [caffeineIntake, setCaffeineIntake] = useState('')
   const [sensitivity, setSensitivity] = useState('')
-  const [napLength, setNapLength] = useState('')
-  const [napCount, setNapCount] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+
+  const initialSleepTimes = getInitialSleepTimes()
+  const [sleptAt, setSleptAt] = useState(initialSleepTimes.sleptAt)
+  const [wokeAt, setWokeAt] = useState(initialSleepTimes.wokeAt)
+  const [isSleepSaving, setIsSleepSaving] = useState(false)
+  const [sleepMessage, setSleepMessage] = useState('')
+  const [isSleepError, setIsSleepError] = useState(false)
 
   const [alerts, setAlerts] = useState({
     napAlarm: true,
@@ -58,8 +64,6 @@ function PersonalizationSettings() {
         const data = settingsResult.value
         setCaffeineIntake(String(data.caffeineDailyMg ?? ''))
         setSensitivity(data.caffeineSensitivity ?? '')
-        setNapLength(String(data.preferredNapMinutes ?? ''))
-        setNapCount(String(data.maxNapsPerDay ?? ''))
       }
 
       if (notificationResult.status === 'fulfilled') {
@@ -100,8 +104,6 @@ function PersonalizationSettings() {
         savePersonalizationSettings({
           caffeineDailyMg,
           caffeineSensitivity: sensitivity || undefined,
-          preferredNapMinutes: Number(napLength),
-          maxNapsPerDay: Number(napCount),
         }),
         saveNotificationSettings([
           { type: 'NAP', enabled: alerts.napAlarm, customTime: null },
@@ -118,6 +120,36 @@ function PersonalizationSettings() {
 
   const handleCancel = () => {
     navigate(PATH.SETTINGS)
+  }
+
+  const handleSleepSubmit = async (event) => {
+    event.preventDefault()
+    const sleptDate = new Date(sleptAt)
+    const wokeDate = new Date(wokeAt)
+
+    if (!sleptAt || !wokeAt || wokeDate <= sleptDate) {
+      setSleepMessage('기상 시각은 취침 시각보다 늦게 입력해 주세요.')
+      setIsSleepError(true)
+      return
+    }
+
+    setIsSleepSaving(true)
+    setSleepMessage('')
+    setIsSleepError(false)
+
+    try {
+      await createSleepLog({
+        sleptAt: toOffsetDateTime(sleptAt),
+        wokeAt: toOffsetDateTime(wokeAt),
+        source: 'MANUAL',
+      })
+      setSleepMessage('수면 시간을 기록했어요.')
+    } catch (error) {
+      setSleepMessage(error.message ?? '수면 기록을 저장하지 못했습니다.')
+      setIsSleepError(true)
+    } finally {
+      setIsSleepSaving(false)
+    }
   }
 
   return (
@@ -149,27 +181,41 @@ function PersonalizationSettings() {
         </section>
 
         <section className="personalization-settings__section">
-          <h2 className="personalization-settings__title">낮잠 선호도 😴</h2>
+          <h2 className="personalization-settings__title">수면 기록 🌙</h2>
 
-          <SettingsField
-            rowLabel="선호 낮잠 길이"
-            fieldLabel="길이 선택"
-            type="select"
-            value={napLength}
-            onChange={setNapLength}
-            options={NAP_LENGTH_OPTIONS}
-            caption="설정한 길이 이외의 낮잠은 앱이 추천하지 않습니다."
-          />
+          <form className="personalization-settings__sleep-form" onSubmit={handleSleepSubmit}>
+            <SettingsField
+              rowLabel="취침 시각"
+              type="datetime-local"
+              value={sleptAt}
+              onChange={setSleptAt}
+            />
 
-          <SettingsField
-            rowLabel="하루 최대 낮잠 횟수"
-            fieldLabel="최대 횟수"
-            type="select"
-            value={napCount}
-            onChange={setNapCount}
-            options={NAP_COUNT_OPTIONS}
-            caption="설정한 횟수를 초과하는 낮잠은 앱이 추천하지 않습니다."
-          />
+            <SettingsField
+              rowLabel="기상 시각"
+              type="datetime-local"
+              value={wokeAt}
+              onChange={setWokeAt}
+              caption="몇 시부터 몇 시까지 잤는지 기록하면 코칭에 반영됩니다."
+            />
+
+            {sleepMessage && (
+              <p
+                className={`personalization-settings__sleep-message${isSleepError ? ' is-error' : ''}`}
+                role={isSleepError ? 'alert' : 'status'}
+              >
+                {sleepMessage}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="personalization-settings__sleep-submit"
+              disabled={isSleepSaving}
+            >
+              {isSleepSaving ? '기록 저장 중' : '수면 기록 저장'}
+            </button>
+          </form>
         </section>
 
         <section className="personalization-settings__section">
@@ -209,7 +255,7 @@ function PersonalizationSettings() {
             type="button"
             className="personalization-settings__action personalization-settings__action--primary"
             onClick={handleSave}
-            disabled={isSaving || !napLength || !napCount}
+            disabled={isSaving}
           >
             {isSaving ? '저장 중' : '저장'}
           </button>

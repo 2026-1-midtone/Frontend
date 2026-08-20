@@ -3,6 +3,7 @@ import {
   createCaffeineIntake,
   createSleepLog,
 } from '@/api/healthRecordApi.js'
+import { toLocalDateTimeInput, toOffsetDateTime } from '@/lib/formatApiData.js'
 import './HealthRecordPanel.scss'
 
 const CAFFEINE_OPTIONS = [
@@ -11,33 +12,6 @@ const CAFFEINE_OPTIONS = [
   { label: '차', value: 'TEA', amountMg: 40 },
   { label: '기타', value: 'OTHER', amountMg: 50 },
 ]
-
-function toLocalDateTimeInput(date) {
-  const pad = (value) => String(value).padStart(2, '0')
-
-  return [
-    date.getFullYear(),
-    '-',
-    pad(date.getMonth() + 1),
-    '-',
-    pad(date.getDate()),
-    'T',
-    pad(date.getHours()),
-    ':',
-    pad(date.getMinutes()),
-  ].join('')
-}
-
-function toOffsetDateTime(value) {
-  const date = new Date(value)
-  const offsetMinutes = -date.getTimezoneOffset()
-  const sign = offsetMinutes >= 0 ? '+' : '-'
-  const absoluteOffset = Math.abs(offsetMinutes)
-  const offsetHours = String(Math.floor(absoluteOffset / 60)).padStart(2, '0')
-  const offsetRemainder = String(absoluteOffset % 60).padStart(2, '0')
-
-  return `${value}:00${sign}${offsetHours}:${offsetRemainder}`
-}
 
 function getInitialSleepTimes() {
   const wokeAt = new Date()

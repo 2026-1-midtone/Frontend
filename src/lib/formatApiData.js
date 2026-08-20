@@ -90,6 +90,33 @@ export function getMonthRange(year, month) {
   }
 }
 
+export function toLocalDateTimeInput(date) {
+  const pad = (value) => String(value).padStart(2, '0')
+
+  return [
+    date.getFullYear(),
+    '-',
+    pad(date.getMonth() + 1),
+    '-',
+    pad(date.getDate()),
+    'T',
+    pad(date.getHours()),
+    ':',
+    pad(date.getMinutes()),
+  ].join('')
+}
+
+export function toOffsetDateTime(value) {
+  const date = new Date(value)
+  const offsetMinutes = -date.getTimezoneOffset()
+  const sign = offsetMinutes >= 0 ? '+' : '-'
+  const absoluteOffset = Math.abs(offsetMinutes)
+  const offsetHours = String(Math.floor(absoluteOffset / 60)).padStart(2, '0')
+  const offsetRemainder = String(absoluteOffset % 60).padStart(2, '0')
+
+  return `${value}:00${sign}${offsetHours}:${offsetRemainder}`
+}
+
 export function getMinutesUntil(dateTime) {
   if (!dateTime) return null
 
